@@ -1,5 +1,5 @@
 import React from "react";
-import ShopProduct from "../../features/customer/shop/components/ShopProduct";
+import ShopProduct from "../../components/user/shop/components/ShopProduct";
 
 const ExternalPage: React.FC = () => {
   return (

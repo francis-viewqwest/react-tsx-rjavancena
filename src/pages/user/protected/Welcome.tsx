@@ -1,5 +1,5 @@
 import React from "react";
-import WelcomeSignup from "../../../features/customer/welcome/components/WelcomeSignup";
+import WelcomeSignup from "../../../features/user/welcome/components/WelcomeSignup";
 
 const InternalPage: React.FC = () => {
   return (

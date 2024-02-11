@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "../Layout";
 import Navbar from "../Navbar";
-import Home from "../../pages/customer/Home";
+import Home from "../../pages/user/Home";
 import Footer from "../Footer";
 
 const CustomerLayout: React.FC = () => {

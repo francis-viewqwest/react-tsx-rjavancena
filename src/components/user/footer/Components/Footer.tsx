@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import rjavancena from "../assets/rjavancenalogo.svg";
+import rjavancena from "../../../../assets/rjavancenalogo.svg";
 
 const Footer: React.FC = () => {
   return (

@@ -1,56 +1,67 @@
 import { useAuth } from "../app/AuthProvider";
-import Home from "../pages/customer/Home";
-import About from "../pages/customer/About";
-import Shop from "../pages/customer/Shop";
-import SignIn from "../pages/customer/SignIn";
-import SignUp from "../pages/customer/SignUp";
+import Home from "../pages/user/Home";
+import Shop from "../pages/user/Shop";
+import About from "../pages/user/About";
+import SignIn from "../pages/user/SignIn";
+import SignUp from "../pages/user/SignUp";
 
-import Layout from "../containers/Layout";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Layout from "../containers/Layout";
+import Navbar from "../../src/components/user/navbar/components/Navbar";
 
-const Routes = () => {
+const Routes: React.FC = () => {
   const { token } = useAuth();
 
   const publicRoutes = [
     {
       path: "/",
-      element: <Home />,
+      element: (
+        <>
+          <Navbar />
+          <Home />
+        </>
+      ),
+    },
+    {
+      path: "/shop",
+      element: <Shop />,
+    },
+    {
+      path: "/about",
+      element: <About />,
+    },
+    {
+      path: "/signin",
+      element: <SignIn />,
+    },
+    {
+      path: "/signup",
+      element: <SignUp />,
+    },
+  ];
+
+  const authUserRoutes = [
+    {
+      path: "/user",
+      element: <Layout />,
       children: [
         {
-          path: "/about",
-          element: <About />,
+          path: "/user/",
+          element: <Home />,
         },
         {
-          path: "/shop",
+          path: "/user/shop",
           element: <Shop />,
         },
         {
-          path: "/signin",
-          element: <SignIn />,
-        },
-        {
-          path: "/signup",
-          element: <SignUp />,
+          path: "/user/about",
+          element: <About />,
         },
       ],
     },
   ];
 
-  const authCustomerRoutes = [
-    {
-      path: "/",
-      element: <Layout />,
-    },
-  ];
-
-  const authAdminRoutes = [
-    {
-      path: "/",
-      element: <Layout />,
-    },
-  ];
-
-  const noAuthRoutes = [
+  const noAuthUserRoutes = [
     {
       path: "/signin",
       element: <SignIn />,
@@ -59,8 +70,8 @@ const Routes = () => {
 
   const router = createBrowserRouter([
     ...publicRoutes,
-    ...(!token ? noAuthRoutes : []),
-    ...authCustomerRoutes,
+    ...(!token ? noAuthUserRoutes : []),
+    ...authUserRoutes,
   ]);
 
   return <RouterProvider router={router} />;

@@ -1,10 +1,10 @@
 import React from "react";
-import AboutContent from "../../features/customer/about/components/AboutContent";
+import SignUp from "../../components/user/signup/components/SignUp";
 
 const ExternalPage: React.FC = () => {
   return (
     <>
-      <AboutContent />
+      <SignUp />
     </>
   );
 };
