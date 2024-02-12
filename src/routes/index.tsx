@@ -1,13 +1,13 @@
 import { useAuth } from "../app/AuthProvider";
-import Home from "../pages/user/Home";
-import Shop from "../pages/user/Shop";
-import About from "../pages/user/About";
-import SignIn from "../pages/user/SignIn";
-import SignUp from "../pages/user/SignUp";
+import Home from "../pages/user/public/Home";
+import Shop from "../pages/user/public/Shop";
+import About from "../pages/user/public/About";
+import SignIn from "../pages/user/public/SignIn";
+import SignUp from "../pages/user/public/SignUp";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "../containers/Layout";
-import Navbar from "../../src/components/user/navbar/components/Navbar";
+import PublicLayout from "../pages/user/PublicLayout";
 
 const Routes: React.FC = () => {
   const { token } = useAuth();
@@ -15,46 +15,47 @@ const Routes: React.FC = () => {
   const publicRoutes = [
     {
       path: "/",
-      element: (
-        <>
-          <Navbar />
-          <Home />
-        </>
-      ),
-    },
-    {
-      path: "/shop",
-      element: <Shop />,
-    },
-    {
-      path: "/about",
-      element: <About />,
-    },
-    {
-      path: "/signin",
-      element: <SignIn />,
-    },
-    {
-      path: "/signup",
-      element: <SignUp />,
+      element: <PublicLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/shop",
+          element: <Shop />,
+        },
+        {
+          path: "/about",
+          element: <About />,
+        },
+        {
+          path: "/signin",
+          element: <SignIn />,
+        },
+        {
+          path: "/signup",
+          element: <SignUp />,
+        },
+      ],
     },
   ];
 
   const authUserRoutes = [
     {
-      path: "/user",
+      path: "user/*",
       element: <Layout />,
       children: [
         {
-          path: "/user/",
+          path: "home",
           element: <Home />,
         },
         {
-          path: "/user/shop",
+          path: "shop",
           element: <Shop />,
         },
         {
-          path: "/user/about",
+          path: "about",
           element: <About />,
         },
       ],

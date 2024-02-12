@@ -2,15 +2,15 @@ import React from "react";
 import { useAuth } from "../app/AuthProvider";
 import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "../components/user/navbar/components/Navbar";
-import Home from "../pages/user/Home";
+import Home from "../pages/user/public/Home";
 import Footer from "../components/user/footer/Components/Footer";
+import ExternalPage from "../pages/user/public/ExternalPage";
 
 interface LayoutProps {
-  children: React.ReactNode;
   token: string;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = () => {
   const { token } = useAuth();
 
   if (!token) {

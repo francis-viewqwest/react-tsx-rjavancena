@@ -38,15 +38,32 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
               <div className="font-black">RJ AVANCENA</div>
               <ul className="hidden md:flex flex-row gap-4">
                 {/* Navbar menu content here */}
-                <li className="text-sm">
-                  <Link to="/">Home</Link>
-                </li>
-                <li className="text-sm">
-                  <Link to="/shop">Shop</Link>
-                </li>
-                <li className="text-sm">
-                  <Link to="/about">About</Link>
-                </li>
+                {token ? (
+                  <>
+                    {" "}
+                    <li className="text-sm">
+                      <Link to="home">Home</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="shop">Shop</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="about">About</Link>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className="text-sm">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="/shop">Shop</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="/about">About</Link>
+                    </li>
+                  </>
+                )}
               </ul>
               <div className="flex-1 lg:block"></div>
               <div className="flex-none">

@@ -5,7 +5,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<{ token: string }> = ({ token }) => {
   return (
     <>
       <div className="w-full top-0 fixed z-10 bg-white py-4">
@@ -38,21 +38,38 @@ const Navbar: React.FC = () => {
               <div className="font-black">RJ AVANCENA</div>
               <ul className="hidden md:flex flex-row gap-4">
                 {/* Navbar menu content here */}
-                <li className="text-sm">
-                  <Link to="/">Home</Link>
-                </li>
-                <li className="text-sm">
-                  <Link to="/shop">Shop</Link>
-                </li>
-                <li className="text-sm">
-                  <Link to="/about">About</Link>
-                </li>
+                {token ? (
+                  <>
+                    {" "}
+                    <li className="text-sm">
+                      <Link to="home">Home</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="shop">Shop</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="about">About</Link>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li className="text-sm">
+                      <Link to="/">Home</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="/shop">Shop</Link>
+                    </li>
+                    <li className="text-sm">
+                      <Link to="/about">About</Link>
+                    </li>
+                  </>
+                )}
               </ul>
               <div className="flex-1 lg:block"></div>
-              <div className="flex-none hidden lg:block">
+              <div className="flex-none">
                 <ul className="flex flex-row gap-4 items-center">
                   {/* Navbar menu content here */}
-                  <div className="flex items-center relative">
+                  <div className="hidden sm:flex items-center relative">
                     <MagnifyingGlassIcon className="w-5 h-5 absolute left-3" />
                     <input
                       type="text"
@@ -62,14 +79,51 @@ const Navbar: React.FC = () => {
 
                     <ShoppingBagIcon className="h-7 w-7 absolute border-l-[1px] pl-2 right-4" />
                   </div>
-                  <li className="text-sm font-bold">
-                    <Link to="/signin">Sign In</Link>
-                  </li>
-                  <li className="text-sm font-bold">
-                    <button className="btn btn-md bg-btnprimary text-white">
-                      <Link to="/signup">Sign Up</Link>
-                    </button>
-                  </li>
+                  {token ? (
+                    <>
+                      <ShoppingBagIcon className="h-7 w-7 sm:hidden" />
+                      <div className="block flex-none">
+                        <div className="dropdown dropdown-end"></div>
+                        <div className="dropdown dropdown-end">
+                          <div
+                            tabIndex={0}
+                            role="button"
+                            className="avatar placeholder"
+                          >
+                            <div className="bg-neutral text-neutral-content rounded-full w-12">
+                              <span className="text-xs font-bold">FB</span>
+                            </div>
+                          </div>
+                          <ul
+                            tabIndex={0}
+                            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+                          >
+                            <li>
+                              <Link to="/profile" className="justify-between">
+                                Profile
+                              </Link>
+                            </li>
+
+                            <div className="divider mt-0 mb-0"></div>
+                            <li>
+                              <Link to="/logout">Logout</Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <li className="text-sm font-bold">
+                        <Link to="/signin">Sign In</Link>
+                      </li>
+                      <li className="text-sm font-bold">
+                        <button className="btn btn-md bg-btnprimary text-white">
+                          <Link to="/signup">Sign Up</Link>
+                        </button>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>
