@@ -8,6 +8,7 @@ import SignUp from "../pages/user/public/SignUp";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "../containers/Layout";
 import PublicLayout from "../pages/user/PublicLayout";
+import VerifyEmail from "../pages/user/protected/VerifyEmail";
 
 const Routes: React.FC = () => {
   const { token } = useAuth();
@@ -38,6 +39,13 @@ const Routes: React.FC = () => {
           element: <SignUp />,
         },
       ],
+    },
+  ];
+
+  const registerAuthUser = [
+    {
+      path: "/signup/verify-email",
+      element: <VerifyEmail />,
     },
   ];
 
@@ -72,6 +80,7 @@ const Routes: React.FC = () => {
   const router = createBrowserRouter([
     ...publicRoutes,
     ...(!token ? noAuthUserRoutes : []),
+    ...registerAuthUser,
     ...authUserRoutes,
   ]);
 

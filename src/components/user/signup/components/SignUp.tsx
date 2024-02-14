@@ -1,14 +1,50 @@
-import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useAuth } from "../../../../app/AuthProvider";
+import Cookies from "js-cookie";
+import axios from "axios";
+
+interface formData {
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
 
 const SignUp: React.FC = () => {
   const form = useForm();
+  const navigate = useNavigate();
+  const { setToken } = useAuth();
 
-  const { register, control, handleSubmit, formState } = form;
+  const { register, handleSubmit, formState } = form;
   const { errors } = formState;
 
-  const onSubmit = (data) => {
-    console.log("Form submited", data);
+  const onSubmit: SubmitHandler<formData> = async (data) => {
+    const registerEndpoint = import.meta.env.VITE_BASE_URL + "register";
+
+    try {
+      const res = await axios.post(registerEndpoint, data);
+
+      if (res.status === 200 && res.data.message) {
+        const queryParams = new URLSearchParams(res.data.message.split("?")[1]);
+        const tjParam = queryParams.get("tj");
+        Cookies.set("token", tjParam);
+        setToken(tjParam);
+
+        if (tjParam) {
+          navigate(`/signup/verify-email?tj=${tjParam}`);
+          console.log(tjParam);
+          console.log("message: ", res.data.message);
+        } else {
+          console.error("Invalid token format");
+        }
+      } else {
+        console.error("Invalid response format");
+      }
+
+      console.log("Form submit", data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -19,8 +55,8 @@ const SignUp: React.FC = () => {
           className="m-auto lg:p-8 flex flex-col gap-4 lg:w-2/6 rounded-md"
         >
           <div className="flex flex-col items-center m-auto gap-3 mb-10">
-            <h1 className="text-3xl font-bold">Create Your Account</h1>
-            <p className="text-sm">
+            <h1 className="text-2xl font-bold">Create Your Account</h1>
+            <p className="text-sm text-center">
               Get started with RJ Avancena Enterprises and enjoy a seamless
               shopping experience.
             </p>

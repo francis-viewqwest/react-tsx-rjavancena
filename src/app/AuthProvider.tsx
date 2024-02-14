@@ -8,18 +8,24 @@ import React, {
 import Cookies from "js-cookie";
 import axios from "axios";
 
-interface TokenProps {
+interface AuthContextProps {
+  token: string | undefined;
+  setToken: (newToken: string) => void;
+}
+
+interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const AuthContext = createContext();
+const AuthContext = createContext<AuthContextProps>({
+  token: undefined,
+  setToken: () => {},
+});
 
-const AuthProvider: React.FC<TokenProps> = ({ children }) => {
-  // const dummyToken = "123";
-
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken_] = useState(Cookies.get("token"));
 
-  const setToken = () => {
+  const setToken = (newToken: string) => {
     setToken_(newToken);
   };
 
