@@ -33,7 +33,7 @@ const SignIn: React.FC = () => {
             </div>
             <div>
               <label className="label-text sm:text-md">
-                <Link to="/">Forgot Password?</Link>
+                <Link to="/forgot-password">Forgot Password?</Link>
               </label>
             </div>
           </div>

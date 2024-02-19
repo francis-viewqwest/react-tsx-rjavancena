@@ -118,9 +118,12 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
                         <Link to="/signin">Sign In</Link>
                       </li>
                       <li className="text-sm font-bold">
-                        <button className="btn btn-md bg-btnprimary text-white">
-                          <Link to="/signup">Sign Up</Link>
-                        </button>
+                        <Link
+                          className="btn btn-md bg-btnprimary text-white"
+                          to="/signup"
+                        >
+                          Sign Up
+                        </Link>
                       </li>
                     </>
                   )}

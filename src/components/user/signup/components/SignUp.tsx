@@ -24,8 +24,8 @@ const SignUp: React.FC = () => {
     try {
       const res = await axios.post(registerEndpoint, data);
 
-      if (res.status === 200 && res.data.message) {
-        const queryParams = new URLSearchParams(res.data.message.split("?")[1]);
+      if (res.status === 200 && res.data.url_token) {
+        const queryParams = new URLSearchParams(res.data.url_token.split("?")[1]);
         const tjParam = queryParams.get("tj");
         Cookies.set("token", tjParam);
         setToken(tjParam);
@@ -33,7 +33,7 @@ const SignUp: React.FC = () => {
         if (tjParam) {
           navigate(`/signup/verify-email?tj=${tjParam}`);
           console.log(tjParam);
-          console.log("message: ", res.data.message);
+          console.log("url_token: ", res.data.url_token);
         } else {
           console.error("Invalid token format");
         }
