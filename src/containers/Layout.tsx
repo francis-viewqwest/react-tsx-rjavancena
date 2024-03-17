@@ -2,9 +2,10 @@ import React from "react";
 import { useAuth } from "../app/AuthProvider";
 import { Navigate, Outlet } from "react-router-dom";
 import Navbar from "../components/user/navbar/components/Navbar";
-import Home from "../pages/user/public/Home";
 import Footer from "../components/user/footer/Components/Footer";
-import ExternalPage from "../pages/user/public/ExternalPage";
+import Sidebar from "./Sidebar";
+import PageContent from "./PageContent";
+import { SidebarProvider } from "@/hooks/SidebarContext";
 
 interface LayoutProps {
   token: string;
@@ -18,11 +19,16 @@ const Layout: React.FC<LayoutProps> = () => {
   }
 
   return (
-    <>
-      <Navbar token={token} />
+    <div className="yflex yflex-1">
+      {/* <Navbar token={token} />
       <Outlet />
-      <Footer />
-    </>
+      <Footer /> */}
+
+      <SidebarProvider>
+        <Sidebar />
+      </SidebarProvider>
+      <PageContent />
+    </div>
   );
 };
 

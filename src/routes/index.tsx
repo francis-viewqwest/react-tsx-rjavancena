@@ -12,9 +12,17 @@ import PublicLayout from "../pages/user/PublicLayout";
 import VerifyEmail from "../pages/user/protected/VerifyEmail";
 import UpdatePassword from "../pages/user/protected/UpdatePassword";
 
+//* Admin Pages Element
+import Menu from "../pages/admin/protected/Menu";
+import Dashboard from "../pages/admin/protected/Dashboard";
+import Inventory from "../pages/admin/protected/Inventory";
+import Users from "../pages/admin/protected/Users";
+import Orders from "../pages/admin/protected/Orders";
+
 const Routes: React.FC = () => {
   const { token } = useAuth();
 
+  //* Public Routes
   const publicRoutes = [
     {
       path: "/",
@@ -48,6 +56,7 @@ const Routes: React.FC = () => {
     },
   ];
 
+  //* Register Auth Routes
   const registerAuthUser = [
     {
       path: "/signup/verify-email",
@@ -59,6 +68,7 @@ const Routes: React.FC = () => {
     },
   ];
 
+  //* Authenticated User Routes
   const authUserRoutes = [
     {
       path: "user/*",
@@ -80,6 +90,40 @@ const Routes: React.FC = () => {
     },
   ];
 
+  //* Authenticated Admin Routes
+  const authAdmin = [
+    {
+      path: "app/*",
+      element: <Layout />,
+      children: [
+        {
+          path: "menu",
+          element: <Menu />,
+        },
+        {
+          path: "dashboard",
+          element: <Dashboard />,
+        },
+        {
+          path: "inventory",
+          element: <Inventory />,
+        },
+        {
+          path: "users",
+          element: <Users />,
+        },
+        {
+          path: "customer",
+          element: "/customer",
+        },
+        {
+          path: "orders",
+          element: <Orders />,
+        },
+      ],
+    },
+  ];
+
   const noAuthUserRoutes = [
     {
       path: "/signin",
@@ -92,6 +136,7 @@ const Routes: React.FC = () => {
     ...(!token ? noAuthUserRoutes : []),
     ...registerAuthUser,
     ...authUserRoutes,
+    ...authAdmin,
   ]);
 
   return <RouterProvider router={router} />;
