@@ -3,6 +3,7 @@ import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/lib/utils"
 
+
 const Drawer = ({
   shouldScaleBackground = true,
   ...props
@@ -41,12 +42,12 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "yfixed yinset-x-0 ybottom-0 yz-50 ymt-24 yflex yh-auto yflex-col yrounded-t-[10px] yborder ybg-background",
+        "yfixed yinset-y-0 ytop-0 yz-50  yflex yh-auto yflex-col ybg-background",
         className
       )}
       {...props}
     >
-      <div className="ymx-auto ymt-4 yh-2 yw-[100px] yrounded-full ybg-muted" />
+      <div className="ymx-auto ymt-4 yh-2 yw-[100px] yrounded-full" />
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>

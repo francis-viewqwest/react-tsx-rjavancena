@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
     },
     {
       title: "Inventory",
-      path: "/",
+      path: "/app/inventory",
       icon: "heroicons-outline:cube",
     },
     {
@@ -78,8 +78,116 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
+      <Drawer direction="left">
+        <DrawerTrigger
+          className="lg:yhidden yborder-b-[1px] yrounded-none yshadow-none"
+          asChild
+        >
+          <Button variant="outline">
+            <Icon icon="heroicons:bars-3-16-solid" />
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <div className="yw-64 yh-full">
+            <DrawerHeader>
+              <DrawerTitle className="font-semibold">RJ AVANCENA</DrawerTitle>
+            </DrawerHeader>
+            <div className="p-4 pb-0 ypx-3">
+              <div className="yflex yflex-col ygap-2">
+                {menus.map((menu, index) => (
+                  <React.Fragment key={index}>
+                    {menu.submenus ? (
+                      <Accordion type="single" collapsible>
+                        <AccordionItem
+                          className="yborder-b-0"
+                          value={`${index}`}
+                        >
+                          <AccordionTrigger
+                            onClick={() => handleExpandSidebar(true, true)}
+                            className={cn(
+                              buttonVariants({
+                                size: "sm",
+                                variant: "ghost",
+                              }),
+                              "justify-between yw-0 hover:yno-underline yfont-medium ytext-neutral-600"
+                            )}
+                          >
+                            <div className="yflex yitems-center ygap-3 ytext-neutral-600">
+                              <Icon fontSize={22} icon={menu.icon} />
+                              <span
+                                className={`${
+                                  !open
+                                    ? "yscale-0 yease-in-out ytransition-all"
+                                    : "yease-in-out yscale-100 ytransition-all"
+                                }`}
+                              >
+                                {menu.title}
+                              </span>
+                            </div>
+                          </AccordionTrigger>
+
+                          {menu.submenus.map((submenu, index) => (
+                            <AccordionContent
+                              className="ypb-2 ypt-2"
+                              key={index}
+                            >
+                              {open ? (
+                                <div className="yw-full yflex yflex-col">
+                                  <Link
+                                    className={cn(
+                                      buttonVariants({
+                                        size: "sm",
+                                        variant: "ghost",
+                                      }),
+                                      "yjustify-between yml-7 ytext-neutral-600 yflex ygap-10"
+                                    )}
+                                    to={submenu.path}
+                                  >
+                                    {submenu.title}
+                                  </Link>
+                                </div>
+                              ) : null}
+                            </AccordionContent>
+                          ))}
+                        </AccordionItem>
+                      </Accordion>
+                    ) : (
+                      <Link
+                        className={cn(
+                          buttonVariants({
+                            size: "sm",
+                            variant: "ghost",
+                          }),
+                          "yjustify-between yfont-medium"
+                        )}
+                        to={menu.path}
+                      >
+                        <div
+                          className={`yflex yitems-center ygap-3 ytext-start ytext-neutral-600`}
+                        >
+                          <Icon fontSize={22} icon={menu.icon} />
+                          <span
+                            className={`${
+                              !open
+                                ? "yscale-0 yease-in-out ytransition-all"
+                                : "yease-in-out yscale-100 ytransition-all"
+                            }`}
+                          >
+                            {menu.title}
+                          </span>
+                        </div>
+                      </Link>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+            <DrawerFooter></DrawerFooter>
+          </div>
+        </DrawerContent>
+      </Drawer>
       <div
-        className={`ymin-h-screen yborder-r yp-2 yflex yflex-col ybg-white ytransition-all relative ${
+        className={`ymin-h-screen yhidden yborder-r yp-2 lg:yflex yflex-col ybg-white ytransition-all relative ${
           open ? "yw-48" : "yw-16"
         }`}
       >
@@ -126,7 +234,7 @@ const Sidebar: React.FC = () => {
                     </AccordionTrigger>
 
                     {menu.submenus.map((submenu, index) => (
-                      <AccordionContent className="ypb-1" key={index}>
+                      <AccordionContent className="ypb-2 ypt-2" key={index}>
                         {open ? (
                           <div className="yw-full yflex yflex-col">
                             <Link
