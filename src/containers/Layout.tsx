@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/drawer";
 import Sidebar from "./Sidebar";
 import PageContent from "./PageContent";
-import { SidebarProvider } from "@/hooks/SidebarContext";
+import { SidebarProvider } from "../hooks/SidebarContext";
 
 interface LayoutProps {
   token: string;

@@ -30,12 +30,12 @@ const Sidebar: React.FC = () => {
   const menus = [
     {
       title: "Menu",
-      path: "/",
+      path: "/app/menu",
       icon: "heroicons-outline:view-grid",
     },
     {
       title: "Dashboard",
-      path: "/",
+      path: "/app/dashboard",
       icon: "heroicons-outline:chart-pie",
     },
     {
@@ -80,11 +80,11 @@ const Sidebar: React.FC = () => {
     <>
       <Drawer direction="left">
         <DrawerTrigger
-          className="lg:yhidden yborder-b-[1px] yrounded-none yshadow-none"
+          className="lg:yhidden yrounded-none yshadow-none"
           asChild
         >
-          <Button variant="outline">
-            <Icon icon="heroicons:bars-3-16-solid" />
+          <Button className="ymx-4 ymt-4 yrounded-sm yabsolute yz-50">
+            <Icon fontSize={24} icon="heroicons:bars-3-16-solid" />
           </Button>
         </DrawerTrigger>
         <DrawerContent>

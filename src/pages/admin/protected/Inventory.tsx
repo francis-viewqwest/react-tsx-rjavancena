@@ -1,11 +1,20 @@
+import Inventory from "@/features/admin/Inventory";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { setTitle } from "../../../common/appSlice";
+import { useEffect } from "react";
 
 const Internal: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setTitle("Inventory"));
+  }, []);
+
   return (
-    <div>
-      <h1>Inventory</h1>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Temporibus consequuntur impedit iusto blanditiis, beatae rerum quasi architecto amet. Nesciunt quo accusamus, corporis ducimus laboriosam laborum inventore sed eaque laudantium sequi exercitationem sit similique numquam ex enim aspernatur animi itaque cumque explicabo beatae cupiditate? Voluptatibus iste dicta, repellat sint fugit at cumque sequi labore quibusdam accusantium officia excepturi quod, nam inventore vitae tenetur nisi, sit expedita quos nesciunt ab porro deserunt quasi? Amet illo harum ab debitis vero quo accusamus error ullam consequuntur vel neque hic, odit molestiae minima sit, nihil reiciendis aut a molestias nemo non est nostrum ipsa iusto? Suscipit quam voluptatem provident similique sapiente nihil ducimus eaque iste maxime consectetur, eum, molestias ut. Laboriosam repellendus beatae, sapiente officia quas iusto ex totam numquam quaerat, voluptate ullam nulla? Fuga dignissimos saepe, pariatur labore quae minima architecto aperiam vero inventore ipsam tenetur fugiat. Accusamus, est iste. Fuga obcaecati voluptas ex, ducimus nulla omnis dignissimos amet, unde ratione sunt quidem eum magnam similique enim hic eveniet illo velit a dolor libero maxime corrupti. Eius sunt beatae vero deserunt illum voluptates voluptas quam, repellendus accusantium distinctio eveniet eligendi necessitatibus deleniti incidunt cum error aperiam labore iusto quidem ut molestiae. Ab, dolore? Similique nihil magnam aut! Quis quod perspiciatis modi nemo inventore officia aspernatur itaque doloremque rerum ex tempore, fugit ipsam officiis sint eligendi, saepe sunt laudantium atque maxime! Velit molestiae deserunt quasi animi amet mollitia aperiam soluta ut eum, voluptas perferendis quae voluptate recusandae impedit aut. Quidem praesentium consequuntur nulla, quaerat, laudantium quos aut voluptas quae blanditiis at, officiis voluptatibus inventore quam explicabo sapiente? Blanditiis quis, repudiandae ipsam natus inventore cupiditate impedit placeat quo consectetur, possimus necessitatibus numquam dignissimos illum vel nobis, eaque alias voluptas architecto quibusdam deserunt id? Earum quae excepturi dolorem doloremque possimus impedit voluptatum neque sunt quidem, nam molestiae expedita totam modi error eos ipsa sequi aut, quo facere incidunt veniam beatae fugiat obcaecati necessitatibus! Saepe aliquid ex nulla eius exercitationem libero facere architecto dignissimos aperiam magni repellendus unde, corporis quos dolor beatae voluptatibus, itaque fuga. Praesentium qui ex omnis perspiciatis ut exercitationem blanditiis minima accusamus, voluptatem nemo dolores dolore labore voluptatibus repudiandae distinctio dicta hic vitae. Nam accusantium quos rerum voluptatibus, id iure repellat. Tempore ipsa saepe, sit impedit id corrupti eos ducimus omnis quaerat ea, accusamus voluptate quae, eaque doloremque sint! Iure, similique. Ad porro animi aliquid adipisci veritatis officia ex fuga laudantium, culpa incidunt? Aspernatur dolorem illo adipisci. Qui architecto similique numquam dolore, eveniet aut praesentium ipsum expedita! Officiis iure numquam ea eum quo voluptas dolorum quisquam atque, hic labore ut nisi pariatur molestiae recusandae ipsum amet! Aliquam labore enim cupiditate et. Dicta perferendis voluptatibus fugiat? Nostrum suscipit enim quidem beatae qui eius officiis possimus ducimus corrupti asperiores, odit praesentium eaque, aperiam nisi quibusdam iste at, dolores recusandae consequuntur deserunt. At, numquam quas. Alias laudantium nisi accusantium modi beatae mollitia quibusdam ut et quae tempore eius blanditiis laboriosam ullam animi, doloremque vel nihil incidunt iste porro iure? Libero odio iusto quos eligendi laboriosam sapiente hic doloribus.
-    </div>
+    <>
+      <Inventory />
+    </>
   );
 };
 
