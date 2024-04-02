@@ -9,7 +9,7 @@ const routes = [
     component: Menu,
   },
   {
-    path: "/dashbard",
+    path: "/dashboard",
     title: "Dashboard",
     component: Dashboard,
   },
