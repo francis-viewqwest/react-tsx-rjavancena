@@ -45,7 +45,7 @@ const Sidebar: React.FC = () => {
     },
     {
       title: "Users",
-      path: "/",
+      path: "/app/users",
       icon: "heroicons-outline:user-group",
     },
     {
@@ -54,22 +54,22 @@ const Sidebar: React.FC = () => {
       submenus: [
         {
           title: "Customer Order",
-          path: "/",
+          path: "/app/customer-order",
           icon: "heroicons-outline:user-group",
         },
         {
           title: "Return Order",
-          path: "/",
+          path: "/app/return-order",
           icon: "heroicons-outline:user-group",
         },
         {
           title: "Failed Delivery",
-          path: "/",
+          path: "/app/failed-delivery",
           icon: "heroicons-outline:user-group",
         },
         {
           title: "Cancellation",
-          path: "/",
+          path: "/app/cancellation",
           icon: "heroicons-outline:user-group",
         },
       ],
@@ -83,7 +83,7 @@ const Sidebar: React.FC = () => {
           className="lg:yhidden yrounded-none yshadow-none"
           asChild
         >
-          <Button className="ymx-4 ymt-4 yrounded-sm yabsolute yz-50">
+          <Button className="ymx-4 ymt-3 yrounded-sm yabsolute yz-50">
             <Icon fontSize={24} icon="heroicons:bars-3-16-solid" />
           </Button>
         </DrawerTrigger>
@@ -203,7 +203,7 @@ const Sidebar: React.FC = () => {
             <Icon icon="heroicons-outline:chevron-double-right" />
           </Button>
         </div>
-        <nav className="ygap-4 yflex yflex-col ypt-10 yease-in-out ytransition-all">
+        <nav className="ygap-3 yflex yflex-col ypt-10 yease-in-out ytransition-all">
           {menus.map((menu, index) => (
             <React.Fragment key={index}>
               {menu.submenus ? (

@@ -8,7 +8,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <div className="ysticky ytop-0 yz-50 yborder-b-[1px] ypy-1 yw-full ybg-white">
+      <div className="ysticky ytop-0 yz-40 yborder-b-[1px] ypy-1 yw-full ybg-white">
         <div className="yp-1 ypx-7 yflex yitems-center yjustify-between">
           <h1 className="yfont-bold ytext-lg yml-14 lg:yml-0">{pageTitle}</h1>
           <Avatar>

@@ -1,8 +1,7 @@
 import Menu from "@/features/admin/Menu";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setTitle } from "../../../common/appSlice";
-import { useEffect } from "react";
 
 const Internal: React.FC = () => {
   const dispatch = useDispatch();
