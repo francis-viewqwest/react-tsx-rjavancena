@@ -1,6 +1,7 @@
 import Menu from "../pages/admin/protected/Menu";
 import Dashboard from "../pages/admin/protected/Dashboard";
 import Inventory from "../pages/admin/protected/Inventory";
+import ProductList from "@/components/admin/Inventory/ProductList";
 import Users from "../pages/admin/protected/Users";
 import CustomerOrder from "../pages/admin/protected/CustomerOrder";
 import ReturnOrder from "../pages/admin/protected/ReturnOrder";
@@ -22,6 +23,11 @@ const routes = [
     path: "/inventory",
     title: "Inventory",
     component: Inventory,
+  },
+  {
+    path: "/product-list",
+    title: "Product List",
+    component: ProductList,
   },
   {
     path: "/users",

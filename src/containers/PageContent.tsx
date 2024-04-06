@@ -8,7 +8,7 @@ const PageContent: React.FC = () => {
     <>
       <div className="yw-full yflex yflex-col ygap-5">
         <Header />
-        <main className="bg-white ymx-4">
+        <main className="bg-white ypx-4 lg:ypx-6">
           <Routes>
             {routes.map((route, index) => (
               <Route
