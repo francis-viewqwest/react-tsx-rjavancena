@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "./DataTable";
 import { Columns } from "./Columns";
 import DataJson from "@/data/productData.json";
+import { Button } from "@/components/ui/button";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import { Link } from "react-router-dom";
 
 interface DataProduct {
   productId: number;
@@ -24,8 +27,14 @@ const ProductList: React.FC = () => {
 
   return (
     <>
-      <h1 className="ytext-sm yfont-bold">Product in 2B ACRYLON 4 </h1>
-      <div className="ypy-9">
+        <Link
+          to="/app/inventory"
+          className="yflex ygap-2 yitems-center ymb-6 ytext-xs yw-32"
+        >
+          <ArrowLeftIcon className="yw-3 yh-3" />
+          Back to inventory
+        </Link>
+      <div>
         <DataTable columns={Columns} data={data} />
       </div>
     </>

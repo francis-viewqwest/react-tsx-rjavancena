@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -45,10 +44,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
-import { IconDots, IconTrash } from "@tabler/icons-react";
 import { Separator } from "@/components/ui/separator";
-
-import { IconPencil } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 const Inventory: React.FC = () => {

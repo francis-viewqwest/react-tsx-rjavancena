@@ -166,6 +166,9 @@ export function DataTable<TData, TValue>({
         </Dialog>
       </div>
       <div className="yrounded-md yborder">
+        <h1 className="ytext-xs yfont-bold ypt-3 ypx-4">
+          Product in 2B ACRYLON 4{" "}
+        </h1>
         <Table>
           <TableHeader className="ytext-xs">
             {table.getHeaderGroups().map((headerGroup) => (

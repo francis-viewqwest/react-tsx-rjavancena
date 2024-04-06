@@ -1,33 +1,162 @@
 import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  IconPackage,
+  IconCircleFilled,
+  IconTrendingUp,
+  IconCash,
+  IconMoneybag,
+} from "@tabler/icons-react";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+
+const formatted = new Intl.NumberFormat("en-PH", {
+  style: "currency",
+  currency: "PHP",
+});
 
 const Dashboard: React.FC = () => {
+  const data = [
+    {
+      name: "Jan",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Feb",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Mar",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Apr",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "May",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Jun",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Jul",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Aug",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Sep",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Oct",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Nov",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+    {
+      name: "Dec",
+      total: Math.floor(Math.random() * 5000) + 1000,
+    },
+  ];
+
   return (
     <>
-      <h1>Dashboard</h1>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos iure
-        possimus commodi reprehenderit reiciendis exercitationem, facilis,
-        assumenda, consequuntur odit cum quisquam! Iste natus, eaque illum
-        facilis deleniti cum ad eveniet architecto aspernatur dolores, sint
-        ducimus? Consequatur dolorum ipsum vitae alias nobis. Molestiae deserunt
-        nesciunt suscipit labore nam placeat enim voluptas natus et modi sed cum
-        accusamus, rerum vel perferendis? Eius dignissimos quibusdam blanditiis
-        culpa impedit mollitia aliquam harum maiores numquam odio hic sit ab,
-        nulla facilis cum totam minus reiciendis molestias! In iusto repudiandae
-        animi sequi quia voluptatem molestias architecto reprehenderit ex
-        incidunt odio saepe vero quae deleniti fugit error nobis, tenetur cumque
-        neque accusamus quaerat aperiam pariatur. Officia, cum soluta. Quod et
-        voluptates nisi culpa consequuntur dolores pariatur necessitatibus
-        minima sit quasi deleniti fugit officia deserunt corporis voluptatibus
-        quo, magnam vero, molestiae id iste omnis repellendus? Minima vel magni
-        officiis adipisci maiores quos sit est aliquid aspernatur asperiores
-        explicabo officia, et quae laudantium eum perspiciatis obcaecati
-        consequatur facilis deserunt velit, numquam placeat reiciendis. Quae
-        dolores explicabo non quis enim. Iste dolorem quod, pariatur facere amet
-        consequatur itaque eveniet officia est fugit nihil esse, minus officiis
-        eos ex tempora, molestias quam et. Magni labore, at ex fuga iure magnam.
-        Repellendus!
-      </p>
+      <div className="yflex yflex-col ygap-4 sm:ygrid-flow-row sm:ygrid sm:ygrid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle className="ypb-0 yflex ytext-sm yflex-row yitems-center yjustify-between yspace-y-0 ytext-neutral-500">
+              Total Products
+              <IconPackage color="black" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="ytext-2xl yfont-bold">1299</div>
+            <div className="yflex yitems-center ygap-2 ytext-xs ytext-muted-foreground">
+              <IconCircleFilled size="9" color="green" /> In Stock
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="yflex ytext-sm yflex-row yitems-center yjustify-between yspace-y-0 ytext-neutral-500">
+              Monthly Sales
+              <IconCash color="black" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="ytext-2xl yfont-bold">{formatted.format(1299)}</div>
+            <div className="yflex yitems-center ygap-2 ytext-xs ytext-muted-foreground">
+              <IconTrendingUp size="14" color="green" /> + 3.21 Than last month
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="yflex ytext-sm yflex-row yitems-center yjustify-between yspace-y-0 ytext-neutral-500">
+              Yearly Sales
+              <IconMoneybag color="black" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="ytext-2xl yfont-bold">
+              {formatted.format(534000)}
+            </div>
+            <div className="yflex yitems-center ygap-2 ytext-xs ytext-muted-foreground">
+              <IconTrendingUp size="14" color="green" /> + 2.21 Than last year
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="ypy-6">
+        <Card>
+          <CardHeader className="ypb-10">
+            <CardTitle className="ytracking-tight">Sales Overview</CardTitle>
+          </CardHeader>
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={data}>
+              <XAxis
+                dataKey="name"
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="#888888"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `$${value}`}
+              />
+              <Bar
+                dataKey="total"
+                fill="currentColor"
+                radius={[4, 4, 0, 0]}
+                className="fill-primary"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </div>
+
+      <div className="ypy-6">
+        
+      </div>
     </>
   );
 };

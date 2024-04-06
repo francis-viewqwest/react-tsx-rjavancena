@@ -2,12 +2,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
-  IconDots,
-  IconPencil,
-  IconTrash,
-  IconArrowUp,
-} from "@tabler/icons-react";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -20,6 +14,7 @@ import {
   DotsHorizontalIcon,
   Pencil1Icon,
   TrashIcon,
+  ArrowUpIcon,
 } from "@radix-ui/react-icons";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -78,7 +73,7 @@ export const Columns: ColumnDef<Product>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Product Name
-          <IconArrowUp className="yml-2 yh-3 yw-3" />
+          <ArrowUpIcon className="yml-2 yh-3 yw-3" />
         </span>
       );
     },
@@ -118,7 +113,7 @@ export const Columns: ColumnDef<Product>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Sells
-          <IconArrowUp className="yml-2 yh-3 yw-3" />
+          <ArrowUpIcon className="yml-2 yh-3 yw-3" />
         </span>
       );
     },
@@ -132,7 +127,7 @@ export const Columns: ColumnDef<Product>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Return
-          <IconArrowUp className="yml-2 yh-3 yw-3" />
+          <ArrowUpIcon className="yml-2 yh-3 yw-3" />
         </span>
       );
     },
@@ -146,7 +141,7 @@ export const Columns: ColumnDef<Product>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Stocks
-          <IconArrowUp className="yml-2 yh-3 yw-3" />
+          <ArrowUpIcon className="yml-2 yh-3 yw-3" />
         </span>
       );
     },
