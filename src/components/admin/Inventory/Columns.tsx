@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 import {
   DotsHorizontalIcon,
   Pencil1Icon,
@@ -30,6 +31,25 @@ export type Product = {
   returnProduct: number;
   stocks: number;
   supplier: string;
+};
+
+export type Transaction = {
+  transactId: number;
+  img: any;
+  customerId: string;
+  date: string;
+  time: string;
+  amount: number;
+  status: string;
+};
+
+export type TopSelling = {
+  img: null;
+  product: string;
+  category: string;
+  price: number;
+  stars: number;
+  cart: number;
 };
 
 export const Columns: ColumnDef<Product>[] = [
@@ -178,6 +198,47 @@ export const Columns: ColumnDef<Product>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const ColumnsTransac: ColumnDef<Transaction>[] = [
+  {
+    accessorKey: "transactId",
+    header: "Transact ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="yh-11 yw-11 ybg-neutral-200 yrounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerId",
+    header: "Customer ID",
+  },
+  {
+    accessorKey: "date",
+    header: "Date",
+  },
+  {
+    accessorKey: "time",
+    header: "time",
+  },
+  {
+    accessorKey: "amount",
+    header: "Amount",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      return row.original.status === "Success" ? (
+        <Badge variant="successOutline">{row.original.status}</Badge>
+      ) : (
+        <Badge variant="destructiveOutline">{row.original.status}</Badge>
       );
     },
   },

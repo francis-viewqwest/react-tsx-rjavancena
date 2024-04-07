@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { DataTable } from "./DataTable";
 import { Columns } from "./Columns";
 import DataJson from "@/data/productData.json";
-import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Link } from "react-router-dom";
 

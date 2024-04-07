@@ -71,9 +71,9 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="yflex ygap-4 ypb-5 yjustify-between">
         <div className="yw-full yrelative yflex yitems-center lg:yw-96">
-          <MagnifyingGlassIcon className="yabsolute yml-3 ytext-neutral-500 yh-5 yw-5" />
+          <MagnifyingGlassIcon className="yabsolute yml-4 ytext-neutral-500 yh-5 yw-5" />
           <Input
-            className="ypx-12"
+            className="ypl-12"
             placeholder="Search Product"
             value={
               (table.getColumn("productName")?.getFilterValue() as string) ?? ""
@@ -167,7 +167,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="yrounded-md yborder">
         <h1 className="ytext-xs yfont-bold ypt-3 ypx-4">
-          Product in 2B ACRYLON 4{" "}
+          Product in 2B ACRYLON 4
         </h1>
         <Table>
           <TableHeader className="ytext-xs">

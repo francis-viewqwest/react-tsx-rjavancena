@@ -21,11 +21,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "@/hooks/SidebarContext";
 
 const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
+  const location = useLocation();
 
   const menus = [
     {
@@ -188,7 +189,7 @@ const Sidebar: React.FC = () => {
       </Drawer>
       <div
         className={`ymin-h-screen yhidden yborder-r yp-2 lg:yflex yflex-col ybg-white ytransition-all relative ${
-          open ? "yw-48" : "yw-16"
+          open ? "yw-48" : "yw-14"
         }`}
       >
         <div className="yflex yitems-center yjustify-between">
@@ -203,7 +204,7 @@ const Sidebar: React.FC = () => {
             <Icon icon="heroicons-outline:chevron-double-right" />
           </Button>
         </div>
-        <nav className="ygap-3 yflex yflex-col ypt-10 yease-in-out ytransition-all">
+        <nav className="ygap-2 yflex yflex-col ypt-10 yease-in-out ytransition-all">
           {menus.map((menu, index) => (
             <React.Fragment key={index}>
               {menu.submenus ? (
@@ -219,12 +220,14 @@ const Sidebar: React.FC = () => {
                         "justify-between yw-0 hover:yno-underline yfont-medium ytext-neutral-600"
                       )}
                     >
-                      <div className="yflex yitems-center ygap-3 ytext-neutral-600">
-                        <Icon fontSize={22} icon={menu.icon} />
+                      <div
+                        className={`yflex yitems-center ygap-3 ytext-neutral-600`}
+                      >
+                        <Icon fontSize={17} icon={menu.icon} />
                         <span
                           className={`${
                             !open
-                              ? "yscale-0 yease-in-out ytransition-all"
+                              ? "yscale-0 yhidden yease-in-out ytransition-all"
                               : "yease-in-out yscale-100 ytransition-all"
                           }`}
                         >
@@ -234,7 +237,7 @@ const Sidebar: React.FC = () => {
                     </AccordionTrigger>
 
                     {menu.submenus.map((submenu, index) => (
-                      <AccordionContent className="ypb-2 ypt-2" key={index}>
+                      <AccordionContent className="ypb-1" key={index}>
                         {open ? (
                           <div className="yw-full yflex yflex-col">
                             <Link
@@ -243,7 +246,10 @@ const Sidebar: React.FC = () => {
                                   size: "sm",
                                   variant: "ghost",
                                 }),
-                                "yjustify-between yml-7 ytext-neutral-600 yflex ygap-10"
+                                `yjustify-between yml-7 ytext-neutral-600 yflex ygap-10  ${
+                                  location.pathname === submenu.path &&
+                                  "ybg-primary ytext-white hover:ybg-primary/90 hover:ytext-white"
+                                }`
                               )}
                               to={submenu.path}
                             >
@@ -262,18 +268,19 @@ const Sidebar: React.FC = () => {
                       size: "sm",
                       variant: "ghost",
                     }),
-                    "yjustify-between yfont-medium"
+                    `yjustify-between yfont-medium ytext-neutral-600 ${
+                      location.pathname === menu.path &&
+                      "ybg-primary ytext-white hover:ybg-primary/90 hover:ytext-white"
+                    }`
                   )}
                   to={menu.path}
                 >
-                  <div
-                    className={`yflex yitems-center ygap-3 ytext-start ytext-neutral-600`}
-                  >
-                    <Icon fontSize={22} icon={menu.icon} />
+                  <div className={`yflex yitems-center ygap-3 ytext-start`}>
+                    <Icon fontSize={17} icon={menu.icon} />
                     <span
                       className={`${
                         !open
-                          ? "yscale-0 yease-in-out ytransition-all"
+                          ? "yscale-0 yhidden yease-in-out ytransition-all"
                           : "yease-in-out yscale-100 ytransition-all"
                       }`}
                     >
