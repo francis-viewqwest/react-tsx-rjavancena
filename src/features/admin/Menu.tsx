@@ -9,9 +9,23 @@ import {
 } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
+import {
+  IconCashBanknoteFilled,
+  IconCreditCardFilled,
+  IconQrcode,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/ui/label";
 
 interface TabsCategory {
   category: string;
@@ -139,6 +153,16 @@ const Menu: React.FC = () => {
       category: "Hardware",
       price: 99.99,
     },
+    {
+      productName: "Power Drill Set",
+      category: "Hardware",
+      price: 99.99,
+    },
+    {
+      productName: "Power Drill Set",
+      category: "Hardware",
+      price: 99.99,
+    },
   ];
 
   return (
@@ -172,7 +196,7 @@ const Menu: React.FC = () => {
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>
-          <div className="yflex yflex-col ygap-y-5 sm:yflex-wrap sm:yflex-row lg:ygrid lg:ygrid-cols-4 lg:ygap-4 ">
+          <div className="yflex yflex-col ygap-y-5 sm:yflex-wrap sm:yflex-row lg:ygrid lg:ygrid-cols-4 lg:ygap-3">
             {menuItem.map((item) => (
               <Card className="ybg-primary ">
                 <CardHeader className="yp-3">
@@ -222,43 +246,248 @@ const Menu: React.FC = () => {
             <h1>Customer 01</h1>
             <Pencil2Icon color="black" />
           </div>
-          <div className="yflex yflex-col ygap-4">
-            {addCartItem.map((item) => (
-              <Card className="yp-2">
-                <div className="yflex ygap-2">
-                  <Skeleton className="ymax-w-full ymax-h-full yp-10" />
-                  <CardContent className="yw-full yrelative ypx-1">
-                    <div>
-                      <div className="yflex yw-full yitems-center yjustify-between">
-                        <h1 className="ytext-xs yfont-bold ytext-primary">
-                          {item.productName}
-                        </h1>
-                        <h1 className="ytext-xs yfont-bold ytext-primary">
-                          {item.price}
-                        </h1>
-                      </div>
-                      <p className="ytext-xs ytext-muted-foreground">
-                        {item.category}
-                      </p>
+          <div>
+            <ScrollArea className="yh-[400px] yrounded-md yborder yp-2">
+              <div className=" yflex yflex-col ygap-4">
+                {addCartItem.map((item) => (
+                  <Card className="yp-2">
+                    <div className="yflex ygap-2">
+                      <Skeleton className="ymax-w-full ymax-h-full yp-10" />
+                      <CardContent className="yw-full yrelative ypx-1">
+                        <div>
+                          <div className="yflex yw-full yitems-center yjustify-between">
+                            <h1 className="ytext-xs yfont-bold ytext-primary">
+                              {item.productName}
+                            </h1>
+                            <h1 className="ytext-xs yfont-bold ytext-primary">
+                              {item.price}
+                            </h1>
+                          </div>
+                          <p className="ytext-xs ytext-muted-foreground">
+                            {item.category}
+                          </p>
+                        </div>
+                        <div className="yflex yw-full yh-full yitems-center yjustify-between">
+                          <div className="yflex yitems-center  ">
+                            <Button className="yrounded-r-none" size="sm">
+                              <MinusIcon />
+                            </Button>
+                            <div className="ybg-white yp-0.5 ypx-3">0</div>
+                            <Button className="yrounded-l-none" size="sm">
+                              <PlusIcon />
+                            </Button>
+                          </div>
+                          <div className="">
+                            <TrashIcon color="red" />
+                          </div>
+                        </div>
+                      </CardContent>
                     </div>
-                    <div className="yflex yw-full yh-full yitems-center yjustify-between">
-                      <div className="yflex yitems-center  ">
-                        <Button className="yrounded-r-none" size="sm">
-                          <MinusIcon />
-                        </Button>
-                        <div className="ybg-white yp-0.5 ypx-3">0</div>
-                        <Button className="yrounded-l-none" size="sm">
-                          <PlusIcon />
-                        </Button>
-                      </div>
-                      <div className="">
-                        <TrashIcon color="red" />
-                      </div>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+          <div className="ypy-5">
+            <h1 className="yfont-bold">Payment Summary</h1>
+            <div className="yflex yflex-col ygap-3 ypt-8 ypb-6">
+              <div className="yflex yitems-center yjustify-between">
+                <h1>Discount</h1>
+                <Button className="yflex ygap-2">
+                  <PlusIcon />
+                  Discount
+                </Button>
+              </div>
+              <div className="yflex yitems-center yjustify-between">
+                <h1>Total Discount</h1>
+                <p>₱0</p>
+              </div>
+              <div className="yflex yitems-center yjustify-between">
+                <h1>Sub Total</h1>
+                <p>₱499.95</p>
+              </div>
+              <div className="yflex yitems-center yjustify-between">
+                <h1>Tax</h1>
+                <p>₱10.95</p>
+              </div>
+            </div>
+            <div>
+              <div className="yflex yitems-center yjustify-between yborder-dashed yborder-t-2 yborder-stone-400 ypy-4">
+                <h1 className="yfont-bold ytext-lg">Total Amount</h1>
+                <p className="yfont-bold ytext-lg">₱499.95</p>
+              </div>
+            </div>
+            <div>
+              <h1 className="yfont-semibold">Payment Method</h1>
+              <div className="ypy-4">
+                <RadioGroup
+                  defaultValue="card"
+                  className="ygrid ygrid-cols-3 ygap-3"
+                >
+                  <div>
+                    <RadioGroupItem
+                      value="card"
+                      id="card"
+                      className="ypeer ysr-only"
+                    />
+                    <Label
+                      htmlFor="card"
+                      className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-4 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
+                    >
+                      <IconCashBanknoteFilled />
+                      Card
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem
+                      value="card"
+                      id="card"
+                      className="ypeer ysr-only"
+                    />
+                    <Label
+                      htmlFor="card"
+                      className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-4 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
+                    >
+                      <IconCreditCardFilled />
+                      Debit Card
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem
+                      value="card"
+                      id="card"
+                      className="ypeer ysr-only"
+                    />
+                    <Label
+                      htmlFor="card"
+                      className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-4 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
+                    >
+                      <IconQrcode />
+                      E-Wallet
+                    </Label>
+                  </div>
+                </RadioGroup>
+                <Button size="lg" className="yw-full ymy-4">
+                  Place Order
+                </Button>
+                {/* <Card className="yp-0">
+                  <CardHeader>
+                    <CardTitle>Payment Method</CardTitle>
+                    <CardDescription>
+                      Add a new payment method to your account.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="ygrid ygap-6 yp-0">
+                    <div className="yflex yflex-row">
+                      <RadioGroup
+                        defaultValue="card"
+                        className="ygrid ygrid-cols-3 ygap-4"
+                      >
+                        <div>
+                          <RadioGroupItem
+                            value="card"
+                            id="card"
+                            className="ypeer ysr-only"
+                          />
+                          <Label
+                            htmlFor="card"
+                            className="yflex yflex-col yitems-center yjustify-between yrounded-md yborder-2 yborder-muted ybg-popover yp-4 yhover:bg-accent yhover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              className="mb-3 h-6 w-6"
+                            >
+                              <rect width="20" height="14" x="2" y="5" rx="2" />
+                              <path d="M2 10h20" />
+                            </svg>
+                            Card
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                      <RadioGroup
+                        defaultValue="card"
+                        className="ygrid ygrid-cols-3 ygap-4"
+                      >
+                        <div>
+                          <RadioGroupItem
+                            value="card"
+                            id="card"
+                            className="ypeer ysr-only"
+                          />
+                          <Label
+                            htmlFor="card"
+                            className="yflex yflex-col yitems-center yjustify-between yrounded-md yborder-2 yborder-muted ybg-popover yp-4 yhover:bg-accent yhover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              className="mb-3 h-6 w-6"
+                            >
+                              <rect width="20" height="14" x="2" y="5" rx="2" />
+                              <path d="M2 10h20" />
+                            </svg>
+                            Card
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                      <RadioGroup
+                        defaultValue="card"
+                        className="ygrid ygrid-cols-3 ygap-4"
+                      >
+                        <div>
+                          <RadioGroupItem
+                            value="card"
+                            id="card"
+                            className="ypeer ysr-only"
+                          />
+                          <Label
+                            htmlFor="card"
+                            className="yflex yflex-col yitems-center yjustify-between yrounded-md yborder-2 yborder-muted ybg-popover yp-4 yhover:bg-accent yhover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              className="mb-3 h-6 w-6"
+                            >
+                              <rect width="20" height="14" x="2" y="5" rx="2" />
+                              <path d="M2 10h20" />
+                            </svg>
+                            Card
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                    <div className="ygrid ygap-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" placeholder="First Last" />
+                    </div>
+                    <div className="ygrid ygap-2">
+                      <Label htmlFor="number">Card number</Label>
+                      <Input id="number" placeholder="" />
                     </div>
                   </CardContent>
-                </div>
-              </Card>
-            ))}
+                  <CardFooter>
+                    <Button className="yw-full">Continue</Button>
+                  </CardFooter>
+                </Card> */}
+              </div>
+            </div>
           </div>
         </div>
       </div>
