@@ -24,8 +24,8 @@ const Inventory: React.FC = () => {
   return (
     <>
       <div className="flex flex-col gap-6 md:flex-row lg:items-center justify-between">
-        <div className="flex flex-col md:flex-row lg:items-center gap-4 md:w-96">
-          <Input type="text" placeholder="Search Product" />
+        <div className="flex flex-col md:flex-row lg:items-center gap-4">
+          <Input className="w-96" type="text" placeholder="Search Product" />
           <Select>
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Category" />
@@ -40,7 +40,7 @@ const Inventory: React.FC = () => {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Create Product</Button>
+            <Button size="sm" className="w-32">Create Product</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>

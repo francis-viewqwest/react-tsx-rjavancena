@@ -125,7 +125,7 @@ const Sidebar: React.FC = () => {
                           </AccordionTrigger>
 
                           {menu.submenus.map((submenu, index) => (
-                            <AccordionContent className="pb-2 pt-2" ke={index}>
+                            <AccordionContent className="pb-2 pt-2" key={index}>
                               {open ? (
                                 <div className="w-full flex flex-col">
                                   <Link
@@ -190,7 +190,7 @@ const Sidebar: React.FC = () => {
           <img
             className={`${open ? "w-24" : "w-0 transition-all ease-in-out"}`}
             src={logo}
-            alt=""
+            alt="RJ Avancena Logo"
           />
           <Button variant="ghost" onClick={() => setOpen(!open)}>
             <Icon icon="heroicons-outline:chevron-double-right" />

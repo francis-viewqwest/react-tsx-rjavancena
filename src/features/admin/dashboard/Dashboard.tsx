@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ColumnsTransac } from "@/components/admin/DataTable/Columns";
+import { ColumnsTransac } from "@/components/ui/columns";
 import { DataTable } from "@/components/ui/data-table";
 import transactionData from "@/data/transactionData.json";
 import TodaysSale from "./components/TodaysSale";
@@ -34,6 +34,7 @@ const Dashboard: React.FC = () => {
 
           <div>
             <DataTable
+              search="transaction"
               title="Recent Transaction"
               columns={ColumnsTransac}
               data={dataTransaction}

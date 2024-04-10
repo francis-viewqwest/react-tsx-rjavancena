@@ -33,8 +33,14 @@ const ProductList: React.FC = () => {
         <ArrowLeftIcon className="w-3 h-3" />
         Back to inventory
       </Link>
+
       <div>
-        <DataTable title="Product in " columns={columnsProduct} data={data} />
+        <DataTable
+          title="Product in "
+          search="inventory"
+          columns={columnsProduct}
+          data={data}
+        />
       </div>
     </>
   );
