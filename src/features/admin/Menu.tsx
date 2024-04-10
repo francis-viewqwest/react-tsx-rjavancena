@@ -165,9 +165,24 @@ const Menu: React.FC = () => {
     },
   ];
 
+  const paymentMethod = [
+    {
+      icon: <IconCashBanknoteFilled />,
+      label: "Card",
+    },
+    {
+      icon: <IconCreditCardFilled />,
+      label: "Debit",
+    },
+    {
+      icon: <IconQrcode />,
+      label: "E-Wallet",
+    },
+  ];
+
   return (
     <>
-      <div className="ypy-7 lg:ygrid lg:ygrid-cols-4 lg:ygrid-rows-4 lg:ygap-3">
+      <div className="ypy-7 lg:ygrid lg:ygrid-cols-4 lg:ygrid-rows-4 lg:ygap-4">
         <div className="lg:ycol-span-3 lg:yrow-span-4">
           <div className="yw-full yrelative yflex yitems-center lg:yw-96">
             <MagnifyingGlassIcon className="yabsolute yml-4 ytext-neutral-500 yh-5 yw-5" />
@@ -186,23 +201,17 @@ const Menu: React.FC = () => {
                     </TabsTrigger>
                   ))}
                 </TabsList>
-                <TabsContent value="account">
-                  Make changes to your account here.
-                </TabsContent>
-                <TabsContent value="password">
-                  Change your password here.
-                </TabsContent>
               </Tabs>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>
-          <div className="yflex yflex-col ygap-y-5 sm:yflex-wrap sm:yflex-row lg:ygrid lg:ygrid-cols-4 lg:ygap-3">
+          <div className="ygap-y-5 ygrid ygrid-cols-2 sm:ygrid-cols-3 sm:yflex-row lg:ygrid lg:ygrid-cols-4 lg:ygap-2">
             {menuItem.map((item) => (
-              <Card className="ybg-primary ">
-                <CardHeader className="yp-3">
+              <Card className="ybg-primary">
+                <CardHeader className="yp-2">
                   <Skeleton className="ymax-w-full ymax-h-full yp-12 ybg-neutral-300" />
                 </CardHeader>
-                <CardContent className="yflex yflex-col ygap-3 yp-3">
+                <CardContent className="yflex yflex-col ygap-3 yp-2">
                   <div>
                     <h1 className="ytext-white yfont-bold ytext-md">
                       {item.productName}
@@ -235,7 +244,7 @@ const Menu: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="lg:yrow-span-4 lg:yw-full lg:yh-full lg:ycol-start-4">
+        <div className="ypy-4 lg:ypy-0 lg:yrow-span-4 lg:yw-full lg:yh-full lg:ycol-start-4">
           <h1 className="yfont-bold yflex yitems-center ygap-4">
             Orders
             <div className="ybg-primary yrounded-full yw-7 yh-7 ytext-white yflex yitems-center">
@@ -252,7 +261,7 @@ const Menu: React.FC = () => {
                 {addCartItem.map((item) => (
                   <Card className="yp-2">
                     <div className="yflex ygap-2">
-                      <Skeleton className="ymax-w-full ymax-h-full yp-10" />
+                      <Skeleton className="ymax-w-full ymax-h-full yp-8" />
                       <CardContent className="yw-full yrelative ypx-1">
                         <div>
                           <div className="yflex yw-full yitems-center yjustify-between">
@@ -317,175 +326,44 @@ const Menu: React.FC = () => {
                 <p className="yfont-bold ytext-lg">₱499.95</p>
               </div>
             </div>
-            <div>
+            <div className="yw-full">
               <h1 className="yfont-semibold">Payment Method</h1>
-              <div className="ypy-4">
-                <RadioGroup
-                  defaultValue="card"
-                  className="ygrid ygrid-cols-3 ygap-3"
-                >
-                  <div>
-                    <RadioGroupItem
-                      value="card"
-                      id="card"
-                      className="ypeer ysr-only"
-                    />
-                    <Label
-                      htmlFor="card"
-                      className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-4 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
-                    >
-                      <IconCashBanknoteFilled />
-                      Card
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem
-                      value="card"
-                      id="card"
-                      className="ypeer ysr-only"
-                    />
-                    <Label
-                      htmlFor="card"
-                      className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-4 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
-                    >
-                      <IconCreditCardFilled />
-                      Debit Card
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem
-                      value="card"
-                      id="card"
-                      className="ypeer ysr-only"
-                    />
-                    <Label
-                      htmlFor="card"
-                      className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-4 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
-                    >
-                      <IconQrcode />
-                      E-Wallet
-                    </Label>
-                  </div>
+              <div className="ypt-4">
+                <RadioGroup className="ygrid ygrid-cols-3 ygap-2 yw-full">
+                  {paymentMethod.map((item) => (
+                    <div>
+                      <RadioGroupItem
+                        value={item.label}
+                        id={item.label}
+                        className="ypeer ysr-only"
+                      />
+                      <Label
+                        htmlFor={item.label}
+                        className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-3 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
+                      >
+                        {item.icon}
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
                 </RadioGroup>
-                <Button size="lg" className="yw-full ymy-4">
+              </div>
+              <div className="yflex yflex-col ygap-6 ypy-4 yw-full">
+                <div className="ygrid ygap-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    className="yw-full"
+                    id="name"
+                    placeholder="First Last"
+                  />
+                </div>
+                <div className="ygrid ygap-2">
+                  <Label htmlFor="number">Card number</Label>
+                  <Input id="number" placeholder="" />
+                </div>
+                <Button size="lg" className="yw-full">
                   Place Order
                 </Button>
-                {/* <Card className="yp-0">
-                  <CardHeader>
-                    <CardTitle>Payment Method</CardTitle>
-                    <CardDescription>
-                      Add a new payment method to your account.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="ygrid ygap-6 yp-0">
-                    <div className="yflex yflex-row">
-                      <RadioGroup
-                        defaultValue="card"
-                        className="ygrid ygrid-cols-3 ygap-4"
-                      >
-                        <div>
-                          <RadioGroupItem
-                            value="card"
-                            id="card"
-                            className="ypeer ysr-only"
-                          />
-                          <Label
-                            htmlFor="card"
-                            className="yflex yflex-col yitems-center yjustify-between yrounded-md yborder-2 yborder-muted ybg-popover yp-4 yhover:bg-accent yhover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              className="mb-3 h-6 w-6"
-                            >
-                              <rect width="20" height="14" x="2" y="5" rx="2" />
-                              <path d="M2 10h20" />
-                            </svg>
-                            Card
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                      <RadioGroup
-                        defaultValue="card"
-                        className="ygrid ygrid-cols-3 ygap-4"
-                      >
-                        <div>
-                          <RadioGroupItem
-                            value="card"
-                            id="card"
-                            className="ypeer ysr-only"
-                          />
-                          <Label
-                            htmlFor="card"
-                            className="yflex yflex-col yitems-center yjustify-between yrounded-md yborder-2 yborder-muted ybg-popover yp-4 yhover:bg-accent yhover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              className="mb-3 h-6 w-6"
-                            >
-                              <rect width="20" height="14" x="2" y="5" rx="2" />
-                              <path d="M2 10h20" />
-                            </svg>
-                            Card
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                      <RadioGroup
-                        defaultValue="card"
-                        className="ygrid ygrid-cols-3 ygap-4"
-                      >
-                        <div>
-                          <RadioGroupItem
-                            value="card"
-                            id="card"
-                            className="ypeer ysr-only"
-                          />
-                          <Label
-                            htmlFor="card"
-                            className="yflex yflex-col yitems-center yjustify-between yrounded-md yborder-2 yborder-muted ybg-popover yp-4 yhover:bg-accent yhover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              className="mb-3 h-6 w-6"
-                            >
-                              <rect width="20" height="14" x="2" y="5" rx="2" />
-                              <path d="M2 10h20" />
-                            </svg>
-                            Card
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                    <div className="ygrid ygap-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" placeholder="First Last" />
-                    </div>
-                    <div className="ygrid ygap-2">
-                      <Label htmlFor="number">Card number</Label>
-                      <Input id="number" placeholder="" />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="yw-full">Continue</Button>
-                  </CardFooter>
-                </Card> */}
               </div>
             </div>
           </div>

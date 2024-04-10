@@ -11,9 +11,9 @@ const badgeVariants = cva(
         default:
           "yborder-transparent ybg-primary ytext-primary-foreground yshadow hover:ybg-primary/80",
         successOutline:
-          "ytext-foreground ytext-green-600 yborder-transparent yborder-green-600 ytext-green-foreground yshadow hover:yborder-green-600/80",
+          "ytext-foreground ytext-green-600 yborder-green-600 yborder-green-600 ytext-green-foreground yshadow hover:yborder-green-600/80",
         destructiveOutline:
-          "ytext-foreground ytext-destructive yborder-transparent yborder-destructive ytext-destructive yshadow hover:yborder-destructive/80",
+          "ytext-destructive yborder-destructive yshadow hover:yborder-destructive/80",
         secondary:
           "yborder-transparent ybg-secondary ytext-secondary-foreground hover:ybg-secondary/80",
         destructive:

@@ -1,4 +1,4 @@
-import Inventory from "@/features/admin/Inventory";
+import Inventory from "@/features/admin/inventory/Inventory";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { setTitle } from "../../../common/appSlice";

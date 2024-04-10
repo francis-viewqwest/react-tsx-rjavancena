@@ -18,7 +18,7 @@ import Dashboard from "../pages/admin/protected/Dashboard";
 import Inventory from "../pages/admin/protected/Inventory";
 import Users from "../pages/admin/protected/Users";
 import Orders from "../pages/admin/protected/Orders";
-import ProductList from "@/components/admin/Inventory/ProductList";
+import ProductList from "../pages/admin/protected/ProductList";
 
 const Routes: React.FC = () => {
   const { token } = useAuth();

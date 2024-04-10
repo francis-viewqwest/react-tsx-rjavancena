@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import ProductList from "@/components/admin/Inventory/ProductList";
+import ProductList from "@/features/admin/inventory/components/ProductList";
 import { useDispatch } from "react-redux";
 import { setTitle } from "@/common/appSlice";
 

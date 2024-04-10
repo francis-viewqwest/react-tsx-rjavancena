@@ -56,7 +56,9 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <div className="yrounded-md yborder">
-        <h1 className="yfont-bold ypt-3 ypx-4 ytracking-tight">{title}</h1>
+        <h1 className="yfont-bold ypt-3 ypx-4 ytracking-tight ytext-sm">
+          {title}
+        </h1>
         <Table>
           <TableHeader className="ytext-xs">
             {table.getHeaderGroups().map((headerGroup) => (
