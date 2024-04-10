@@ -10,36 +10,54 @@ import Payment from "./components/Payment";
 const Menu: React.FC = () => {
   return (
     <>
-      <div className="ypy-7 lg:ygrid lg:ygrid-cols-4 lg:ygrid-rows-4 lg:ypy-4 lg:ygap-4">
-        <div className="lg:ycol-span-3 lg:yrow-span-4">
-          <div className="yw-full yrelative yflex yitems-center lg:yw-96">
-            <MagnifyingGlassIcon className="yabsolute yml-4 ytext-neutral-500 yh-5 yw-5" />
-            <Input className="ypl-12" placeholder="Search Product" />
+      <div className="py-7 lg:grid lg:grid-cols-4 lg:grid-rows-4 lg:py-4 lg:gap-4">
+        <div className="lg:col-span-3 lg:row-span-4">
+          <div className="w-full relative flex items-center lg:w-96">
+            <MagnifyingGlassIcon className="absolute ml-4 text-neutral-500 h-5 w-5" />
+            <Input className="pl-12" placeholder="Search Product" />
           </div>
-          <div className="ypy-4">
+          <div className="py-4">
             <MenuList />
           </div>
         </div>
-        <div className="ypy-4 lg:ypy-0 lg:yrow-span-4 lg:yw-full lg:yh-full lg:ycol-start-4">
-          <Tabs defaultValue="customer01">
-            <ScrollArea className="w-96 whitespace-nowrap rounded-md border">
-              <TabsList className="ybg-none">
-                <TabsTrigger className="ytext-xs" value="customer01">
+        <div className="py-4 lg:py-0 lg:row-span-4 lg:w-full lg:h-full lg:col-start-4">
+          <Tabs className="bg-white" defaultValue="customer01">
+            <ScrollArea className="whitespace-nowrap rounded-md border">
+              <TabsList className="bg-white">
+                <TabsTrigger
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
+                  value="customer01"
+                >
                   Customer 01
                 </TabsTrigger>
-                <TabsTrigger className="ytext-xs" value="Customer02">
+                <TabsTrigger
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
+                  value="Customer02"
+                >
                   Customer 02
                 </TabsTrigger>
-                <TabsTrigger className="ytext-xs" value="Customer03">
+                <TabsTrigger
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
+                  value="Customer03"
+                >
                   Customer 03
                 </TabsTrigger>
-                <TabsTrigger className="ytext-xs" value="Customer04">
+                <TabsTrigger
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
+                  value="Customer04"
+                >
                   Customer 04
                 </TabsTrigger>
-                <TabsTrigger className="ytext-xs" value="Customer05">
+                <TabsTrigger
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
+                  value="Customer05"
+                >
                   Customer 05
                 </TabsTrigger>
-                <TabsTrigger className="ytext-xs" value="Customer06">
+                <TabsTrigger
+                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
+                  value="Customer06"
+                >
                   Customer 06
                 </TabsTrigger>
               </TabsList>

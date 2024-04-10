@@ -33,49 +33,49 @@ const Payment: React.FC = () => {
 
   return (
     <>
-      <div className="ypy-5">
-        <h1 className="yfont-bold">Payment Summary</h1>
-        <div className="yflex yflex-col ygap-3 ypt-8 ypb-6">
-          <div className="yflex yitems-center yjustify-between">
+      <div className="py-5">
+        <h1 className="font-bold">Payment Summary</h1>
+        <div className="flex flex-col gap-3 pt-8 pb-6">
+          <div className="flex items-center justify-between">
             <h1>Discount</h1>
-            <Button className="yflex ygap-2">
+            <Button className="flex gap-2">
               <PlusIcon />
               Discount
             </Button>
           </div>
-          <div className="yflex yitems-center yjustify-between">
+          <div className="flex items-center justify-between">
             <h1>Total Discount</h1>
             <p>₱0</p>
           </div>
-          <div className="yflex yitems-center yjustify-between">
+          <div className="flex items-center justify-between">
             <h1>Sub Total</h1>
             <p>₱499.95</p>
           </div>
-          <div className="yflex yitems-center yjustify-between">
+          <div className="flex items-center justify-between">
             <h1>Tax</h1>
             <p>₱10.95</p>
           </div>
         </div>
         <div>
-          <div className="yflex yitems-center yjustify-between yborder-dashed yborder-t-2 yborder-stone-400 ypy-4">
-            <h1 className="yfont-bold ytext-lg">Total Amount</h1>
-            <p className="yfont-bold ytext-lg">₱499.95</p>
+          <div className="flex items-center justify-between border-dashed border-t-2 border-stone-400 py-4">
+            <h1 className="font-bold text-lg">Total Amount</h1>
+            <p className="font-bold text-lg">₱499.95</p>
           </div>
         </div>
-        <div className="yw-full">
-          <h1 className="yfont-semibold">Payment Method</h1>
-          <div className="ypt-4">
-            <RadioGroup className="ygrid ygrid-cols-3 ygap-2 yw-full">
+        <div className="w-full">
+          <h1 className="font-semibold">Payment Method</h1>
+          <div className="pt-4">
+            <RadioGroup className="grid grid-cols-3 gap-2 w-full">
               {paymentMethod.map((item) => (
                 <div>
                   <RadioGroupItem
                     value={item.label}
                     id={item.label}
-                    className="ypeer ysr-only"
+                    className="peer sr-only"
                   />
                   <Label
                     htmlFor={item.label}
-                    className="yflex yflex-col ytext-xs yitems-center yfont-semibold yjustify-between yrounded-md yborder-2 yborder-primary ybg-popover yp-3 hover:ybg-primary hover:ytext-white peer-data-[state=checked]:yborder-primary [&:has([data-state=checked])]:yborder-primary"
+                    className="flex flex-col text-xs items-center font-semibold justify-between rounded-md border-2 border-primary bg-popover p-3 hover:bg-primary hover:text-white peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                   >
                     {item.icon}
                     {item.label}
@@ -84,16 +84,16 @@ const Payment: React.FC = () => {
               ))}
             </RadioGroup>
           </div>
-          <div className="yflex yflex-col ygap-6 ypy-4 yw-full">
-            <div className="ygrid ygap-2">
+          <div className="flex flex-col gap-6 py-4 w-full">
+            <div className="grid gap-2">
               <Label htmlFor="name">Name</Label>
-              <Input className="yw-full" id="name" placeholder="First Last" />
+              <Input className="w-full" id="name" placeholder="First Last" />
             </div>
-            <div className="ygrid ygap-2">
+            <div className="grid gap-2">
               <Label htmlFor="number">Card number</Label>
               <Input id="number" placeholder="" />
             </div>
-            <Button size="lg" className="yw-full">
+            <Button size="lg" className="w-full">
               Place Order
             </Button>
           </div>

@@ -62,8 +62,8 @@ const SalesOverview: React.FC = () => {
   return (
     <>
       <Card>
-        <CardHeader className="ypb-10">
-          <CardTitle className="ytracking-tight">Sales Overview</CardTitle>
+        <CardHeader className="pb-10">
+          <CardTitle className="tracking-tight">Sales Overview</CardTitle>
         </CardHeader>
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={dataChart}>

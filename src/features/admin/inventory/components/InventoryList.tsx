@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-
+import { IconCircleFilled } from "@tabler/icons-react";
 import {
   DotsHorizontalIcon,
   Pencil1Icon,
@@ -82,16 +82,16 @@ const InventoryList: React.FC = () => {
     <>
       {product.map((item, index) => (
         <Link key={index} to="/app/product-list">
-          <Card className="md:yflex md:yitems-center md:yjustify-between ypx-4">
-            <div className="md:yflex md:yitems-center">
-              <Skeleton className="hidden ybg-neutral-200 lg:yh-20 lg:yw-28 lg:yrounded-xl" />
-              <CardHeader className="yw-full yjustify-start yleft-0 lg:yflex lg:yflex-col">
-                <div className="yflex yitems-center yjustify-between">
-                  <CardTitle className="ytext-md">{item.productName}</CardTitle>
+          <Card className="md:flex md:items-center md:justify-between px-4">
+            <div className="md:flex md:items-center">
+              {/* <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" /> */}
+              <CardHeader className="w-full justify-start left-0 lg:flex lg:flex-col">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-md">{item.productName}</CardTitle>
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="lg:yhidden">
+                    <DropdownMenuTrigger className="lg:hidden">
                       <Button variant="ghost">
-                        <DotsHorizontalIcon className="md:yhidden md:yh-5 md:yw-5" />
+                        <DotsHorizontalIcon className="md:hidden md:h-5 md:w-5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
@@ -100,26 +100,24 @@ const InventoryList: React.FC = () => {
                       <DropdownMenuItem>
                         Edit
                         <DropdownMenuShortcut>
-                          <Pencil1Icon className="yw-4 yh-4" />
+                          <Pencil1Icon className="w-4 h-4" />
                         </DropdownMenuShortcut>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         Remove
                         <DropdownMenuShortcut>
-                          <TrashIcon className="yw-4 yh-4" color="red" />
+                          <TrashIcon className="w-4 h-4" color="red" />
                         </DropdownMenuShortcut>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <CardDescription className="yflex ygap-3 yitems-center">
+                <CardDescription className="flex gap-3 items-center">
                   <Badge>{item.variants} Variants</Badge>
-                  <Label className="yfont-medium ytext-xs">
-                    {item.category}
-                  </Label>
-                  <div className="yflex yitems-center ygap-1">
-                    <span className="yrounded-full ybg-green-600 yh-2 yw-2 translate-y-1" />
-                    <Label className="ytext-xs yfont-medium">
+                  <Label className="font-medium text-xs">{item.category}</Label>
+                  <div className="flex items-center gap-1">
+                    <IconCircleFilled size="9" color="green" />
+                    <Label className="text-xs font-medium">
                       Product Stocked: {item.stock}
                     </Label>
                   </div>
@@ -127,32 +125,32 @@ const InventoryList: React.FC = () => {
               </CardHeader>
             </div>
             <Separator
-              className="hidden md:block lg:yh-14 lg:yw-1"
+              className="hidden md:block lg:h-14 lg:w-1"
               orientation="vertical"
             />
-            <CardContent className="yflex yjustify-between ygap-5 lg:ygap-9">
-              <div className="yflex yflex-col ygap-3">
-                <h1 className="yuppercase ytext-xs yfont-medium ytext-neutral-500">
+            <CardContent className="flex justify-between gap-5 lg:gap-9">
+              <div className="flex flex-col gap-3">
+                <h1 className="uppercase text-xs font-medium text-neutral-500">
                   Total Sells
                 </h1>
-                <Label className="ytext-sm yfont-semibold yflex yitems-center">
+                <Label className="text-sm font-semibold flex items-center">
                   <Icon fontSize={16} icon="tabler:currency-peso" />
                   <span>{item.totalSells}</span>
                 </Label>
               </div>
-              <div className="yflex yflex-col ygap-3">
-                <h1 className="yuppercase ytext-xs yfont-medium ytext-neutral-500">
+              <div className="flex flex-col gap-3">
+                <h1 className="uppercase text-xs font-medium text-neutral-500">
                   Total Discounted
                 </h1>
-                <Label className="ytext-sm yfont-semibold">
+                <Label className="text-sm font-semibold">
                   {item.totalDisc}
                 </Label>
               </div>
-              <div className="yflex yflex-col ygap-3">
-                <h1 className="yuppercase ytext-xs yfont-medium ytext-neutral-500">
+              <div className="flex flex-col gap-3">
+                <h1 className="uppercase text-xs font-medium text-neutral-500">
                   Total Return
                 </h1>
-                <Label className="ytext-sm yfont-semibold">
+                <Label className="text-sm font-semibold">
                   {item.totalReturn}
                 </Label>
               </div>
@@ -160,7 +158,7 @@ const InventoryList: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Button variant="ghost">
-                  <DotsHorizontalIcon className="yhidden md:yblock yh-5 yw-5" />
+                  <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -169,13 +167,13 @@ const InventoryList: React.FC = () => {
                 <DropdownMenuItem>
                   Edit
                   <DropdownMenuShortcut>
-                    <Pencil1Icon className="yw-4 yh-4" />
+                    <Pencil1Icon className="w-4 h-4" />
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   Remove
                   <DropdownMenuShortcut>
-                    <TrashIcon className="yw-4 yh-4" color="red" />
+                    <TrashIcon className="w-4 h-4" color="red" />
                   </DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuContent>

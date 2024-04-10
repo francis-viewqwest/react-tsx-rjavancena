@@ -111,11 +111,12 @@ const MenuList: React.FC = () => {
   return (
     <>
       <Tabs defaultValue="All">
-        <ScrollArea className="w-96 whitespace-nowrap rounded-md border">
-          <TabsList className="ybg-white">
-            {TabsCategory.map((item) => (
+        <ScrollArea className="whitespace-nowrap rounded-md border">
+          <TabsList className="bg-white">
+            {TabsCategory.map((item, index) => (
               <TabsTrigger
-                className="data-[state=active]:ybg-primary data-[state=active]:ytext-white ytext-xs"
+                key={index}
+                className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
                 value={item.category}
               >
                 {item.category}
@@ -125,36 +126,33 @@ const MenuList: React.FC = () => {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
         <TabsContent value="All">
-          <div className="ygap-y-5 ygrid ygrid-cols-2 sm:ygrid-cols-3 sm:yflex-row lg:ygrid lg:ygrid-cols-4 lg:ygap-2">
+          <div className="gap-y-5 grid grid-cols-2 sm:grid-cols-3 sm:flex-row lg:grid lg:grid-cols-4 lg:gap-2">
             {menuItem.map((item) => (
-              <Card className="ybg-primary">
-                <CardHeader className="yp-2">
-                  <Skeleton className="ymax-w-full ymax-h-full yp-12 ybg-neutral-300" />
+              <Card className="bg-primary">
+                <CardHeader className="p-2">
+                  <Skeleton className="max-w-full max-h-full p-12 bg-neutral-300" />
                 </CardHeader>
-                <CardContent className="yflex yflex-col ygap-3 yp-2">
+                <CardContent className="flex flex-col gap-3 p-2">
                   <div>
-                    <h1 className="ytext-white yfont-bold ytext-md">
+                    <h1 className="text-white font-bold text-md">
                       {item.productName}
                     </h1>
-                    <p className=" ytext-xs ytext-muted-foreground">
+                    <p className=" text-xs text-muted-foreground">
                       {item.category}
                     </p>
                   </div>
-                  <div className="yflex yitems-center yjustify-between">
-                    <p className="ytext-white yfont-bold">₱{item.price}</p>
-                    <div className="yflex yitems-center ygap-3 yjustify-end">
+                  <div className="flex items-center justify-between">
+                    <p className="text-white font-bold">₱{item.price}</p>
+                    <div className="flex items-center gap-3 justify-end">
                       <Button
-                        size="sm"
                         variant="outline"
-                        className="ybg-none yborder-white"
+                        size="sm"
+                        className="bg-inherit border-white hover:bg-white/10"
                       >
                         <MinusIcon color="white" />
                       </Button>
-                      <span className=" ytext-white">0</span>
-                      <Button
-                        className="ybg-white hover:ybg-white/90"
-                        size="sm"
-                      >
+                      <span className=" text-white">0</span>
+                      <Button className="bg-white hover:bg-white/90" size="sm">
                         <PlusIcon color="black" />
                       </Button>
                     </div>

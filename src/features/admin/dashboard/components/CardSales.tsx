@@ -48,20 +48,20 @@ const cardsContent: CardsContent[] = [
 const CardSales: React.FC = () => {
   return (
     <>
-      <div className="yflex yflex-col ygap-4 sm:ygrid-flow-row sm:ygrid sm:ygrid-cols-3">
+      <div className="flex flex-col gap-4 sm:grid-flow-row sm:grid sm:grid-cols-3">
         {cardsContent.map((item, index) => (
           <Card key={index}>
-            <CardHeader className="yspace-y-0 ypb-2">
-              <CardTitle className="ytext-sm yfont-medium yflex yjustify-between yitems-center">
+            <CardHeader className="space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium flex justify-between items-center">
                 {item.title}
                 {item.icon}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="ytext-2xl yfont-bold">
+              <div className="text-2xl font-bold">
                 {formatted.format(item.data)}
               </div>
-              <div className="yflex yitems-center ygap-2 ytext-xs ytext-muted-foreground">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 {item.icon2} {item.analytic}
               </div>
             </CardContent>

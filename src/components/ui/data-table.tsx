@@ -19,8 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { Button } from "./button";
-
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -55,12 +55,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="yrounded-md yborder">
-        <h1 className="yfont-bold ypt-3 ypx-4 ytracking-tight ytext-sm">
-          {title}
-        </h1>
+      <DataTableToolbar table={table} />
+
+      <div className="rounded-md border my-4">
+        <h1 className="font-bold pt-3 px-4 tracking-tight text-xs">{title}</h1>
         <Table>
-          <TableHeader className="ytext-xs">
+          <TableHeader className="text-xs">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -78,7 +78,7 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="ytext-xs">
+          <TableBody className="text-xs">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -108,24 +108,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="yflex yf yitems-center yjustify-end yspace-x-2 ypy-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      <DataTablePagination table={table} />
     </>
   );
 }

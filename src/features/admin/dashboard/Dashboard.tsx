@@ -25,10 +25,10 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <div className="lg:ygrid lg:ygrid-cols-5 lg:ygrid-rows-5 lg:ygap-3">
-        <div className="lg:ycol-span-4 lg:yrow-span-5">
+      <div className="lg:grid lg:grid-cols-5 lg:grid-rows-5 lg:gap-3">
+        <div className="lg:col-span-4 lg:row-span-5">
           <CardSales />
-          <div className="ypy-6">
+          <div className="py-6">
             <SalesOverview />
           </div>
 
@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
             />
           </div>
         </div>
-        <div className="lg:yrow-span-5 lg:yw-full lg:yh-full lg:ycol-start-5">
+        <div className="lg:row-span-5 lg:w-full lg:h-full lg:col-start-5">
           <TodaysSale />
         </div>
       </div>

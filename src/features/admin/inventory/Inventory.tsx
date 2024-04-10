@@ -23,11 +23,11 @@ import InventoryList from "./components/InventoryList";
 const Inventory: React.FC = () => {
   return (
     <>
-      <div className="yflex yflex-col ygap-6 md:yflex-row lg:yitems-center yjustify-between">
-        <div className="yflex yflex-col md:yflex-row lg:yitems-center ygap-4 md:yw-96">
+      <div className="flex flex-col gap-6 md:flex-row lg:items-center justify-between">
+        <div className="flex flex-col md:flex-row lg:items-center gap-4 md:w-96">
           <Input type="text" placeholder="Search Product" />
           <Select>
-            <SelectTrigger className="yw-36">
+            <SelectTrigger className="w-36">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
@@ -49,8 +49,8 @@ const Inventory: React.FC = () => {
                 Fill out the following details to bring your new product.
               </DialogDescription>
             </DialogHeader>
-            <div className="ygrid ygap-4 ypy-4">
-              <div className="ygrid grid-cols-4 yitems-center ygap-4">
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
                   Product Name
                 </Label>
@@ -60,8 +60,8 @@ const Inventory: React.FC = () => {
                   className="col-span-3"
                 />
               </div>
-              <div className="ygrid ygap-4 ypy-4">
-                <div className="ygrid grid-cols-4 yitems-center ygap-4">
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="username" className="text-right">
                     Category
                   </Label>
@@ -85,7 +85,7 @@ const Inventory: React.FC = () => {
         </Dialog>
       </div>
 
-      <div className="yflex yflex-col ygap-4 ypy-4">
+      <div className="flex flex-col gap-4 py-4">
         <InventoryList />
       </div>
     </>

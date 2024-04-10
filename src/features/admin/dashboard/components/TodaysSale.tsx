@@ -55,11 +55,11 @@ const TodaysSale: React.FC = () => {
 
   return (
     <>
-      <div className="lg:ypx-3 lg:yrounded-md lg:yborder lg:yrelative">
-        <h1 className="ypy-3 yfont-bold ytext-muted-foreground ytext-sm">
+      <div className="lg:px-3 lg:rounded-md lg:border lg:relative">
+        <h1 className="py-3 font-bold text-muted-foreground text-sm">
           Todays Sale
         </h1>
-        <div className="sm:ygrid sm:ygrid-cols-2 lg:ygrid-cols-none">
+        <div className="sm:grid sm:grid-cols-2 lg:grid-cols-none">
           <div>
             <ResponsiveContainer style={{ left: 0 }} width="100%" height={210}>
               <PieChart style={{ margin: "auto", position: "relative" }}>
@@ -82,36 +82,39 @@ const TodaysSale: React.FC = () => {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <h1 className="yfont-bold ytext-2xl ytext-center">₱534000</h1>
-            <p className="ytext-xs ytext-muted-foreground ytext-center">
+            <h1 className="font-bold text-2xl text-center">₱534000</h1>
+            <p className="text-xs text-muted-foreground text-center">
               Total Earnings
             </p>
           </div>
-          <div className="ypy-5">
-            <p className="ytext-sm ytext-muted-foreground lg:ytext-xs">
+          <div className="py-5">
+            <p className="text-sm text-muted-foreground lg:text-xs">
               Top Selling Products
             </p>
-            <div className="yflex yflex-col">
+            <div className="flex flex-col">
               {topSelling.map((item, index) => (
-                <Card className="yp-4 ymy-3 yborder-none yshadow-none yrelative ybg-none ">
-                  <div className="yflex yitems-center ygap-4 lg:ygap-3">
-                    <Skeleton className="yh-12 yw-12 yrounded-3xl  ybg-neutral-500 lg:yw-10 lg:yh-10" />
+                <Card
+                  key={index}
+                  className="p-4 my-3 border-none shadow-none relative bg-none "
+                >
+                  <div className="flex items-center gap-4 lg:gap-3">
+                    <Skeleton className="h-12 w-12 rounded-3xl  bg-neutral-500 lg:w-10 lg:h-10" />
                     <div>
-                      <h1 className="ytext-sm lg:ytext-xs">{item.product}</h1>
-                      <p className="ytext-xs ytext-muted-foreground">
+                      <h1 className="text-sm lg:text-xs">{item.product}</h1>
+                      <p className="text-xs text-muted-foreground">
                         {item.category}
                       </p>
-                      <p className="ytext-xs yfont-semibold">
+                      <p className="text-xs font-semibold">
                         {formatted.format(item.price)}
                       </p>
                     </div>
                   </div>
-                  <div className="yflex yitems-center ygap-4 ybottom-0 yright-0 yjustify-end lg:ypt-4">
-                    <span className="yflex yitems-center ytext-xs ytext-muted-foreground ygap-2">
+                  <div className="flex items-center gap-4 bottom-0 right-0 justify-end lg:pt-4">
+                    <span className="flex items-center text-xs text-muted-foreground gap-2">
                       <IconStar color="black" size="14" />
                       {item.stars}
                     </span>
-                    <span className="yflex yitems-center ytext-xs ytext-muted-foreground ygap-2">
+                    <span className="flex items-center text-xs text-muted-foreground gap-2">
                       <IconShoppingCart color="black" size="14" />
                       {item.cart}
                     </span>

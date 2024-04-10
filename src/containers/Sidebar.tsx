@@ -80,27 +80,24 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <Drawer direction="left">
-        <DrawerTrigger
-          className="lg:yhidden yrounded-none yshadow-none"
-          asChild
-        >
-          <Button className="ymx-4 ymt-3 yrounded-sm yabsolute yz-50">
+        <DrawerTrigger className="lg:hidden rounded-none shadow-none" asChild>
+          <Button className="mx-4 mt-3 rounded-sm absolute z-50">
             <Icon fontSize={24} icon="heroicons:bars-3-16-solid" />
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="yw-64 yh-full">
+          <div className="w-64 h-full">
             <DrawerHeader>
               <DrawerTitle className="font-semibold">RJ AVANCENA</DrawerTitle>
             </DrawerHeader>
-            <div className="p-4 pb-0 ypx-3">
-              <div className="yflex yflex-col ygap-2">
+            <div className="p-4 pb-0 px-3">
+              <div className="flex flex-col gap-2">
                 {menus.map((menu, index) => (
                   <React.Fragment key={index}>
                     {menu.submenus ? (
                       <Accordion type="single" collapsible>
                         <AccordionItem
-                          className="yborder-b-0"
+                          className="border-b-0"
                           value={`${index}`}
                         >
                           <AccordionTrigger
@@ -110,16 +107,16 @@ const Sidebar: React.FC = () => {
                                 size: "sm",
                                 variant: "ghost",
                               }),
-                              "justify-between yw-0 hover:yno-underline yfont-medium ytext-neutral-600"
+                              "justify-between w-0 hover:no-underline font-medium text-neutral-600"
                             )}
                           >
-                            <div className="yflex yitems-center ygap-3 ytext-neutral-600">
+                            <div className="flex items-center gap-3 text-neutral-600">
                               <Icon fontSize={22} icon={menu.icon} />
                               <span
                                 className={`${
                                   !open
-                                    ? "yscale-0 yease-in-out ytransition-all"
-                                    : "yease-in-out yscale-100 ytransition-all"
+                                    ? "scale-0 ease-in-out transition-all"
+                                    : "ease-in-out scale-100 transition-all"
                                 }`}
                               >
                                 {menu.title}
@@ -128,19 +125,16 @@ const Sidebar: React.FC = () => {
                           </AccordionTrigger>
 
                           {menu.submenus.map((submenu, index) => (
-                            <AccordionContent
-                              className="ypb-2 ypt-2"
-                              key={index}
-                            >
+                            <AccordionContent className="pb-2 pt-2" ke={index}>
                               {open ? (
-                                <div className="yw-full yflex yflex-col">
+                                <div className="w-full flex flex-col">
                                   <Link
                                     className={cn(
                                       buttonVariants({
                                         size: "sm",
                                         variant: "ghost",
                                       }),
-                                      "yjustify-between yml-7 ytext-neutral-600 yflex ygap-10"
+                                      "justify-between ml-7 text-neutral-600 flex gap-10"
                                     )}
                                     to={submenu.path}
                                   >
@@ -159,19 +153,19 @@ const Sidebar: React.FC = () => {
                             size: "sm",
                             variant: "ghost",
                           }),
-                          "yjustify-between yfont-medium"
+                          "justify-between font-medium"
                         )}
                         to={menu.path}
                       >
                         <div
-                          className={`yflex yitems-center ygap-3 ytext-start ytext-neutral-600`}
+                          className={`flex items-center gap-3 text-start text-neutral-600`}
                         >
                           <Icon fontSize={22} icon={menu.icon} />
                           <span
                             className={`${
                               !open
-                                ? "yscale-0 yease-in-out ytransition-all"
-                                : "yease-in-out yscale-100 ytransition-all"
+                                ? "scale-0 ease-in-out transition-all"
+                                : "ease-in-out scale-100 transition-all"
                             }`}
                           >
                             {menu.title}
@@ -188,15 +182,13 @@ const Sidebar: React.FC = () => {
         </DrawerContent>
       </Drawer>
       <div
-        className={`ymin-h-screen yhidden yborder-r yp-2 lg:yflex yflex-col ybg-white ytransition-all relative ${
-          open ? "yw-48" : "yw-14"
+        className={`min-h-screen hidden border-r p-2 lg:flex flex-col bg-white transition-all relative ${
+          open ? "w-48" : "w-14"
         }`}
       >
-        <div className="yflex yitems-center yjustify-between">
+        <div className="flex items-center justify-between">
           <img
-            className={`${
-              open ? "yw-24" : "yw-0 ytransition-all yease-in-out"
-            }`}
+            className={`${open ? "w-24" : "w-0 transition-all ease-in-out"}`}
             src={logo}
             alt=""
           />
@@ -204,12 +196,12 @@ const Sidebar: React.FC = () => {
             <Icon icon="heroicons-outline:chevron-double-right" />
           </Button>
         </div>
-        <nav className="ygap-2 yflex yflex-col ypt-10 yease-in-out ytransition-all">
+        <nav className="gap-2 flex flex-col pt-10 ease-in-out transition-all">
           {menus.map((menu, index) => (
             <React.Fragment key={index}>
               {menu.submenus ? (
                 <Accordion type="single" collapsible>
-                  <AccordionItem className="yborder-b-0" value={`${index}`}>
+                  <AccordionItem className="border-b-0" value={`${index}`}>
                     <AccordionTrigger
                       onClick={() => handleExpandSidebar(true, true)}
                       className={cn(
@@ -217,18 +209,18 @@ const Sidebar: React.FC = () => {
                           size: "sm",
                           variant: "ghost",
                         }),
-                        "justify-between yw-0 hover:yno-underline yfont-medium ytext-neutral-600"
+                        "justify-between w-0 hover:no-underline font-medium text-neutral-600"
                       )}
                     >
                       <div
-                        className={`yflex yitems-center ygap-3 ytext-neutral-600`}
+                        className={`flex items-center gap-3 text-neutral-600`}
                       >
                         <Icon fontSize={17} icon={menu.icon} />
                         <span
                           className={`${
                             !open
-                              ? "yscale-0 yhidden yease-in-out ytransition-all"
-                              : "yease-in-out yscale-100 ytransition-all"
+                              ? "scale-0 hidden ease-in-out transition-all"
+                              : "ease-in-out scale-100 transition-all"
                           }`}
                         >
                           {menu.title}
@@ -237,18 +229,18 @@ const Sidebar: React.FC = () => {
                     </AccordionTrigger>
 
                     {menu.submenus.map((submenu, index) => (
-                      <AccordionContent className="ypb-1" key={index}>
+                      <AccordionContent className="pb-1" key={index}>
                         {open ? (
-                          <div className="yw-full yflex yflex-col">
+                          <div className="w-full flex flex-col">
                             <Link
                               className={cn(
                                 buttonVariants({
                                   size: "sm",
                                   variant: "ghost",
                                 }),
-                                `yjustify-between yml-7 ytext-neutral-600 yflex ygap-10  ${
+                                `justify-between ml-7 text-neutral-600 flex gap-10  ${
                                   location.pathname === submenu.path &&
-                                  "ybg-primary ytext-white hover:ybg-primary/90 hover:ytext-white"
+                                  "bg-primary text-white hover:bg-primary/90 hover:text-white"
                                 }`
                               )}
                               to={submenu.path}
@@ -268,20 +260,20 @@ const Sidebar: React.FC = () => {
                       size: "sm",
                       variant: "ghost",
                     }),
-                    `yjustify-between yfont-medium ytext-neutral-600 ${
+                    `justify-between font-medium text-neutral-600 ${
                       location.pathname === menu.path &&
-                      "ybg-primary ytext-white hover:ybg-primary/90 hover:ytext-white"
+                      "bg-primary text-white hover:bg-primary/90 hover:text-white"
                     }`
                   )}
                   to={menu.path}
                 >
-                  <div className={`yflex yitems-center ygap-3 ytext-start`}>
+                  <div className={`flex items-center gap-3 text-start`}>
                     <Icon fontSize={17} icon={menu.icon} />
                     <span
                       className={`${
                         !open
-                          ? "yscale-0 yhidden yease-in-out ytransition-all"
-                          : "yease-in-out yscale-100 ytransition-all"
+                          ? "scale-0 hidden ease-in-out transition-all"
+                          : "ease-in-out scale-100 transition-all"
                       }`}
                     >
                       {menu.title}
