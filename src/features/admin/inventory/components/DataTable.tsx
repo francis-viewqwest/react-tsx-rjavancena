@@ -69,11 +69,11 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="yflex ygap-4 ypb-5 yjustify-between">
-        <div className="yw-full yrelative yflex yitems-center lg:yw-96">
-          <MagnifyingGlassIcon className="yabsolute yml-3 ytext-neutral-500 yh-5 yw-5" />
+      <div className="flex gap-4 pb-5 justify-between">
+        <div className="w-full relative flex items-center lg:w-96">
+          <MagnifyingGlassIcon className="absolute ml-4 text-neutral-500 h-5 w-5" />
           <Input
-            className="ypx-12"
+            className="pl-12"
             placeholder="Search Product"
             value={
               (table.getColumn("productName")?.getFilterValue() as string) ?? ""
@@ -95,34 +95,34 @@ export function DataTable<TData, TValue>({
                 inventory. Please fill out the required fields to proceed.
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="yh-72 yw-full">
-              <div className="ygrid ypy-4 ygap-6 ypx-2 sm:ypx-5">
-                <div className="ygrid grid-cols-4 yitems-center ygap-1">
-                  <Label className="ytext-sm">Product Name</Label>
+            <ScrollArea className="h-72 w-full">
+              <div className="grid py-4 gap-6 px-2 sm:px-5">
+                <div className="grid grid-cols-4 items-center gap-1">
+                  <Label className="text-sm">Product Name</Label>
                   <Input
                     id="name"
                     placeholder="Enter product name"
                     className="col-span-3"
                   />
                 </div>
-                <div className="ygrid grid-cols-4 yitems-center ygap-1">
-                  <Label className="ytext-sm">Unit Price</Label>
+                <div className="grid grid-cols-4 items-center gap-1">
+                  <Label className="text-sm">Unit Price</Label>
                   <Input
                     id="unitPrice"
                     placeholder="Enter unit price"
                     className="col-span-3"
                   />
                 </div>
-                <div className="ygrid grid-cols-4 yitems-center ygap-1">
-                  <Label className="ytext-sm">Quantity</Label>
+                <div className="grid grid-cols-4 items-center gap-1">
+                  <Label className="text-sm">Quantity</Label>
                   <Input
                     id="quantity"
                     placeholder="Enter product quantity"
                     className="col-span-3"
                   />
                 </div>
-                <div className="ygrid grid-cols-4 yitems-center ygap-1">
-                  <Label className="ytext-sm">Product Image</Label>
+                <div className="grid grid-cols-4 items-center gap-1">
+                  <Label className="text-sm">Product Image</Label>
                   <Input
                     id="productImg"
                     type="file"
@@ -130,8 +130,8 @@ export function DataTable<TData, TValue>({
                     className="col-span-3"
                   />
                 </div>
-                <div className="ygrid grid-cols-4 yitems-center ygap-1">
-                  <Label className="ytext-sm">Product Description</Label>
+                <div className="grid grid-cols-4 items-center gap-1">
+                  <Label className="text-sm">Product Description</Label>
                   <Input
                     id="productDescription"
                     type="text"
@@ -139,8 +139,8 @@ export function DataTable<TData, TValue>({
                     className="col-span-3"
                   />
                 </div>
-                <div className="ygrid grid-cols-4 yitems-center ygap-1">
-                  <Label className="ytext-sm">Discounted Price</Label>
+                <div className="grid grid-cols-4 items-center gap-1">
+                  <Label className="text-sm">Discounted Price</Label>
                   <Input
                     id="discPrice"
                     type="number"
@@ -166,6 +166,9 @@ export function DataTable<TData, TValue>({
         </Dialog>
       </div>
       <div className="yrounded-md yborder">
+        <h1 className="ytext-xs yfont-bold ypt-3 ypx-4">
+          Product in 2B ACRYLON 4
+        </h1>
         <Table>
           <TableHeader className="ytext-xs">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -217,7 +220,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="yjustify-between yflex yitems-center">
         <div className="yflex-1 ytext-sm ytext-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredSelectedRowModel().rows.length} of
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="yflex yf yitems-center yjustify-end yspace-x-2 ypy-4">

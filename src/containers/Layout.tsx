@@ -29,7 +29,7 @@ const Layout: React.FC<LayoutProps> = () => {
   }
 
   return (
-    <div className="yflex yflex-1 yoverflow-hidden yw-screen yh-screen yrelative">
+    <div className="flex flex-1 overflow-hidden w-screen h-screen relative">
       {/* <Navbar token={token} />
       <Outlet />
       <Footer /> */}
@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = () => {
         <Sidebar />
       </SidebarProvider>
 
-      <div className="yw-full yoverflow-y-auto">
+      <div className="w-full overflow-y-auto">
         <PageContent />
       </div>
     </div>

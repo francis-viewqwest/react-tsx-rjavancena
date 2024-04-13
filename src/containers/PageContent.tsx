@@ -6,9 +6,9 @@ import routes from "../routes/LayoutRoutes";
 const PageContent: React.FC = () => {
   return (
     <>
-      <div className="yw-full yflex yflex-col ygap-5">
+      <div className="w-full flex flex-col gap-5">
         <Header />
-        <main className="bg-white ypx-4 lg:ypx-6">
+        <main className="bg-white px-4 lg:px-3">
           <Routes>
             {routes.map((route, index) => (
               <Route

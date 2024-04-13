@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setTitle } from "../../../common/appSlice";
-import Cancellation from "@/features/admin/Cancellation";
+import Cancellation from "@/features/admin/orders/cancellation/Cancellation";
 
 const Internal: React.FC = () => {
   const dispatch = useDispatch();
