@@ -10,31 +10,30 @@ import { Input } from "@/components/ui/input";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  search: any;
+  placeHolder: string | any;
+  columnName: string | any;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  search,
+  placeHolder,
+  columnName,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
-  let placeHolder: string | null = null;
-  let columnName: string | null = null;
-
-  switch (search) {
-    case "inventory":
-      placeHolder = "Search Product";
-      columnName = "productName";
-      break;
-    case "transaction":
-      placeHolder = "Search Transaction";
-      columnName = "customerId";
-      break;
-    default:
-      placeHolder = null;
-      break;
-  }
+  //for global filtering (STABLE)
+  // const [searchQuery, setSearchQuery] = useState<string>("");
+  // const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchQuery(event.target.value);
+  //   filterData(event.target.value);
+  // };
+  // const filterData = (query: string) => {
+  //   table.setGlobalFilter(query || undefined);
+  // };
+  // const handleResetFilters = () => {
+  //   setSearchQuery("");
+  //   filterData("");
+  // };
 
   return (
     <div className="flex items-center justify-between">

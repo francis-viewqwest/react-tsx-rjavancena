@@ -4,21 +4,10 @@ import { DataTable } from "@/components/ui/data-table";
 import DataJson from "@/data/productData.json";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Link } from "react-router-dom";
-
-interface DataProduct {
-  productId: number;
-  img: any;
-  productName: string;
-  retail: number;
-  discPrice: number;
-  sells: number;
-  returnProduct: number;
-  stocks: number;
-  supplier: string;
-}
+import { ProductType } from "@/interface/InterfaceType";
 
 const ProductList: React.FC = () => {
-  const [data, setData] = useState<DataProduct[]>([]);
+  const [data, setData] = useState<ProductType[]>([]);
 
   useEffect(() => {
     setData(DataJson.data);
@@ -35,12 +24,7 @@ const ProductList: React.FC = () => {
       </Link>
 
       <div>
-        <DataTable
-          title="Product in "
-          search="inventory"
-          columns={columnsProduct}
-          data={data}
-        />
+        <DataTable title="Product in " columns={columnsProduct} data={data} />
       </div>
     </>
   );

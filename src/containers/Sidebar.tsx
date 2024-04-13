@@ -203,6 +203,7 @@ const Sidebar: React.FC = () => {
                 <Accordion type="single" collapsible>
                   <AccordionItem className="border-b-0" value={`${index}`}>
                     <AccordionTrigger
+                      open={open}
                       onClick={() => handleExpandSidebar(true, true)}
                       className={cn(
                         buttonVariants({

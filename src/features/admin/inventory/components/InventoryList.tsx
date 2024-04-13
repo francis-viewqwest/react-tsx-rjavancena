@@ -20,28 +20,16 @@ import {
   Pencil1Icon,
   TrashIcon,
 } from "@radix-ui/react-icons";
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
-
-interface ProductContent {
-  id: number;
-  img: any;
-  productName: string;
-  category: string;
-  variants: number;
-  stock: number;
-  totalSells: number;
-  totalDisc: number;
-  totalReturn: number;
-}
+import { ProductInventory } from "@/interface/InterfaceType";
 
 const InventoryList: React.FC = () => {
-  const product: ProductContent[] = [
+  const product: ProductInventory[] = [
     {
       id: 1,
       img: null,
