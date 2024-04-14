@@ -8,7 +8,17 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import shipmentOrder from "@/data/shipmentOrder.json";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,6 +37,11 @@ interface TableContextType {
   columnName: string | any;
   rowsSelection: string | any;
   jsx: React.ReactNode;
+  tablesOptionsJsx: React.ReactNode;
+  selectedOption: any;
+  tablesOptions: any;
+  setSelectedOption: any;
+  setTablesOptions: any;
 }
 
 const defaultTableContextValue: TableContextType = {
@@ -41,6 +56,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   page: initialPage,
 }) => {
   const [page, setPage] = useState<string | any>(initialPage);
+  const [selectedOption, setSelectedOption] = useState<any>("packOrders");
 
   let placeHolder;
   let columnName;
@@ -201,6 +217,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       );
       rowsSelection = false;
       break;
+    case "CustomerOrder":
+      placeHolder = "Search Users";
+      columnName = "customerName";
+      rowsSelection = false;
+      break;
     default:
       placeHolder = null;
       columnName = null;
@@ -210,7 +231,16 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
 
   return (
     <TableContext.Provider
-      value={{ page, setPage, jsx, placeHolder, columnName, rowsSelection }}
+      value={{
+        page,
+        setPage,
+        jsx,
+        placeHolder,
+        columnName,
+        rowsSelection,
+        selectedOption,
+        setSelectedOption,
+      }}
     >
       {children}
     </TableContext.Provider>

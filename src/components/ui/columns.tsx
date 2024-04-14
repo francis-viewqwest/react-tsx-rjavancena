@@ -3,12 +3,29 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RowInventoryActions, RowUsersAction } from "./data-table-actions-row";
+import {
+  RowInventoryActions,
+  RowPackOrdersAction,
+  RowReturnOrderAction,
+  RowUsersAction,
+  RowShippingAction,
+  RowFailedDeliverAction,
+  RowCancelledDeliverAction,
+  RowHandoverAction,
+} from "./data-table-actions-row";
 import {
   ProductType,
   TransactionType,
   UsersType,
   CustomerOrderType,
+  PackOrderType,
+  HandOverType,
+  ShipmentOrderType,
+  ShippingType,
+  DeliveredType,
+  FailedDeliverType,
+  ReturnOrderType,
+  CancelledDeliverType,
 } from "@/interface/InterfaceType";
 
 // This type is used to define the shape of our data.
@@ -285,5 +302,331 @@ export const ColumnsCustomerOrder: ColumnDef<CustomerOrderType>[] = [
   {
     accessorKey: "totalAmount",
     header: "Total Amount",
+  },
+];
+
+export const ColumnsPacksOrder: ColumnDef<PackOrderType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "totalOrders",
+    header: "Total Orders",
+  },
+  {
+    accessorKey: "totalAmount",
+    header: "Total Amount",
+  },
+  {
+    accessorKey: "datePlaced",
+    header: "Date Placed",
+  },
+  {
+    accessorKey: "paymentMethod",
+    header: "Payment Method",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant="successStatus">{row.original.status}</Badge>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowPackOrdersAction row={row} />,
+  },
+];
+
+export const ColumnsShipmentOrder: ColumnDef<ShipmentOrderType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "totalOrders",
+    header: "Total Orders",
+  },
+  {
+    accessorKey: "totalAmount",
+    header: "Total Amount",
+  },
+  {
+    accessorKey: "datePlaced",
+    header: "Date Placed",
+  },
+  {
+    accessorKey: "paymentMethod",
+    header: "Payment Method",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant="successStatus">{row.original.status}</Badge>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowPackOrdersAction row={row} />,
+  },
+];
+
+export const ColumnsHandover: ColumnDef<HandOverType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "totalOrders",
+    header: "Total Orders",
+  },
+  {
+    accessorKey: "totalAmount",
+    header: "Total Amount",
+  },
+  {
+    accessorKey: "datePlaced",
+    header: "Date Placed",
+  },
+  {
+    accessorKey: "paymentMethod",
+    header: "Payment Method",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant="successStatus">{row.original.status}</Badge>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowHandoverAction row={row} />,
+  },
+];
+
+export const ColumnsShipping: ColumnDef<ShippingType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "shippingAddress",
+    header: "Shipping Address",
+  },
+  {
+    accessorKey: "totalItems",
+    header: "Total Items",
+  },
+  {
+    accessorKey: "totalAmount",
+    header: "Total Amount",
+  },
+  {
+    accessorKey: "paymentMethod",
+    header: "Payment Method",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant="progressStatus">{row.original.status}</Badge>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowShippingAction row={row} />,
+  },
+];
+
+export const ColumnsDelivered: ColumnDef<DeliveredType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "shippingAddress",
+    header: "Shipping Address",
+  },
+  {
+    accessorKey: "totalItems",
+    header: "Total Items",
+  },
+  {
+    accessorKey: "totalAmount",
+    header: "Total Amount",
+  },
+  {
+    accessorKey: "paymentMethod",
+    header: "Payment Method",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant="successStatus">{row.original.status}</Badge>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowShippingAction row={row} />,
+  },
+];
+
+export const ColumnsFailedDeliver: ColumnDef<FailedDeliverType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "reasonFailure",
+    header: "Reason for Failure",
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowFailedDeliverAction row={row} />,
+  },
+];
+export const ColumnsCancelledDeliver: ColumnDef<CancelledDeliverType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Customer Name",
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
+    accessorKey: "reasonCancel",
+    header: "Reason for Cancel",
+  },
+  {
+    accessorKey: "shippingAddress",
+    header: "Shipping Address",
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <RowCancelledDeliverAction row={row} />,
+  },
+];
+
+export const ColumnsReturnOrder: ColumnDef<ReturnOrderType>[] = [
+  {
+    accessorKey: "orderId",
+    header: "Order ID",
+  },
+  {
+    accessorKey: "img",
+    header: "Image",
+    cell: () => {
+      return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
+    },
+  },
+  {
+    accessorKey: "customerName",
+    header: "Name",
+  },
+  {
+    accessorKey: "returnReason",
+    header: "Reason",
+  },
+  {
+    accessorKey: "returnStatus",
+    header: "Status",
+  },
+  {
+    accessorKey: "returnDate",
+    header: "Requested On",
+  },
+  {
+    accessorKey: "action",
+    header: "",
+    cell: ({ row }) => <RowReturnOrderAction row={row} />,
   },
 ];

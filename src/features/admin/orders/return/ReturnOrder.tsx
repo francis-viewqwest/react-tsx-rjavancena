@@ -1,7 +1,24 @@
-import React from "react";
+import { DataTable } from "@/components/ui/data-table";
+import React, { useEffect, useState } from "react";
+import returnJSON from "@/data/returnOrder.json";
+import { ColumnsReturnOrder } from "@/components/ui/columns";
 
 const ReturnOrder: React.FC = () => {
-  return <div>ReturnOrder</div>;
+  const [returnData, setReturnData] = useState<any>([]);
+
+  useEffect(() => {
+    setReturnData(returnJSON);
+  }, []);
+
+  return (
+    <>
+      <DataTable
+        title="Return Orders"
+        columns={ColumnsReturnOrder}
+        data={returnData}
+      />
+    </>
+  );
 };
 
 export default ReturnOrder;

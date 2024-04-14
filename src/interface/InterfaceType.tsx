@@ -54,3 +54,90 @@ export type CustomerOrderType = {
   orderStatus: string;
   totalAmount: number;
 };
+
+export type PackOrderType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  totalOrders: number;
+  totalAmount: number;
+  datePlaced: string;
+  paymentMethod: string;
+  status: string;
+};
+
+export type ShipmentOrderType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  totalOrders: number;
+  totalAmount: number;
+  datePlaced: string;
+  paymentMethod: string;
+  status: string;
+};
+
+export type HandOverType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  totalOrders: number;
+  totalAmount: number;
+  datePlaced: string;
+  paymentMethod: string;
+  status: string;
+};
+
+export type ShippingType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  shippingAddress: string;
+  totalItems: number;
+  totalAmount: number;
+  paymentMethod: string;
+  status: string;
+};
+
+export type DeliveredType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  shippingAddress: string;
+  totalItems: number;
+  totalAmount: number;
+  paymentMethod: string;
+  status: string;
+};
+
+export type FailedDeliverType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  reasonFailure: string;
+};
+
+export type CancelledDeliverType = {
+  id: number;
+  orderId: number;
+  img: null;
+  customerName: string;
+  email: string;
+  reasonCancel: string;
+  shippingAddress: string;
+};
+
+export type ReturnOrderType = {
+  orderId: number;
+  img: null;
+  customerName: string;
+  returnReason: string;
+  returnStatus: string;
+  returnDate: string;
+};
