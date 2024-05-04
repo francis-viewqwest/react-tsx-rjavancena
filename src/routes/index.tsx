@@ -1,6 +1,7 @@
 import { useAuth } from "../app/AuthProvider";
 import Home from "../pages/user/public/Home";
 import Shop from "../pages/user/public/Shop";
+import ShopCategory from "@/pages/user/public/ShopCategory";
 import About from "../pages/user/public/About";
 import SignIn from "../pages/user/public/SignIn";
 import SignUp from "../pages/user/public/SignUp";
@@ -36,6 +37,10 @@ const Routes: React.FC = () => {
         {
           path: "/shop",
           element: <Shop />,
+        },
+        {
+          path: "/shop/:category",
+          element: <ShopCategory />,
         },
         {
           path: "/about",

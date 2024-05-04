@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Section: React.FC = () => {
   return (
@@ -20,7 +21,7 @@ const Section: React.FC = () => {
             of RJ Avancena Enterprises. Your hardware journey begins here.
           </p>
           <div className="flex items-center gap-6">
-            <button className="btn btn-md">Shop Now</button>
+            <Button className="font-bold bg-white text-black">Shop Now</Button>
             <Link className="text-white underline" to="/">Contact Us</Link>
           </div>
         </div>

@@ -6,30 +6,30 @@ const Footer: React.FC = () => {
   return (
     <>
       <footer className="max-w-[1200px] p-4 m-auto">
-        <div className="footer py-10">
-          <aside>
+        <div className="footer py-10 lg:flex lg:justify-between">
+          <aside className="flex gap-4 items-center">
             <img src={rjavancena} alt="" />
-            <p>
+            <p className="text-sm">
               RJ Avancena Enterprises
               <br />
               Providing reliable tech since 1996
             </p>
           </aside>
-          <nav>
+          <nav className="py-4 flex  flex-col gap-3">
             <h6 className="footer-title">Services</h6>
             <a className="link link-hover">Branding</a>
             <a className="link link-hover">Design</a>
             <a className="link link-hover">Marketing</a>
             <a className="link link-hover">Advertisement</a>
           </nav>
-          <nav>
+          <nav className="py-4 flex  flex-col gap-3">
             <h6 className="footer-title">Company</h6>
             <a className="link link-hover">About us</a>
             <a className="link link-hover">Contact</a>
             <a className="link link-hover">Jobs</a>
             <a className="link link-hover">Press kit</a>
           </nav>
-          <nav>
+          <nav className="py-4 flex  flex-col gap-3">
             <h6 className="footer-title">Legal</h6>
             <a className="link link-hover">Terms of use</a>
             <a className="link link-hover">Privacy policy</a>
@@ -37,11 +37,11 @@ const Footer: React.FC = () => {
           </nav>
         </div>
         <div className="divider"></div>
-        <div className="footer items-center p-4">
+        <div className="footer  items-center p-4 lg:flex lg:items-center lg:justify-between">
           <aside className="items-center grid-flow-col">
             <p>© RJ Avancena, Ent. 2024.</p>
           </aside>
-          <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+          <nav className="flex gap-4 md:place-self-center md:justify-self-end">
             <Link to="/">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

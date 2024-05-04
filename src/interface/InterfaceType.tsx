@@ -1,4 +1,5 @@
 //* COMPONENTS INTERFACE
+
 export interface ProductInventory {
   id: number;
   img: any;

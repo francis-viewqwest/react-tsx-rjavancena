@@ -1,163 +1,111 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  ShoppingBagIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
+  IconMenu2,
+  IconShoppingCart,
+  IconShoppingBag,
+  IconSearch,
+} from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 const Navbar: React.FC<{ token: string }> = ({ token }) => {
+  const navRoutes = [
+    {
+      menu: "Home",
+      path: "/",
+    },
+    {
+      menu: "Shop",
+      path: "/shop",
+    },
+    {
+      menu: "About Us",
+      path: "/shop",
+    },
+    {
+      menu: "Contact Us",
+      path: "/shop",
+    },
+  ];
+
   return (
     <>
-      <div className="w-full top-0 fixed z-10 bg-white py-4">
-        <div className="drawer z-10 max-w-[1200px] w-full m-auto bg-white">
-          <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content flex flex-col">
-            {/* Navbar */}
-            <div className="w-full navbar gap-1 md:gap-10">
-              <div className="flex-none lg:hidden">
-                <label
-                  htmlFor="my-drawer-3"
-                  aria-label="open sidebar"
-                  className="btn btn-square btn-ghost"
+      <Drawer direction="left">
+        <div className="flex items-center justify-between p-4 sticky top-0 z-50 bg-white border-b-[1px]">
+          <div className="flex items-center gap-20">
+            <h1 className="font-black text-md uppercase">RJ Avancena</h1>
+            <div className="flex gap-12 text-neutral-500">
+              {navRoutes.map((nav, index) => (
+                <Link
+                  className="text-md hidden font-medium lg:block lg:hover:text-black lg:hover:font-medium ease-in-out"
+                  key={index}
+                  to={nav.path}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    className="inline-block w-6 h-6 stroke-current"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    ></path>
-                  </svg>
-                </label>
-              </div>
-              <div className="font-black">RJ AVANCENA</div>
-              <ul className="hidden md:flex flex-row gap-4">
-                {/* Navbar menu content here */}
-                {token ? (
-                  <>
-                    {" "}
-                    <li className="text-sm">
-                      <Link to="home">Home</Link>
-                    </li>
-                    <li className="text-sm">
-                      <Link to="shop">Shop</Link>
-                    </li>
-                    <li className="text-sm">
-                      <Link to="about">About</Link>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li className="text-sm">
-                      <Link to="/">Home</Link>
-                    </li>
-                    <li className="text-sm">
-                      <Link to="/shop">Shop</Link>
-                    </li>
-                    <li className="text-sm">
-                      <Link to="/about">About</Link>
-                    </li>
-                  </>
-                )}
-              </ul>
-              <div className="flex-1 lg:block"></div>
-              <div className="flex-none">
-                <ul className="flex flex-row gap-4 items-center">
-                  {/* Navbar menu content here */}
-                  <div className="hidden sm:flex items-center relative">
-                    <MagnifyingGlassIcon className="w-5 h-5 absolute left-3" />
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      className="input input-bordered input-md w-60 px-10"
-                    />
-
-                    <ShoppingBagIcon className="h-7 w-7 absolute border-l-[1px] pl-2 right-4" />
-                  </div>
-                  {token ? (
-                    <>
-                      <ShoppingBagIcon className="h-7 w-7 sm:hidden" />
-                      <div className="block flex-none">
-                        <div className="dropdown dropdown-end"></div>
-                        <div className="dropdown dropdown-end">
-                          <div
-                            tabIndex={0}
-                            role="button"
-                            className="avatar placeholder"
-                          >
-                            <div className="bg-neutral text-neutral-content rounded-full w-12">
-                              <span className="text-xs font-bold">FB</span>
-                            </div>
-                          </div>
-                          <ul
-                            tabIndex={0}
-                            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-                          >
-                            <li>
-                              <Link to="/profile" className="justify-between">
-                                Profile
-                              </Link>
-                            </li>
-
-                            <div className="divider mt-0 mb-0"></div>
-                            <li>
-                              <Link to="/logout">Logout</Link>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <li className="text-sm font-bold">
-                        <Link to="/signin">Sign In</Link>
-                      </li>
-                      <li className="text-sm font-bold">
-                        <Link
-                          className="btn btn-md bg-btnprimary text-white"
-                          to="/signup"
-                        >
-                          Sign Up
-                        </Link>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
+                  {nav.menu}
+                </Link>
+              ))}
             </div>
           </div>
-          <div className="drawer-side">
-            <label
-              htmlFor="my-drawer-3"
-              aria-label="close sidebar"
-              className="drawer-overlay"
-            ></label>
-            <ul className="menu bg-white p-4 w-64 min-h-full text-black">
-              {/* Sidebar content here */}
-              <li className="text-sm">
-                <Link to="/">Home</Link>
-              </li>
-              <li className="text-sm">
-                <Link to="/">Shop</Link>
-              </li>
-              <li className="text-sm">
-                <Link to="/">About</Link>
-              </li>
-              <li className="text-sm">
-                <Link to="/">Sign In</Link>
-              </li>
-              <li className="text-sm">
-                <Link to="/">Sign Up</Link>
-              </li>
-            </ul>
+          <div className="flex items-center gap-5">
+            <Input
+              className="w-auto hidden md:block"
+              placeholder="Search product"
+            />
+            <Button variant="outline" className="rounded-full" size="icon">
+              <IconShoppingBag size={22} />
+            </Button>
+            <div className="hidden lg:gap-5 lg:flex lg:items-center">
+              <Button>
+                <Link className="text-md" to="/sign-in">
+                  Sign in
+                </Link>
+              </Button>
+              <Link className="text-md" to="/sign-up">
+                Sign up
+              </Link>
+            </div>
+            <DrawerTrigger
+              className="lg:hidden rounded-none shadow-none"
+              asChild
+            >
+              <Button className="rounded-sm right-0 w-14" asChild>
+                <IconMenu2 size={34} />
+              </Button>
+            </DrawerTrigger>
           </div>
         </div>
-      </div>
+        <DrawerContent className="p-4 w-3/4">
+          <DrawerHeader className="p-0 mb-20">
+            <DrawerTitle className="justify-start flex left-0 font-black">
+              RJ AVANCENA
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4">
+            {navRoutes.map((nav, index) => (
+              <Link className="uppercase text-2xl" key={index} to={nav.path}>
+                {nav.menu}
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-col gap-4 absolute bottom-0">
+            <Link className="uppercase text-2xl" to="/sign-in">
+              Sign in
+            </Link>
+            <Link className="uppercase text-2xl" to="/sign-up">
+              Sign up
+            </Link>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };
