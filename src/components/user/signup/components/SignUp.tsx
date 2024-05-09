@@ -3,32 +3,53 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "../../../../app/AuthProvider";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-interface formData {
+interface FormValues {
   email: string;
   password: string;
   password_confirmation: string;
 }
 
 const SignUp: React.FC = () => {
-  const form = useForm();
   const navigate = useNavigate();
   const { setToken } = useAuth();
 
-  const { register, handleSubmit, formState } = form;
-  const { errors } = formState;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<formData> = async (data) => {
-    const registerEndpoint = import.meta.env.VITE_BASE_URL + "register";
+  useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      password_confirmation: "",
+    },
+  });
 
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const euDevice = Cookies.get("eu");
+    console.log(euDevice);
     try {
-      const res = await axios.post(registerEndpoint, data);
+      const res = await axios.post(import.meta.env.VITE_BASE_URL + "register", {
+        ...data,
+        eu_device: euDevice,
+      });
 
       if (res.status === 200 && res.data.url_token) {
-        const queryParams = new URLSearchParams(res.data.url_token.split("?")[1]);
+        const queryParams = new URLSearchParams(
+          res.data.url_token.split("?")[1]
+        );
         const tjParam = queryParams.get("tj");
-        Cookies.set("token", tjParam);
-        setToken(tjParam);
+        if (tjParam !== null) {
+          Cookies.set("token", tjParam);
+          setToken(tjParam);
+        }
 
         if (tjParam) {
           navigate(`/signup/verify-email?tj=${tjParam}`);
@@ -42,73 +63,88 @@ const SignUp: React.FC = () => {
       }
 
       console.log("Form submit", data);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      let emailError = error.response.data.message.email || "";
+      let passwordError = error.response.data.message.password || "";
+
+      setError("email", { type: "custom", message: emailError });
+      setError("password", { type: "custom", message: passwordError });
     }
   };
 
   return (
     <>
-      <div className="w-full h-screen p-4 py-44 md:flex items-center max-w-[1200px] m-auto">
+      <div className="w-full h-screen p-4 md:flex md:flex-col items-center max-w-[75em] m-auto">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="m-auto lg:p-8 flex flex-col gap-4 lg:w-2/6 rounded-md"
+          className="m-auto pt-20 lg:p-7 flex flex-col gap-3 lg:gap-8 rounded-md lg:border-[1px] lg:shadow-sm"
         >
-          <div className="flex flex-col items-center m-auto gap-3 mb-10">
+          <div className="flex flex-col items-center m-auto gap-2">
             <h1 className="text-2xl font-bold">Create Your Account</h1>
-            <p className="text-sm text-center">
+            <p className="text-xs max-w-96 m-auto text-center text-neutral-500">
               Get started with RJ Avancena Enterprises and enjoy a seamless
               shopping experience.
             </p>
           </div>
-          <label className="form-control w-full">
-            <input
-              type="text"
-              placeholder="Email Address"
-              className="input input-bordered w-full"
-              {...register("email", {
-                required: {
-                  value: true,
-                  message: "email is required",
-                },
-              })}
-            />
-          </label>
-          <label className="form-control w-full">
-            <input
-              type="password"
-              placeholder="Password"
-              className="input input-bordered w-full"
-              {...register("password", {
-                required: {
-                  value: true,
-                  message: "Password is required",
-                },
-              })}
-            />
-          </label>
-          <label className="form-control w-full">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              className="input input-bordered w-full"
-              {...register("password_confirmation", {
-                required: {
-                  value: true,
-                  message: "Confirm Password not matche",
-                },
-              })}
-            />
-          </label>
-
-          <button className="btn btn-md bg-btnprimary w-full text-white mt-10">
-            Sign Up
-          </button>
-          <div className="text-sm text-center flex gap-1 m-auto">
-            Already have an account?
-            <span className="font-bold">
-              <Link to="/signin">Sign In</Link>
-            </span>
+          <div className="flex flex-col gap-4">
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Email</Label>
+              <Input
+                // type="email"
+                placeholder="Enter your email address"
+                {...register("email", {
+                  required: {
+                    value: true,
+                    message: "Email is required",
+                  },
+                })}
+              />
+              {errors.email && (
+                <small className="text-red-500 text-xs  max-w-96">
+                  {errors.email.message}
+                </small>
+              )}
+            </div>
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Password</Label>
+              <Input
+                type="password"
+                placeholder="Enter your password"
+                {...register("password", {
+                  required: {
+                    value: true,
+                    message: "Password is required",
+                  },
+                })}
+              />
+              {errors.password && (
+                <small className="text-red-500 text-xs  max-w-96">
+                  {errors.password.message}
+                </small>
+              )}
+            </div>
+            <div className="grid w-full items-center gap-1.5">
+              <Label>Confirm Password</Label>
+              <Input
+                type="password"
+                placeholder="Enter your confirm password"
+                {...register("password_confirmation", {
+                  required: {
+                    value: true,
+                    message: "Confirm Password not matche",
+                  },
+                })}
+              />
+            </div>
+            <div className="flex flex-col w-full mt-5 gap-4">
+              <Button className="font-bold">Sign Up</Button>
+              <div className="text-sm text-center m-auto">
+                Already have an account?{" "}
+                <span className="font-bold">
+                  <Link to="/signin">Sign In</Link>
+                </span>
+              </div>
+            </div>
           </div>
         </form>
       </div>

@@ -65,11 +65,11 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
             </Button>
             <div className="hidden lg:gap-5 lg:flex lg:items-center">
               <Button>
-                <Link className="text-md" to="/sign-in">
+                <Link className="text-md" to="/signin">
                   Sign in
                 </Link>
               </Button>
-              <Link className="text-md" to="/sign-up">
+              <Link className="text-md" to="/signup">
                 Sign up
               </Link>
             </div>
@@ -97,10 +97,10 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
             ))}
           </div>
           <div className="flex flex-col gap-4 absolute bottom-0">
-            <Link className="uppercase text-2xl" to="/sign-in">
+            <Link className="uppercase text-2xl" to="/signin">
               Sign in
             </Link>
-            <Link className="uppercase text-2xl" to="/sign-up">
+            <Link className="uppercase text-2xl" to="/signup">
               Sign up
             </Link>
           </div>

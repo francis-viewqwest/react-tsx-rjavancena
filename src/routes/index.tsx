@@ -20,9 +20,26 @@ import Inventory from "../pages/admin/protected/Inventory";
 import Users from "../pages/admin/protected/Users";
 import Orders from "../pages/admin/protected/Orders";
 import ProductList from "../pages/admin/protected/ProductList";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 const Routes: React.FC = () => {
   const { token } = useAuth();
+
+  const fetchEudevice = async () => {
+    try {
+      const res = await axios.get(import.meta.env.VITE_BASE_URL + "eu-device");
+
+      Cookies.set("eu", res.data.eu);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEudevice();
+  }, []);
 
   //* Public Routes
   const publicRoutes = [
