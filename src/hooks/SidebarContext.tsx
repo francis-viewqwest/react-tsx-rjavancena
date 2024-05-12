@@ -17,7 +17,13 @@ export const SidebarProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <SidebarContext.Provider value={{ open, setOpen, handleExpandSidebar }}>
+    <SidebarContext.Provider
+      value={{
+        open,
+        setOpen,
+        handleExpandSidebar,
+      }}
+    >
       {children}
     </SidebarContext.Provider>
   );

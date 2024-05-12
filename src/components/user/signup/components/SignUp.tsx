@@ -90,7 +90,7 @@ const SignUp: React.FC = () => {
             <div className="grid w-full items-center gap-1.5">
               <Label>Email</Label>
               <Input
-                // type="email"
+                type="email"
                 placeholder="Enter your email address"
                 {...register("email", {
                   required: {

@@ -3,13 +3,18 @@
 export interface ProductInventory {
   id: number;
   img: any;
-  productName: string;
+  name: string;
   category: string;
-  variants: number;
+  variant: number;
   stock: number;
   totalSells: number;
   totalDisc: number;
   totalReturn: number;
+}
+
+//* API CONFIG INTERFACE
+export interface ApiConfig {
+  url: string;
 }
 
 //* DATA TABLE COLUMNS INTERFACE

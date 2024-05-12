@@ -21,59 +21,63 @@ import {
 } from "@/components/ui/accordion";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "@/hooks/SidebarContext";
+import { useSelector } from "react-redux";
 
 const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
+
   const location = useLocation();
 
-  const menus = [
-    {
-      title: "Menu",
-      path: "/app/menu",
-      icon: "heroicons-outline:view-grid",
-    },
-    {
-      title: "Dashboard",
-      path: "/app/dashboard",
-      icon: "heroicons-outline:chart-pie",
-    },
-    {
-      title: "Inventory",
-      path: "/app/inventory",
-      icon: "heroicons-outline:cube",
-    },
-    {
-      title: "Users",
-      path: "/app/users",
-      icon: "heroicons-outline:user-group",
-    },
-    {
-      title: "Orders",
-      icon: "heroicons-outline:clipboard-list",
-      submenus: [
-        {
-          title: "Customer Order",
-          path: "/app/customer-order",
-          icon: "heroicons-outline:user-group",
-        },
-        {
-          title: "Return Order",
-          path: "/app/return-order",
-          icon: "heroicons-outline:user-group",
-        },
-        {
-          title: "Failed Delivery",
-          path: "/app/failed-delivery",
-          icon: "heroicons-outline:user-group",
-        },
-        {
-          title: "Cancellation",
-          path: "/app/cancellation",
-          icon: "heroicons-outline:user-group",
-        },
-      ],
-    },
-  ];
+  const sideNavRoutes = useSelector((state) => state.user.sidebar);
+
+  // const menus = [
+  //   {
+  //     title: "Menu",
+  //     path: "/app/menu",
+  //     icon: "heroicons-outline:view-grid",
+  //   },
+  //   {
+  //     title: "Dashboard",
+  //     path: "/app/dashboard",
+  //     icon: "heroicons-outline:chart-pie",
+  //   },
+  //   {
+  //     title: "Inventory",
+  //     path: "/app/inventory",
+  //     icon: "heroicons-outline:cube",
+  //   },
+  //   {
+  //     title: "Users",
+  //     path: "/app/users",
+  //     icon: "heroicons-outline:user-group",
+  //   },
+  //   {
+  //     title: "Orders",
+  //     icon: "heroicons-outline:clipboard-list",
+  //     submenus: [
+  //       {
+  //         title: "Customer Order",
+  //         path: "/app/customer-order",
+  //         icon: "heroicons-outline:user-group",
+  //       },
+  //       {
+  //         title: "Return Order",
+  //         path: "/app/return-order",
+  //         icon: "heroicons-outline:user-group",
+  //       },
+  //       {
+  //         title: "Failed Delivery",
+  //         path: "/app/failed-delivery",
+  //         icon: "heroicons-outline:user-group",
+  //       },
+  //       {
+  //         title: "Cancellation",
+  //         path: "/app/cancellation",
+  //         icon: "heroicons-outline:user-group",
+  //       },
+  //     ],
+  //   },
+  // ];
 
   return (
     <>
@@ -90,7 +94,7 @@ const Sidebar: React.FC = () => {
             </DrawerHeader>
             <div className="p-4 pb-0 px-3">
               <div className="flex flex-col gap-2">
-                {menus.map((menu, index) => (
+                {sideNavRoutes.map((menu, index) => (
                   <React.Fragment key={index}>
                     {menu.submenus ? (
                       <Accordion type="single" collapsible>
@@ -134,7 +138,7 @@ const Sidebar: React.FC = () => {
                                       }),
                                       "justify-between ml-7 text-neutral-600 flex gap-10"
                                     )}
-                                    to={submenu.path}
+                                    to={`app${submenu.path}`}
                                   >
                                     {submenu.title}
                                   </Link>
@@ -146,6 +150,7 @@ const Sidebar: React.FC = () => {
                       </Accordion>
                     ) : (
                       <Link
+                        reloadDocument
                         className={cn(
                           buttonVariants({
                             size: "sm",
@@ -153,7 +158,7 @@ const Sidebar: React.FC = () => {
                           }),
                           "justify-between font-medium"
                         )}
-                        to={menu.path}
+                        to={`/app${menu.path}`}
                       >
                         <div
                           className={`flex items-center gap-3 text-start text-neutral-600`}
@@ -195,7 +200,7 @@ const Sidebar: React.FC = () => {
           </Button>
         </div>
         <nav className="gap-2 flex flex-col pt-10 ease-in-out transition-all">
-          {menus.map((menu, index) => (
+          {sideNavRoutes.map((menu, index) => (
             <React.Fragment key={index}>
               {menu.submenus ? (
                 <Accordion type="single" collapsible>
@@ -242,7 +247,7 @@ const Sidebar: React.FC = () => {
                                   "bg-primary text-white hover:bg-primary/90 hover:text-white"
                                 }`
                               )}
-                              to={submenu.path}
+                              to={`/app${submenu.path}`}
                             >
                               {submenu.title}
                             </Link>
@@ -264,7 +269,7 @@ const Sidebar: React.FC = () => {
                       "bg-primary text-white hover:bg-primary/90 hover:text-white"
                     }`
                   )}
-                  to={menu.path}
+                  to={`/app${menu.path}`}
                 >
                   <div className={`flex items-center gap-3 text-start`}>
                     <Icon fontSize={17} icon={menu.icon} />

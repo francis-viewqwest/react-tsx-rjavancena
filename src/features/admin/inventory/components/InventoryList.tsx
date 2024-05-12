@@ -6,6 +6,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -27,54 +37,51 @@ import { Icon } from "@iconify/react";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ProductInventory } from "@/interface/InterfaceType";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
+import _ from "lodash";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-const InventoryList: React.FC = () => {
-  const product: ProductInventory[] = [
-    {
-      id: 1,
-      img: null,
-      productName: "2B ACRYLON 4",
-      category: "Paint",
-      variants: 4,
-      stock: 50,
-      totalSells: 124,
-      totalDisc: 2,
-      totalReturn: 2,
-    },
-    {
-      id: 2,
-      img: null,
-      productName: "2B ACRYLON 4",
-      category: "Paint",
-      variants: 4,
-      stock: 50,
-      totalSells: 124,
-      totalDisc: 2,
-      totalReturn: 2,
-    },
-    {
-      id: 3,
-      img: null,
-      productName: "2B ACRYLON 4",
-      category: "Paint",
-      variants: 4,
-      stock: 50,
-      totalSells: 124,
-      totalDisc: 2,
-      totalReturn: 2,
-    },
-  ];
+interface InventoryListProps {
+  dataInventory: {
+    result: {
+      data: ProductInventory[];
+    };
+  };
+}
+
+const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
+  const [modalData, setModalData] = useState({});
+
+  const { control, handleSubmit, getValues, setValue } = useForm({});
+
+  const handleEdit = (values) => {
+    console.log(values.details);
+
+    // values.details.map((val) => setValue(val.value))
+    values.details.forEach((val) => {
+      setValue(_.replace(_.lowerCase(val.label), " ", "_"), val.value);
+    });
+    console.log("Updated values:", getValues());
+    setModalData(values);
+  };
 
   return (
     <>
-      {product.map((item, index) => (
-        <Link key={index} to="/app/product-list">
-          <Card className="md:flex md:items-center md:justify-between px-4">
+      {dataInventory.map((item, index) => (
+        <Card className="md:flex md:items-center md:justify-between px-4">
+          <Link
+            className="w-full md:flex md:items-center md:justify-between px-4"
+            key={index}
+            to="/app/product-list"
+          >
             <div className="md:flex md:items-center">
-              {/* <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" /> */}
+              <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" />
               <CardHeader className="w-full justify-start left-0 lg:flex lg:flex-col">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-md">{item.productName}</CardTitle>
+                  <CardTitle className="text-md">{item.name}</CardTitle>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="lg:hidden">
                       <Button variant="ghost">
@@ -100,7 +107,7 @@ const InventoryList: React.FC = () => {
                   </DropdownMenu>
                 </div>
                 <CardDescription className="flex gap-3 items-center">
-                  <Badge>{item.variants} Variants</Badge>
+                  <Badge>{item.variant} Variants</Badge>
                   <Label className="font-medium text-xs">{item.category}</Label>
                   <div className="flex items-center gap-1">
                     <IconCircleFilled size="9" color="green" />
@@ -122,7 +129,7 @@ const InventoryList: React.FC = () => {
                 </h1>
                 <Label className="text-sm font-semibold flex items-center">
                   <Icon fontSize={16} icon="tabler:currency-peso" />
-                  <span>{item.totalSells}</span>
+                  <span>{item.total_sales}</span>
                 </Label>
               </div>
               <div className="flex flex-col gap-3">
@@ -130,7 +137,7 @@ const InventoryList: React.FC = () => {
                   Total Discounted
                 </h1>
                 <Label className="text-sm font-semibold">
-                  {item.totalDisc}
+                  {item.total_discounted}
                 </Label>
               </div>
               <div className="flex flex-col gap-3">
@@ -138,35 +145,72 @@ const InventoryList: React.FC = () => {
                   Total Return
                 </h1>
                 <Label className="text-sm font-semibold">
-                  {item.totalReturn}
+                  {item.total_return}
                 </Label>
               </div>
             </CardContent>
+          </Link>
+
+          <Dialog>
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Button variant="ghost">
                   <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="w-full">
                 <DropdownMenuLabel>Action</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  Edit
-                  <DropdownMenuShortcut>
-                    <Pencil1Icon className="w-4 h-4" />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  Remove
-                  <DropdownMenuShortcut>
-                    <TrashIcon className="w-4 h-4" color="red" />
-                  </DropdownMenuShortcut>
-                </DropdownMenuItem>
+                {item.action.map((act) => (
+                  <>
+                    <DropdownMenuItem>
+                      <DialogTrigger
+                        className="flex items-center w-full justify-between"
+                        onClick={() => handleEdit(act)}
+                      >
+                        {act.button_name}
+                        <DropdownMenuShortcut>
+                          <Pencil1Icon className="w-4 h-4" />
+                        </DropdownMenuShortcut>
+                      </DialogTrigger>
+                    </DropdownMenuItem>
+                  </>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          </Card>
-        </Link>
+            <DialogPortal>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit product details</DialogTitle>
+                  <DialogDescription>
+                    Make changes to your product details here. Click save when
+                    you're done.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-rows-auto gap-5 py-4">
+                  {modalData?.details?.map((detail) => (
+                    <div className="grid grid-cols-2 items-center gap-4">
+                      <Label htmlFor="name">{detail.label}</Label>
+                      <Input
+                        id="name"
+                        value={detail.value}
+                        className="col-span-3"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <DialogFooter>
+                  <Button type="submit">Save changes</Button>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
+        </Card>
       ))}
     </>
   );
