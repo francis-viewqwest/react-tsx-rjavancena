@@ -43,6 +43,9 @@ import { useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
 import _ from "lodash";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { updateInventoryParent } from "@/app/slice/inventorySlice";
+import Cookies from "js-cookie";
 
 interface InventoryListProps {
   dataInventory: {
@@ -54,18 +57,41 @@ interface InventoryListProps {
 
 const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
   const [modalData, setModalData] = useState({});
+  const dispatch = useDispatch();
 
-  const { control, handleSubmit, getValues, setValue } = useForm({});
+  const { control, handleSubmit, getValues, setValue, register } = useForm({});
+
+  // modalData.details.forEach((val) => {
+  //   console.log(val.value)
+  // })
 
   const handleEdit = (values) => {
     console.log(values.details);
 
-    // values.details.map((val) => setValue(val.value))
     values.details.forEach((val) => {
-      setValue(_.replace(_.lowerCase(val.label), " ", "_"), val.value);
+      const fieldName = _.replace(_.lowerCase(val.label), " ", "_");
+      setValue(fieldName, val.value);
     });
     console.log("Updated values:", getValues());
     setModalData(values);
+  };
+
+  const handleSaveClick = () => {
+    const formValues = getValues();
+    const euDevice = Cookies.get("eu");
+
+    const payload = {
+      ...formValues,
+      eu_device: euDevice,
+    };
+
+    dispatch(
+      updateInventoryParent({
+        url: "inventory/parent/update",
+        method: "POST",
+        data: payload,
+      })
+    );
   };
 
   return (
@@ -193,14 +219,19 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
                       <Label htmlFor="name">{detail.label}</Label>
                       <Input
                         id="name"
-                        value={detail.value}
+                        type="text"
+                        {...register(
+                          _.replace(_.lowerCase(detail.label), " ", "_")
+                        )}
                         className="col-span-3"
                       />
                     </div>
                   ))}
                 </div>
                 <DialogFooter>
-                  <Button type="submit">Save changes</Button>
+                  <Button type="submit" onClick={() => handleSaveClick()}>
+                    Save changes
+                  </Button>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">
                       Close
