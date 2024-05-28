@@ -67,6 +67,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
 
   const handleEdit = (values) => {
     console.log(values.details);
+    console.log(values);
 
     values.details.forEach((val) => {
       const fieldName = _.replace(_.lowerCase(val.label), " ", "_");
@@ -81,8 +82,14 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
     const euDevice = Cookies.get("eu");
 
     const payload = {
-      ...formValues,
-      eu_device: euDevice,
+      items: [
+        {
+          inventory_id: "",
+          name: formValues.product_name,
+          category: formValues.product_category,
+          eu_device: euDevice,
+        },
+      ],
     };
 
     dispatch(

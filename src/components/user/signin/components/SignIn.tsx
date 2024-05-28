@@ -9,6 +9,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/app/AuthProvider";
 
 interface FormValues {
   email: String;
@@ -22,6 +23,8 @@ const SignIn: React.FC = () => {
     formState: { errors },
     setError,
   } = useForm<FormValues>();
+
+  const { setToken } = useAuth();
 
   const navigate = useNavigate();
 
@@ -38,13 +41,11 @@ const SignIn: React.FC = () => {
       console.log(res);
       const access_token = res.data.access_token;
       Cookies.set("token", res.data.access_token);
+      setToken(access_token);
 
-      toast({
-        title: res.data.message,
-        description:
-          "No account found with this email. Please sign up to create a new account.",
-      });
-      navigate("/app/menu");
+      if (access_token) {
+        navigate("/app/menu");
+      }
     } catch (error: any) {
       console.log(error);
 

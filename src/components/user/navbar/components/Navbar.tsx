@@ -46,7 +46,7 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
             <div className="flex gap-12 text-neutral-500">
               {navRoutes.map((nav, index) => (
                 <Link
-                  className="text-md hidden font-medium lg:block lg:hover:text-black lg:hover:font-medium ease-in-out"
+                  className="text-md hidden font-medium xl:block lg:hover:text-black lg:hover:font-medium ease-in-out"
                   key={index}
                   to={nav.path}
                 >
@@ -63,7 +63,7 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
             <Button variant="outline" className="rounded-full" size="icon">
               <IconShoppingBag size={22} />
             </Button>
-            <div className="hidden lg:gap-5 lg:flex lg:items-center">
+            <div className="hidden lg:gap-5 xl:flex lg:items-center">
               <Button>
                 <Link className="text-md" to="/signin">
                   Sign in
@@ -74,7 +74,7 @@ const Navbar: React.FC<{ token: string }> = ({ token }) => {
               </Link>
             </div>
             <DrawerTrigger
-              className="lg:hidden rounded-none shadow-none"
+              className="xl:hidden rounded-none shadow-none"
               asChild
             >
               <Button className="rounded-sm right-0 w-14" asChild>

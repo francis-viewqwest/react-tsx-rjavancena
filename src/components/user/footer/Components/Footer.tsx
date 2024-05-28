@@ -6,40 +6,40 @@ const Footer: React.FC = () => {
   return (
     <>
       <footer className="max-w-[1200px] p-4 m-auto">
-        <div className="footer py-10 lg:flex lg:justify-between">
-          <aside className="flex gap-4 items-center">
+        <div className="footer py-10 md:flex md:justify-between">
+          <aside className="flex gap-4 items-center top-0">
             <img src={rjavancena} alt="" />
-            <p className="text-sm">
+            <p className="text-xs">
               RJ Avancena Enterprises
               <br />
               Providing reliable tech since 1996
             </p>
           </aside>
           <nav className="py-4 flex  flex-col gap-3">
-            <h6 className="footer-title">Services</h6>
-            <a className="link link-hover">Branding</a>
-            <a className="link link-hover">Design</a>
-            <a className="link link-hover">Marketing</a>
-            <a className="link link-hover">Advertisement</a>
+            <h6 className="font-semibold">Services</h6>
+            <a className="text-neutral-600 text-sm">Branding</a>
+            <a className="text-neutral-600 text-sm">Design</a>
+            <a className="text-neutral-600 text-sm">Marketing</a>
+            <a className="text-neutral-600 text-sm">Advertisement</a>
           </nav>
           <nav className="py-4 flex  flex-col gap-3">
-            <h6 className="footer-title">Company</h6>
-            <a className="link link-hover">About us</a>
-            <a className="link link-hover">Contact</a>
-            <a className="link link-hover">Jobs</a>
-            <a className="link link-hover">Press kit</a>
+            <h6 className="font-semibold">Company</h6>
+            <a className="text-neutral-600 text-sm">About us</a>
+            <a className="text-neutral-600 text-sm">Contact</a>
+            <a className="text-neutral-600 text-sm">Jobs</a>
+            <a className="text-neutral-600 text-sm">Press kit</a>
           </nav>
           <nav className="py-4 flex  flex-col gap-3">
-            <h6 className="footer-title">Legal</h6>
-            <a className="link link-hover">Terms of use</a>
-            <a className="link link-hover">Privacy policy</a>
-            <a className="link link-hover">Cookie policy</a>
+            <h6 className="font-semibold">Legal</h6>
+            <a className="text-neutral-600 text-sm">Terms of use</a>
+            <a className="text-neutral-600 text-sm">Privacy policy</a>
+            <a className="text-neutral-600 text-sm">Cookie policy</a>
           </nav>
         </div>
         <div className="divider"></div>
         <div className="footer  items-center p-4 lg:flex lg:items-center lg:justify-between">
           <aside className="items-center grid-flow-col">
-            <p>© RJ Avancena, Ent. 2024.</p>
+            <p className="text-xs">© RJ Avancena, Ent. 2024.</p>
           </aside>
           <nav className="flex gap-4 md:place-self-center md:justify-self-end">
             <Link to="/">

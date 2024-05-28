@@ -3,7 +3,7 @@
   "data": {
     "inventory": [
       {
-        "inventory_id": "eyJpdiI6Imxyd3VoTEF4ZHdDVVVrdkJDUU5lcmc9PSIsInZhbHVlIjoiYXViV2w3ZUw4MUxGNVFFWkRkbENBdz09IiwibWFjIjoiMGVkZWZjOTk1MzViNGFiMzkxYzBmN2YwZDUwYTAxYTQ0Y2I1OWNmZTQ3MWE4Y2M0MTg5NGFkMzVhYmUxNmI2YSIsInRhZyI6IiJ9",
+        "inventory_id": "eyJpdiI6InRhb0tUMXVHN3NxbVY5alBqT3h5YVE9PSIsInZhbHVlIjoibEp3RUs2M2hPODcxZEhKKzRLQlpYUT09IiwibWFjIjoiZjY4ZWNhYmE3OTVkMWMxYzQzYmI0ZGI2Nzg3Y2E3ZTZkN2Y5Yzc3ZGM3Yzk4M2E4OWFmM2E2N2E3ZDE5NTg0MCIsInRhZyI6IiJ9",
         "name": "z",
         "category": "prod-z",
         "created_at": "May 12, 2024 12:30 am",
@@ -16,11 +16,11 @@
         "action": [
           {
             "url": "inventory/parent/update",
-            "payload": ["inventory_id", "name", "category"],
+            "payload": ["inventory_id", "name", "category", "eu_device"],
             "method": "POST",
             "icon": "radix-icons:pencil-1",
             "button_name": "Edit",
-            "action": "modal",
+            "container": "modal",
             "details": [
               {
                 "label": "Product Name",
@@ -30,7 +30,7 @@
               {
                 "label": "Product Category",
                 "type": "input",
-                "value": "Hardware Tools"
+                "value": "prod-z"
               }
             ]
           },
@@ -40,16 +40,24 @@
             "method": "DELETE",
             "icon": "radix-icons:trash",
             "button_name": "Delete",
-            "action": null,
-            "details": {
-              "name": "z",
-              "category": "prod-z"
-            }
+            "container": "modal",
+            "details": [
+              {
+                "label": "Product Name",
+                "type": "input",
+                "value": "z"
+              },
+              {
+                "label": "Product Category",
+                "type": "input",
+                "value": "prod-z"
+              }
+            ]
           }
         ],
         "view": [
           {
-            "url": "inventory/parentproduct/show/eyJpdiI6Imxyd3VoTEF4ZHdDVVVrdkJDUU5lcmc9PSIsInZhbHVlIjoiYXViV2w3ZUw4MUxGNVFFWkRkbENBdz09IiwibWFjIjoiMGVkZWZjOTk1MzViNGFiMzkxYzBmN2YwZDUwYTAxYTQ0Y2I1OWNmZTQ3MWE4Y2M0MTg5NGFkMzVhYmUxNmI2YSIsInRhZyI6IiJ9",
+            "url": "inventory/parent/product/show/eyJpdiI6InRhb0tUMXVHN3NxbVY5alBqT3h5YVE9PSIsInZhbHVlIjoibEp3RUs2M2hPODcxZEhKKzRLQlpYUT09IiwibWFjIjoiZjY4ZWNhYmE3OTVkMWMxYzQzYmI0ZGI2Nzg3Y2E3ZTZkN2Y5Yzc3ZGM3Yzk4M2E4OWFmM2E2N2E3ZDE5NTg0MCIsInRhZyI6IiJ9",
             "method": "GET"
           }
         ]

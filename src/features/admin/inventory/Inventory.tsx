@@ -19,8 +19,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import InventoryList from "./components/InventoryList";
-import { inventoryData, inventoryStatus } from "@/app/slice/inventorySlice";
-import { useSelector } from "react-redux";
+import {
+  inventoryData,
+  createInventoryData,
+  inventoryStatus,
+} from "@/app/slice/inventorySlice";
+import { useDispatch, useSelector } from "react-redux";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Cookies from "js-cookie";
 
 const Inventory: React.FC = () => {
   const inventoryResData: any[] = useSelector(inventoryData);
@@ -28,6 +34,42 @@ const Inventory: React.FC = () => {
   const [dataInventory, setDataInventory] = useState<any[]>(
     inventoryResData?.data?.inventory || []
   );
+
+  const dispatch = useDispatch();
+
+  interface CreateProduct {
+    productName: string;
+    productCategory: string;
+  }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<CreateProduct>();
+
+  const onSubmit: SubmitHandler<CreateProduct> = (data, invBtn) => {
+    const euDevice = Cookies.get("eu");
+
+    const payload = {
+      name: data.productName,
+      category: data.productCategory,
+      eu_device: euDevice,
+    };
+
+    dispatch(
+      createInventoryData({
+        url: invBtn?.url,
+        method: invBtn.method,
+        data: payload,
+      })
+    );
+  };
+
+  const handleFormSubmit = (invBtn) => (data) => {
+    onSubmit(data, invBtn);
+  };
 
   useEffect(() => {
     console.log(inventoryResData);
@@ -62,55 +104,60 @@ const Inventory: React.FC = () => {
           </Select>
         </div>
 
-        {/* {dataInventory.map((invBtn, index) => (
+        {inventoryResData.data?.buttons?.map((invBtn, index) => (
           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm" className="w-32">
-                Create Product
+                {invBtn.button_name}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Create New Product</DialogTitle>
-                <DialogDescription>
-                  Fill out the following details to bring your new product.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Product Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter product name"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="username" className="text-right">
-                      Category
+              <form onSubmit={handleSubmit(handleFormSubmit(invBtn))}>
+                <DialogHeader>
+                  <DialogTitle>Create New Product</DialogTitle>
+                  <DialogDescription>
+                    Fill out the following details to bring your new product.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex flex-col gap-8 py-4">
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="name" className="text-left">
+                      Product Name
                     </Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select product category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Hardware</SelectItem>
-                        <SelectItem value="dark">Power Tools</SelectItem>
-                        <SelectItem value="system">Paints</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      id="name"
+                      placeholder="Enter product name"
+                      {...register("productName", {
+                        required: {
+                          value: true,
+                          message: "Product name is required",
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Label htmlFor="name" className="text-left">
+                      Product Category
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder="Enter product category"
+                      {...register("productCategory", {
+                        required: {
+                          value: true,
+                          message: "Product category is required",
+                        },
+                      })}
+                    />
                   </div>
                 </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button type="submit">Save changes</Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
-        ))} */}
+        ))}
       </div>
 
       <div className="flex flex-col gap-4 py-4">

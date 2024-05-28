@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ApiConfig } from "@/interface/InterfaceType"
+import axiosClient from "@/axios-client";
+import Cookies from "js-cookie";
 
 
 interface InventoryState {
@@ -20,6 +22,8 @@ interface ApiConfig {
     method: string;
     data?: any;
 }
+
+
 
 const inventorySlice = createSlice({
     name: "inventory",
@@ -45,15 +49,29 @@ const inventorySlice = createSlice({
         builder
             .addCase(updateInventoryParent.pending, (state) => {
                 state.status = "pending";
-                state.error = null
+                state.error = null;
             })
             .addCase(updateInventoryParent.fulfilled, (state, action) => {
                 state.status = "fulfilled";
-                state.data = action.payload
+                state.data = action.payload;
             })
             .addCase(updateInventoryParent.rejected, (state, action) => {
                 state.status = "rejected";
-                state.error = action.error.message
+                state.error = action.error.message;
+            })
+
+        builder
+            .addCase(createInventoryData.pending, (state) => {
+                state.status = "pending";
+                state.error = null;
+            })
+            .addCase(createInventoryData.fulfilled, (state, action) => {
+                state.status = "fulfilled";
+                state.data = action.payload;
+            })
+            .addCase(createInventoryData.rejected, (state, action) => {
+                state.status = "rejected";
+                state.error = action.error.message;
             })
     }
 })
@@ -62,12 +80,31 @@ const inventorySlice = createSlice({
 //* GET INVENTORY
 export const getInventoryData = createAsyncThunk("inventory/getInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {
-        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}${apiconfig.url}`)
+        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}${apiconfig.url}`, { headers: { Authorization: `Bearer ${Cookies.get("token")}` } })
 
         return res.data
     } catch (error: any) {
         console.log(error);
         return rejectWithValue(error.response.data)
+    }
+})
+
+//* CREATE INVENTORY
+export const createInventoryData = createAsyncThunk("inventory/createInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+
+    console.log(apiconfig)
+    try {
+
+        const res = await axiosClient({
+            url: apiconfig.url,
+            method: apiconfig.method,
+            data: apiconfig.data
+        })
+
+        return res.data;
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data);
     }
 })
 
@@ -92,5 +129,7 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
 
 export const inventoryData = (state: any) => state.inventory?.data
 export const inventoryStatus = (state: any) => state.inventory?.status;
+
+
 
 export default inventorySlice.reducer

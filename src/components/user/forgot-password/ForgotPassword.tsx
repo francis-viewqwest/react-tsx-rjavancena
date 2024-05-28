@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "../../../app/AuthProvider";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
 
 interface forgotPassForm {
   email: string;
@@ -35,31 +36,29 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-screen p-4 py-44 md:flex items-center max-w-[1200px] m-auto">
+      <div className="w-full h-screen p-4 py-44 md:flex items-center max-w-[1200px] lg:py-0 m-auto">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="m-auto lg:p-8 flex flex-col gap-4 lg:w-2/6 rounded-md"
+          className="m-auto lg:p-4 flex flex-col gap-4 lg:w-2/6 rounded-md"
         >
           <div className="flex flex-col items-center m-auto gap-3 mb-10">
-            <h1 className="text-2xl font-bold">Forgot Your Password?</h1>
-            <p className="text-sm text-center">
+            <h1 className="text-xl font-bold">Forgot Your Password?</h1>
+            <p className="text-sm text-center max-w-72">
               No worries, it happens to the best of us. Just follow the steps
               below to reset your password.
             </p>
           </div>
-          <label className="form-control w-full">
-            <input
-              type="text"
-              placeholder="Email Address"
-              className="input input-bordered w-full"
-              {...register("email", {
-                required: {
-                  value: true,
-                  message: "email is required",
-                },
-              })}
-            />
-          </label>
+          <Input
+            className="max-w-72 mx-auto"
+            type="email"
+            placeholder="Enter your Email Address"
+            {...register("email", {
+              required: {
+                value: true,
+                message: "email is required",
+              },
+            })}
+          />
 
           <button className="btn btn-md bg-btnprimary w-full text-white mt-10">
             Reset Password
