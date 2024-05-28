@@ -57,23 +57,20 @@ interface InventoryListProps {
 
 const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
   const [modalData, setModalData] = useState({});
+  const [funcData, setFuncData] = useState({});
   const dispatch = useDispatch();
 
   const { control, handleSubmit, getValues, setValue, register } = useForm({});
 
-  // modalData.details.forEach((val) => {
-  //   console.log(val.value)
-  // })
-
   const handleEdit = (values) => {
-    console.log(values.details);
     console.log(values);
+    setFuncData(values)
 
     values.details.forEach((val) => {
       const fieldName = _.replace(_.lowerCase(val.label), " ", "_");
       setValue(fieldName, val.value);
     });
-    console.log("Updated values:", getValues());
+
     setModalData(values);
   };
 
@@ -84,7 +81,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
     const payload = {
       items: [
         {
-          inventory_id: "",
+          inventory_id: funcData.inventory_id,
           name: formValues.product_name,
           category: formValues.product_category,
           eu_device: euDevice,
@@ -94,7 +91,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
 
     dispatch(
       updateInventoryParent({
-        url: "inventory/parent/update",
+        url: funcData.url,
         method: "POST",
         data: payload,
       })
@@ -104,11 +101,14 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
   return (
     <>
       {dataInventory.map((item, index) => (
-        <Card className="md:flex md:items-center md:justify-between px-4">
+        <Card
+          key={index}
+          className="md:flex md:items-center md:justify-between px-4"
+        >
           <Link
             className="w-full md:flex md:items-center md:justify-between px-4"
-            key={index}
-            to="/app/product-list"
+            // to="/app/product-list"
+            to={item.view[0].url}
           >
             <div className="md:flex md:items-center">
               <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" />

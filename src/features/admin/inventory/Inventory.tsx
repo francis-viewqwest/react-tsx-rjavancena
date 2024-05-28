@@ -23,6 +23,8 @@ import {
   inventoryData,
   createInventoryData,
   inventoryStatus,
+  createInventoryStatus,
+  getInventoryData,
 } from "@/app/slice/inventorySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -31,9 +33,7 @@ import Cookies from "js-cookie";
 const Inventory: React.FC = () => {
   const inventoryResData: any[] = useSelector(inventoryData);
   const inventoryResStatus: string = useSelector(inventoryStatus);
-  const [dataInventory, setDataInventory] = useState<any[]>(
-    inventoryResData?.data?.inventory || []
-  );
+  const [dataInventory, setDataInventory] = useState<any[]>([]);
 
   const dispatch = useDispatch();
 
@@ -53,9 +53,13 @@ const Inventory: React.FC = () => {
     const euDevice = Cookies.get("eu");
 
     const payload = {
-      name: data.productName,
-      category: data.productCategory,
-      eu_device: euDevice,
+      items: [
+        {
+          name: data.productName,
+          category: data.productCategory,
+          eu_device: euDevice,
+        },
+      ],
     };
 
     dispatch(
@@ -77,7 +81,8 @@ const Inventory: React.FC = () => {
       case "pending":
         break;
       case "fulfilled":
-        setDataInventory(inventoryResData.data.inventory);
+        // dispatch(getInventoryData());
+        setDataInventory(inventoryResData?.data?.inventory);
         break;
       case "rejected":
         alert("Rejected");
@@ -85,6 +90,7 @@ const Inventory: React.FC = () => {
       default:
         break;
     }
+
   }, [inventoryResStatus]);
 
   return (
@@ -104,60 +110,61 @@ const Inventory: React.FC = () => {
           </Select>
         </div>
 
-        {inventoryResData.data?.buttons?.map((invBtn, index) => (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm" className="w-32">
-                {invBtn.button_name}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <form onSubmit={handleSubmit(handleFormSubmit(invBtn))}>
-                <DialogHeader>
-                  <DialogTitle>Create New Product</DialogTitle>
-                  <DialogDescription>
-                    Fill out the following details to bring your new product.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="flex flex-col gap-8 py-4">
-                  <div className="flex flex-col gap-3">
-                    <Label htmlFor="name" className="text-left">
-                      Product Name
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder="Enter product name"
-                      {...register("productName", {
-                        required: {
-                          value: true,
-                          message: "Product name is required",
-                        },
-                      })}
-                    />
+        {Array.isArray(inventoryResData.data?.buttons) &&
+          inventoryResData.data.buttons.map((invBtn, index) => (
+            <Dialog key={index}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="w-32">
+                  {invBtn.button_name}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <form onSubmit={handleSubmit(handleFormSubmit(invBtn))}>
+                  <DialogHeader>
+                    <DialogTitle>Create New Product</DialogTitle>
+                    <DialogDescription>
+                      Fill out the following details to bring your new product.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col gap-8 py-4">
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="name" className="text-left">
+                        Product Name
+                      </Label>
+                      <Input
+                        id="name"
+                        placeholder="Enter product name"
+                        {...register("productName", {
+                          required: {
+                            value: true,
+                            message: "Product name is required",
+                          },
+                        })}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="name" className="text-left">
+                        Product Category
+                      </Label>
+                      <Input
+                        id="name"
+                        placeholder="Enter product category"
+                        {...register("productCategory", {
+                          required: {
+                            value: true,
+                            message: "Product category is required",
+                          },
+                        })}
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-3">
-                    <Label htmlFor="name" className="text-left">
-                      Product Category
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder="Enter product category"
-                      {...register("productCategory", {
-                        required: {
-                          value: true,
-                          message: "Product category is required",
-                        },
-                      })}
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
-        ))}
+                  <DialogFooter>
+                    <Button type="submit">Save changes</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          ))}
       </div>
 
       <div className="flex flex-col gap-4 py-4">

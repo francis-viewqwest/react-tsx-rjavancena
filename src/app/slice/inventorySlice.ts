@@ -23,8 +23,6 @@ interface ApiConfig {
     data?: any;
 }
 
-
-
 const inventorySlice = createSlice({
     name: "inventory",
     initialState,
