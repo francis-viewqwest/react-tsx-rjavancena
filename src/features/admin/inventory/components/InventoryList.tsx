@@ -41,10 +41,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
-import _ from "lodash";
+import _, { update } from "lodash";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { updateInventoryParent } from "@/app/slice/inventorySlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateInventoryParent,
+  deleteInventoryData,
+  inventoryError,
+} from "@/app/slice/inventorySlice";
 import Cookies from "js-cookie";
 
 interface InventoryListProps {
@@ -58,13 +62,23 @@ interface InventoryListProps {
 const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
+  const updateErrorMessage = useSelector(inventoryError);
   const dispatch = useDispatch();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   const { control, handleSubmit, getValues, setValue, register } = useForm({});
 
-  const handleEdit = (values) => {
-    console.log(values);
-    setFuncData(values)
+  useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      password_confirmation: "",
+    },
+  });
+
+  const handleEdit = (values: any) => {
+    setFuncData(values);
 
     values.details.forEach((val) => {
       const fieldName = _.replace(_.lowerCase(val.label), " ", "_");
@@ -72,6 +86,13 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
     });
 
     setModalData(values);
+    setShowEditDialog(true);
+  };
+
+  const handleRemove = (values: any) => {
+    setFuncData(values);
+    setModalData(values);
+    setShowRemoveDialog(true);
   };
 
   const handleSaveClick = () => {
@@ -96,6 +117,28 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
         data: payload,
       })
     );
+  };
+
+  const handleDeleteClick = () => {
+    const euDevice = Cookies.get("eu");
+
+    const payload = {
+      inventory_id: funcData.inventory_id,
+      eu_device: euDevice,
+    };
+
+    dispatch(
+      deleteInventoryData({
+        url: funcData.url,
+        method: funcData.method,
+        data: payload,
+      })
+    );
+  };
+
+  const errorMessages = {
+    product_name: updateErrorMessage?.name,
+    product_category: updateErrorMessage?.category,
   };
 
   return (
@@ -196,56 +239,110 @@ const InventoryList: React.FC<InventoryListProps> = ({ dataInventory }) => {
                 <DropdownMenuSeparator />
                 {item.action.map((act) => (
                   <>
-                    <DropdownMenuItem>
-                      <DialogTrigger
-                        className="flex items-center w-full justify-between"
-                        onClick={() => handleEdit(act)}
-                      >
-                        {act.button_name}
-                        <DropdownMenuShortcut>
-                          <Pencil1Icon className="w-4 h-4" />
-                        </DropdownMenuShortcut>
-                      </DialogTrigger>
-                    </DropdownMenuItem>
+                    {act.button_name == "Edit" ? (
+                      <>
+                        <DropdownMenuItem>
+                          <DialogTrigger
+                            className="flex items-center w-full justify-between"
+                            onClick={() => handleEdit(act)}
+                          >
+                            {act.button_name}
+                            <DropdownMenuShortcut>
+                              <Icon fontSize={16} icon={act.icon} />
+                            </DropdownMenuShortcut>
+                          </DialogTrigger>
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <>
+                        <DropdownMenuItem>
+                          <DialogTrigger
+                            className="flex items-center w-full justify-between"
+                            onClick={() => handleRemove(act)}
+                          >
+                            {act.button_name}
+                            <DropdownMenuShortcut>
+                              <Icon fontSize={16} icon={act.icon} />
+                            </DropdownMenuShortcut>
+                          </DialogTrigger>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
             <DialogPortal>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Edit product details</DialogTitle>
-                  <DialogDescription>
-                    Make changes to your product details here. Click save when
-                    you're done.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid grid-rows-auto gap-5 py-4">
-                  {modalData?.details?.map((detail) => (
-                    <div className="grid grid-cols-2 items-center gap-4">
-                      <Label htmlFor="name">{detail.label}</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        {...register(
-                          _.replace(_.lowerCase(detail.label), " ", "_")
-                        )}
-                        className="col-span-3"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <DialogFooter>
-                  <Button type="submit" onClick={() => handleSaveClick()}>
-                    Save changes
-                  </Button>
-                  <DialogClose asChild>
-                    <Button type="button" variant="secondary">
-                      Close
+              {showEditDialog && (
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Edit product details</DialogTitle>
+                    <DialogDescription>
+                      Make changes to your product details here. Click save when
+                      you're done.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid grid-rows-auto gap-7 py-2">
+                    {modalData?.details?.map((detail: any) => (
+                      <div className="grid grid-cols-2 items-center gap-2 w-full">
+                        <Label className="font-medium">{detail.label}</Label>
+                        <Input
+                          type="text"
+                          {...register(
+                            _.replace(_.lowerCase(detail.label), " ", "_")
+                          )}
+                          className="col-span-3"
+                        />
+                        <Label className="text-red-500 w-full col-span-3">
+                          {errorMessages &&
+                            errorMessages[
+                              _.replace(_.lowerCase(detail.label), " ", "_")
+                            ]}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit" onClick={() => handleSaveClick()}>
+                      Save changes
                     </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
+                    <DialogClose asChild>
+                      <Button type="button" variant="secondary">
+                        Close
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              )}
+
+              {showRemoveDialog && (
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>
+                      Delete Product{" "}
+                      {modalData?.details?.map((detail) => detail.value)}
+                    </DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your product and remove it from your inventory.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="destructive"
+                      type="submit"
+                      onClick={() => handleDeleteClick()}
+                    >
+                      Delete
+                    </Button>
+                    <DialogClose asChild>
+                      <Button type="button" variant="secondary">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              )}
             </DialogPortal>
           </Dialog>
         </Card>

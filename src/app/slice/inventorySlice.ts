@@ -7,14 +7,18 @@ import Cookies from "js-cookie";
 
 interface InventoryState {
     data: object;
-    status: "idle" | "pending" | "fulfilled" | "rejected";
+    status: string;
     error: string | null | any;
+    createInventoryParentResponse: object,
+    updateInventoryParentResponse: object
 }
 
 const initialState: InventoryState = {
     data: {},
     status: "idle",
-    error: null,
+    error: false,
+    createInventoryParentResponse: {},
+    updateInventoryParentResponse: {},
 }
 
 interface ApiConfig {
@@ -27,49 +31,70 @@ const inventorySlice = createSlice({
     name: "inventory",
     initialState,
     reducers: {
-
+        resetLoading: (state) => {
+            state.status = "idle";
+        }
     },
     extraReducers: (builder) => {
+
+        //* GET INVENTORY 
         builder
             .addCase(getInventoryData.pending, (state) => {
-                state.status = "pending";
+                state.status = "getInventoryData/loading";
                 state.error = null
             })
             .addCase(getInventoryData.fulfilled, (state, action) => {
-                state.status = "fulfilled";
+                state.status = "getInventoryData/success";
                 state.data = action.payload
             })
             .addCase(getInventoryData.rejected, (state, action) => {
-                state.status = "rejected";
-                state.error = action.error.message
+                state.status = "getInventoryData/failed";
+                state.error = action.payload
             })
 
+        //* UPDATE INVENTORY 
         builder
             .addCase(updateInventoryParent.pending, (state) => {
-                state.status = "pending";
+                state.status = "updateInventoryParent/loading";
                 state.error = null;
             })
             .addCase(updateInventoryParent.fulfilled, (state, action) => {
-                state.status = "fulfilled";
+                state.status = "updateInventoryParent/success";
                 state.data = action.payload;
             })
             .addCase(updateInventoryParent.rejected, (state, action) => {
-                state.status = "rejected";
-                state.error = action.error.message;
+                state.status = "updateInventoryParent/failed";
+                state.error = action.payload;
             })
 
+        //* CREATE INVENTORY 
         builder
             .addCase(createInventoryData.pending, (state) => {
-                state.status = "pending";
+                state.status = "createInventoryParent/loading";
                 state.error = null;
             })
             .addCase(createInventoryData.fulfilled, (state, action) => {
-                state.status = "fulfilled";
+                state.status = "createInventoryParent/success";
                 state.data = action.payload;
             })
             .addCase(createInventoryData.rejected, (state, action) => {
-                state.status = "rejected";
-                state.error = action.error.message;
+                state.status = "createInventoryParent/failed";
+                state.error = action.payload;
+            })
+
+        //* DELETE INVENTORY 
+        builder
+            .addCase(deleteInventoryData.pending, (state) => {
+                state.status = "deleteInventoryData/loading";
+                state.error = null;
+            })
+            .addCase(deleteInventoryData.fulfilled, (state, action) => {
+                state.status = "deleteInventoryData/success";
+                state.data = action.payload;
+            })
+            .addCase(deleteInventoryData.rejected, (state, action) => {
+                state.status = "deleteInventoryData/failed";
+                state.error = action.payload
             })
     }
 })
@@ -78,7 +103,10 @@ const inventorySlice = createSlice({
 //* GET INVENTORY
 export const getInventoryData = createAsyncThunk("inventory/getInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {
-        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}${apiconfig.url}`, { headers: { Authorization: `Bearer ${Cookies.get("token")}` } })
+        const res = await axiosClient({
+            url: apiconfig.url,
+            method: "GET"
+        })
 
         return res.data
     } catch (error: any) {
@@ -89,8 +117,6 @@ export const getInventoryData = createAsyncThunk("inventory/getInventoryData", a
 
 //* CREATE INVENTORY
 export const createInventoryData = createAsyncThunk("inventory/createInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
-
-    console.log(apiconfig)
     try {
 
         const res = await axiosClient({
@@ -102,7 +128,7 @@ export const createInventoryData = createAsyncThunk("inventory/createInventoryDa
         return res.data;
     } catch (error: any) {
         console.log(error)
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response?.data?.message || error.message);
     }
 })
 
@@ -119,14 +145,38 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
 
         return res.data;
     } catch (error: any) {
-        console.log(error);
-        return rejectWithValue(error.response?.data || error.message);
+        console.log(error.response.data.message);
+        return rejectWithValue(error.response?.data?.message || error.message);
     }
 });
 
+//* DELETE INVENTORY DATA
+export const deleteInventoryData = createAsyncThunk("inventory/deleteInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+
+    try {
+        const res = await axiosClient({
+            method: apiconfig.method,
+            url: apiconfig.url,
+            data: apiconfig?.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error.response.data.message);
+        return rejectWithValue(error.response?.data?.message || error.message);
+    }
+
+})
+
+//RESET order
+export const loadingStatus = (state: any) => state.inventory.status;
+
+//Create Inventory Response:
+export const getCreateInventoryParentResponse = (state: any) => state.inventory.createInventoryParentResponse;
 
 export const inventoryData = (state: any) => state.inventory?.data
 export const inventoryStatus = (state: any) => state.inventory?.status;
+export const inventoryError = (state: any) => state.inventory.error
 
 
 

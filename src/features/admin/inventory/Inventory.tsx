@@ -19,21 +19,29 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import InventoryList from "./components/InventoryList";
+
 import {
+  getInventoryData,
+  loadingStatus,
   inventoryData,
   createInventoryData,
   inventoryStatus,
-  createInventoryStatus,
-  getInventoryData,
+  inventoryError,
 } from "@/app/slice/inventorySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Cookies from "js-cookie";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 
-const Inventory: React.FC = () => {
+const Inventory: React.FC = ({ props }) => {
   const inventoryResData: any[] = useSelector(inventoryData);
   const inventoryResStatus: string = useSelector(inventoryStatus);
+  const inventoryErrorMess: string = useSelector(inventoryError);
   const [dataInventory, setDataInventory] = useState<any[]>([]);
+  const inventoryLoading = useSelector(loadingStatus);
+
+  const { toast } = useToast();
 
   const dispatch = useDispatch();
 
@@ -76,22 +84,58 @@ const Inventory: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(inventoryResData);
-    switch (inventoryResStatus) {
-      case "pending":
-        break;
-      case "fulfilled":
-        // dispatch(getInventoryData());
-        setDataInventory(inventoryResData?.data?.inventory);
-        break;
-      case "rejected":
-        alert("Rejected");
-        break;
-      default:
-        break;
+    //* GET INVENTORY DATA
+    if (inventoryLoading === "getInventoryData/success") {
+      setDataInventory(inventoryResData?.data?.inventory);
     }
 
-  }, [inventoryResStatus]);
+    if (inventoryLoading === "getInventoryData/failed") {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+
+    //* CREATE INVENTORY DATA
+    if (inventoryLoading === "createInventoryParent/success") {
+      dispatch(getInventoryData({ url: props.routeData.path_key }));
+      toast({
+        title: inventoryResData.message,
+      });
+    }
+
+    if (inventoryLoading === "createInventoryParent/failed") {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+
+    //* UPDATE INVENTORY DATA
+    if (inventoryLoading === "updateInventoryParent/success") {
+      toast({ title: inventoryResData.message });
+      dispatch(getInventoryData({ url: props.routeData.path_key }));
+    }
+
+    //* DELETE INVENTORY DATA
+    if (inventoryLoading === "deleteInventoryData/success") {
+      toast({ title: inventoryResData.message });
+      dispatch(getInventoryData({ url: props.routeData.path_key }));
+    }
+
+    if (inventoryLoading === "deleteInventoryData/failed") {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+  }, [inventoryLoading, toast]);
 
   return (
     <>
@@ -126,36 +170,42 @@ const Inventory: React.FC = () => {
                       Fill out the following details to bring your new product.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="flex flex-col gap-8 py-4">
-                    <div className="flex flex-col gap-3">
-                      <Label htmlFor="name" className="text-left">
+                  <div className="flex flex-col gap-5 py-4">
+                    <div className="flex flex-col gap-2">
+                      <Label className="text-left font-medium">
                         Product Name
                       </Label>
                       <Input
                         id="name"
                         placeholder="Enter product name"
                         {...register("productName", {
-                          required: {
-                            value: true,
-                            message: "Product name is required",
-                          },
+                          // required: {
+                          //   value: true,
+                          //   message: "Product name is required",
+                          // },
                         })}
                       />
+                      <Label className="text-red-500">
+                        {inventoryErrorMess?.name}
+                      </Label>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      <Label htmlFor="name" className="text-left">
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="name" className="text-left font-medium">
                         Product Category
                       </Label>
                       <Input
                         id="name"
                         placeholder="Enter product category"
                         {...register("productCategory", {
-                          required: {
-                            value: true,
-                            message: "Product category is required",
-                          },
+                          // required: {
+                          //   value: true,
+                          //   message: "Product category is required",
+                          // },
                         })}
                       />
+                      <Label className="text-red-500">
+                        {inventoryErrorMess?.category}
+                      </Label>
                     </div>
                   </div>
                   <DialogFooter>

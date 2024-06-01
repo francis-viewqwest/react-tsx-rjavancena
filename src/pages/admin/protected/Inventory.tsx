@@ -22,7 +22,7 @@ const Internal: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Inventory />
+      <Inventory props={props} />
     </>
   );
 };
