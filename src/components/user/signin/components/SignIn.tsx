@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/app/AuthProvider";
+import axiosClient from "@/axios-client";
 
 interface FormValues {
   email: String;
@@ -34,14 +35,18 @@ const SignIn: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      const res = await axios.post(import.meta.env.VITE_BASE_URL + "login", {
+      // const res = await axios.post(import.meta.env.VITE_BASE_URL + "login", {
+      //   ...data,
+      //   eu_device: euDevice,
+      // });
+      const res = await axiosClient.post('/login',{
         ...data,
         eu_device: euDevice,
       });
       console.log(res);
       const access_token = res.data.access_token;
       Cookies.set("token", res.data.access_token);
-      setToken(access_token);
+      // setToken(access_token);
 
       if (access_token) {
         navigate("/app/menu");

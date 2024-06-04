@@ -25,7 +25,6 @@ import {
   loadingStatus,
   inventoryData,
   createInventoryData,
-  inventoryStatus,
   inventoryError,
 } from "@/app/slice/inventorySlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,10 +35,11 @@ import { ToastAction } from "@radix-ui/react-toast";
 
 const Inventory: React.FC = ({ props }) => {
   const inventoryResData: any[] = useSelector(inventoryData);
-  const inventoryResStatus: string = useSelector(inventoryStatus);
   const inventoryErrorMess: string = useSelector(inventoryError);
   const [dataInventory, setDataInventory] = useState<any[]>([]);
   const inventoryLoading = useSelector(loadingStatus);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCategory, setFilteredCategory] = useState("");
 
   const { toast } = useToast();
 
@@ -61,13 +61,9 @@ const Inventory: React.FC = ({ props }) => {
     const euDevice = Cookies.get("eu");
 
     const payload = {
-      items: [
-        {
-          name: data.productName,
-          category: data.productCategory,
-          eu_device: euDevice,
-        },
-      ],
+      name: data.productName,
+      category: data.productCategory,
+      eu_device: euDevice,
     };
 
     dispatch(
@@ -83,8 +79,29 @@ const Inventory: React.FC = ({ props }) => {
     onSubmit(data, invBtn);
   };
 
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleCategoryChange = (event) => {
+    console.log("click");
+    console.log(event);
+    setFilteredCategory(event.target.value);
+  };
+
+  const filteredData = dataInventory.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredOptions = inventoryResData?.data?.filter_category.filter(
+    (filt) => !filteredCategory || filt === filteredCategory
+  );
+
   useEffect(() => {
     //* GET INVENTORY DATA
+    console.log(inventoryLoading);
     if (inventoryLoading === "getInventoryData/success") {
       setDataInventory(inventoryResData?.data?.inventory);
     }
@@ -139,19 +156,36 @@ const Inventory: React.FC = ({ props }) => {
 
   return (
     <>
+      {console.log(inventoryResData?.data?.filter_category)}
       <div className="flex flex-col gap-6 md:flex-row lg:items-center justify-between">
         <div className="flex flex-col md:flex-row lg:items-center gap-4">
-          <Input className="w-96" type="text" placeholder="Search Product" />
-          <Select>
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Hardware</SelectItem>
-              <SelectItem value="dark">Power Tools</SelectItem>
-              <SelectItem value="system">Paints</SelectItem>
-            </SelectContent>
-          </Select>
+          <Input
+            className="w-96"
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search Product"
+          />
+          <div>
+            <Select>
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {inventoryResData?.data?.filter_category.map((filt, index) => (
+                  <SelectItem
+                    key={index}
+                    value={filt}
+                    onClick={handleCategoryChange} // Changed from onChange to onClick
+                    selected={filteredCategory === filt}
+                  >
+                    {filt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {filteredCategory && <p>Selected Category: {filteredCategory}</p>}
+          </div>
         </div>
 
         {Array.isArray(inventoryResData.data?.buttons) &&
@@ -218,7 +252,12 @@ const Inventory: React.FC = ({ props }) => {
       </div>
 
       <div className="flex flex-col gap-4 py-4">
-        {inventoryResData && <InventoryList dataInventory={dataInventory} />}
+        {inventoryResData && (
+          <InventoryList
+            filteredData={filteredData}
+            // dataInventory={dataInventory}
+          />
+        )}
       </div>
     </>
   );

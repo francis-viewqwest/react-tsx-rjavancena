@@ -15,7 +15,7 @@ interface InventoryState {
 
 const initialState: InventoryState = {
     data: {},
-    status: "idle",
+    status: false,
     error: false,
     createInventoryParentResponse: {},
     updateInventoryParentResponse: {},
@@ -168,14 +168,12 @@ export const deleteInventoryData = createAsyncThunk("inventory/deleteInventoryDa
 
 })
 
-//RESET order
-export const loadingStatus = (state: any) => state.inventory.status;
 
 //Create Inventory Response:
 export const getCreateInventoryParentResponse = (state: any) => state.inventory.createInventoryParentResponse;
 
 export const inventoryData = (state: any) => state.inventory?.data
-export const inventoryStatus = (state: any) => state.inventory?.status;
+export const loadingStatus = (state: any) => state.inventory.status;
 export const inventoryError = (state: any) => state.inventory.error
 
 
