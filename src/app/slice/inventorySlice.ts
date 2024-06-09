@@ -52,6 +52,21 @@ const inventorySlice = createSlice({
                 state.error = action.payload
             })
 
+        //* GET INVENTORY CHILD
+        builder
+            .addCase(getInventoryDataChild.pending, (state) => {
+                state.status = "getInventoryDataChild/loading";
+                state.error = null
+            })
+            .addCase(getInventoryDataChild.fulfilled, (state, action) => {
+                state.status = "getInventoryDataChild/success";
+                state.data = action.payload
+            })
+            .addCase(getInventoryDataChild.rejected, (state, action) => {
+                state.status = "getInventoryDataChild/failed";
+                state.error = action.payload
+            })
+
         //* UPDATE INVENTORY 
         builder
             .addCase(updateInventoryParent.pending, (state) => {
@@ -115,6 +130,21 @@ export const getInventoryData = createAsyncThunk("inventory/getInventoryData", a
     }
 })
 
+//* GET INVENTORY CHILD
+export const getInventoryDataChild = createAsyncThunk("inventory/getInventoryDataChild", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: apiconfig.url,
+            method: "GET"
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error);
+        return rejectWithValue(error.response.data)
+    }
+})
+
 //* CREATE INVENTORY
 export const createInventoryData = createAsyncThunk("inventory/createInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {
@@ -127,8 +157,7 @@ export const createInventoryData = createAsyncThunk("inventory/createInventoryDa
 
         return res.data;
     } catch (error: any) {
-        console.log(error)
-        return rejectWithValue(error.response?.data?.message || error.message);
+        return rejectWithValue(error.response?.data?.message || error.response.data.message);
     }
 })
 
@@ -145,7 +174,7 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
 
         return res.data;
     } catch (error: any) {
-        console.log(error.response.data.message);
+        console.log(error);
         return rejectWithValue(error.response?.data?.message || error.message);
     }
 });

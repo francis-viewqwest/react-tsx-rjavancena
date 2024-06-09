@@ -36,11 +36,11 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { ProductInventory } from "@/interface/InterfaceType";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
 import _, { update } from "lodash";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -61,10 +61,7 @@ interface InventoryListProps {
   };
 }
 
-const InventoryList: React.FC<InventoryListProps> = ({
-  filteredData,
-  // dataInventory,
-}) => {
+const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
   const updateErrorMessage = useSelector(inventoryError);
@@ -145,6 +142,8 @@ const InventoryList: React.FC<InventoryListProps> = ({
     product_category: updateErrorMessage?.category,
   };
 
+  const navigate = useNavigate();
+
   return (
     <>
       {inventoryLoading === "getInventoryData/loading" ? (
@@ -159,8 +158,7 @@ const InventoryList: React.FC<InventoryListProps> = ({
           >
             <Link
               className="w-full md:flex md:items-center md:justify-between px-4"
-              // to="/app/product-list"
-              to={item.view[0].url}
+              to={`/app/inventory/inventory-child/${item.view[0].url}`}
             >
               <div className="md:flex md:items-center">
                 <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" />
@@ -331,7 +329,20 @@ const InventoryList: React.FC<InventoryListProps> = ({
                     <DialogHeader>
                       <DialogTitle>
                         Delete Product{" "}
-                        {modalData?.details?.map((detail) => detail.value)}
+                        {modalData?.details?.map((detail, index) => (
+                          <>
+                            {index > 0 &&
+                              modalData.details[index - 1].label ===
+                                "Product Name" &&
+                              " from "}
+                            {detail.label === "Product Name" && (
+                              <span>{detail.value}</span>
+                            )}
+                            {detail.label === "Product Category" && (
+                              <span>{detail.value}</span>
+                            )}
+                          </>
+                        ))}
                       </DialogTitle>
                       <DialogDescription>
                         This action cannot be undone. This will permanently
@@ -365,6 +376,7 @@ const InventoryList: React.FC<InventoryListProps> = ({
           </h1>
         </div>
       )}
+      {/* <Outlet /> */}
     </>
   );
 };

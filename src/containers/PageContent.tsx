@@ -8,6 +8,7 @@ import Menu from "../pages/admin/protected/Menu";
 import Dashboard from "../pages/admin/protected/Dashboard";
 import Inventory from "../pages/admin/protected/Inventory";
 import ProductList from "../pages/admin/protected/ProductList";
+// import ProductList from "@/features/admin/inventory/components/ProductList";
 import Users from "../pages/admin/protected/Users";
 import CustomerOrder from "../pages/admin/protected/CustomerOrder";
 import ReturnOrder from "../pages/admin/protected/ReturnOrder";
@@ -38,27 +39,21 @@ const PageContent: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    requestRoutes();
-  }, []);
-
   interface RouteData {
     path_key: string;
   }
 
   const routeComponent = (key: string, routeData: RouteData) => {
-    // console.log(routeData);
-
     switch (key) {
-      case "Menu":
+      case "parent-Menu":
         return <Menu />;
-      case "Dashboard":
+      case "parent-Dashboard":
         return <Dashboard />;
-      case "Inventory":
+      case "parent-Inventory":
         return <Inventory routeData={routeData} />;
-      case "Product List":
+      case "child-Inventory":
         return <ProductList />;
-      case "Users":
+      case "parent-Users":
         return <Users />;
       case "Customer Order":
         return <CustomerOrder />;
@@ -73,6 +68,10 @@ const PageContent: React.FC = () => {
         return null;
     }
   };
+
+  useEffect(() => {
+    requestRoutes();
+  }, []);
 
   return (
     <>
@@ -96,7 +95,19 @@ const PageContent: React.FC = () => {
                   key={index}
                   path={`${route.path}`}
                   element={routeComponent(route.title, route)}
-                />
+                >
+                  <Route
+                    index
+                    element={routeComponent(`parent-${route.title}`, route)}
+                  />
+                  {route.title === "Inventory" && (
+                    <Route
+                      key={`${index}-child`}
+                      path="inventory-child/:id"
+                      element={routeComponent(`child-${route.title}`, route)}
+                    />
+                  )}
+                </Route>
               )
             )}
           </Routes>

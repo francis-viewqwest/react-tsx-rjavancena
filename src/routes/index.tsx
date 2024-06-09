@@ -92,62 +92,62 @@ const Routes: React.FC = () => {
   ];
 
   //* Authenticated User Routes
-  const authUserRoutes = [
-    {
-      path: "user/*",
-      element: <Layout />,
-      children: [
-        {
-          path: "home",
-          element: <Home />,
-        },
-        {
-          path: "shop",
-          element: <Shop />,
-        },
-        {
-          path: "about",
-          element: <About />,
-        },
-      ],
-    },
-  ];
+  // const authUserRoutes = [
+  //   {
+  //     path: "user/*",
+  //     element: <Layout />,
+  //     children: [
+  //       {
+  //         path: "home",
+  //         element: <Home />,
+  //       },
+  //       {
+  //         path: "shop",
+  //         element: <Shop />,
+  //       },
+  //       {
+  //         path: "about",
+  //         element: <About />,
+  //       },
+  //     ],
+  //   },
+  // ];
 
   //* Authenticated Admin Routes
   const authAdmin = [
     {
-      path: "app/*",
+      path: "/app/*",
       element: <Layout />,
-      children: [
-        {
-          path: "menu",
-          element: <Menu />,
-        },
-        {
-          path: "dashboard",
-          element: <Dashboard />,
-        },
-        {
-          path: "inventory",
-          element: <Inventory />,
-        },
-        {
-          path: "product-list",
-          element: <ProductList />,
-        },
-        {
-          path: "users",
-          element: <Users />,
-        },
-        {
-          path: "customer",
-          element: "/customer",
-        },
-        {
-          path: "orders",
-          element: <Orders />,
-        },
-      ],
+      // children: [
+      //   {
+      //     path: "menu",
+      //     element: <Menu />,
+      //   },
+      //   {
+      //     path: "dashboard",
+      //     element: <Dashboard />,
+      //   },
+      //   {
+      //     path: "inventory",
+      //     element: <Inventory />,
+      //   },
+      //   {
+      //     path: "product-list",
+      //     element: <ProductList />,
+      //   },
+      //   {
+      //     path: "users",
+      //     element: <Users />,
+      //   },
+      //   {
+      //     path: "customer",
+      //     element: "/customer",
+      //   },
+      //   {
+      //     path: "orders",
+      //     element: <Orders />,
+      //   },
+      // ],
     },
   ];
 
@@ -161,9 +161,9 @@ const Routes: React.FC = () => {
   const router = createBrowserRouter([
     ...publicRoutes,
     ...(!token ? noAuthUserRoutes : []),
-    ...registerAuthUser,
-    ...authUserRoutes,
     ...authAdmin,
+    ...registerAuthUser,
+    // ...authUserRoutes,
   ]);
 
   return <RouterProvider router={router} />;

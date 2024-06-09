@@ -3,15 +3,21 @@ import { columnsProduct } from "@/components/ui/columns";
 import { DataTable } from "@/components/ui/data-table";
 import DataJson from "@/data/productData.json";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ProductType } from "@/interface/InterfaceType";
+// import { useDispatch } from "react-redux";
+// import { getInventoryDataChild } from "@/app/slice/inventorySlice";
 
 const ProductList: React.FC = () => {
+  // useDispatch(getInventoryDataChild({ url: props.routeData.path_key }));
   const [data, setData] = useState<ProductType[]>([]);
 
   useEffect(() => {
     setData(DataJson.data);
   }, []);
+
+  const { id } = useParams();
+  console.log(id);
 
   return (
     <>

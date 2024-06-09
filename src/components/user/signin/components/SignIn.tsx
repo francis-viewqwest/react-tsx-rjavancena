@@ -49,7 +49,7 @@ const SignIn: React.FC = () => {
       // setToken(access_token);
 
       if (access_token) {
-        navigate("/app/menu");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       console.log(error);

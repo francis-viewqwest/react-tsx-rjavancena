@@ -22,9 +22,9 @@ import InventoryList from "./components/InventoryList";
 
 import {
   getInventoryData,
-  loadingStatus,
   inventoryData,
   createInventoryData,
+  loadingStatus,
   inventoryError,
 } from "@/app/slice/inventorySlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +32,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
+import { Outlet } from "react-router-dom";
 
 const Inventory: React.FC = ({ props }) => {
   const inventoryResData: any[] = useSelector(inventoryData);
@@ -40,6 +41,7 @@ const Inventory: React.FC = ({ props }) => {
   const inventoryLoading = useSelector(loadingStatus);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCategory, setFilteredCategory] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
   const { toast } = useToast();
 
@@ -50,12 +52,7 @@ const Inventory: React.FC = ({ props }) => {
     productCategory: string;
   }
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<CreateProduct>();
+  const { register, handleSubmit } = useForm<CreateProduct>();
 
   const onSubmit: SubmitHandler<CreateProduct> = (data, invBtn) => {
     const euDevice = Cookies.get("eu");
@@ -83,25 +80,27 @@ const Inventory: React.FC = ({ props }) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleCategoryChange = (event) => {
-    console.log("click");
-    console.log(event);
-    setFilteredCategory(event.target.value);
+  const handleCategoryChange = (category) => {
+    setFilteredCategory(category === "all" ? "" : category);
   };
 
-  const filteredData = dataInventory.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredOptions = inventoryResData?.data?.filter_category.filter(
-    (filt) => !filteredCategory || filt === filteredCategory
-  );
+  useEffect(() => {
+    // Apply both category and search filters
+    const filtered = dataInventory.filter((item) => {
+      const matchesCategory = filteredCategory
+        ? item.category.toLowerCase() === filteredCategory.toLowerCase()
+        : true;
+      const matchesSearchQuery = searchQuery
+        ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      return matchesCategory && matchesSearchQuery;
+    });
+    setFilteredData(filtered);
+  }, [filteredCategory, searchQuery, dataInventory]);
 
   useEffect(() => {
     //* GET INVENTORY DATA
-    console.log(inventoryLoading);
     if (inventoryLoading === "getInventoryData/success") {
       setDataInventory(inventoryResData?.data?.inventory);
     }
@@ -123,10 +122,12 @@ const Inventory: React.FC = ({ props }) => {
       });
     }
 
+    // console.log(inventoryErrorMess.message);
+
     if (inventoryLoading === "createInventoryParent/failed") {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
+        title: inventoryErrorMess || "Uh oh! Something went wrong.",
         description: "There was a problem with your request.",
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
@@ -136,6 +137,15 @@ const Inventory: React.FC = ({ props }) => {
     if (inventoryLoading === "updateInventoryParent/success") {
       toast({ title: inventoryResData.message });
       dispatch(getInventoryData({ url: props.routeData.path_key }));
+    }
+
+    if (inventoryLoading === "updateInventoryParent/failed") {
+      toast({
+        variant: "destructive",
+        title: inventoryErrorMess || "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
     }
 
     //* DELETE INVENTORY DATA
@@ -156,7 +166,6 @@ const Inventory: React.FC = ({ props }) => {
 
   return (
     <>
-      {console.log(inventoryResData?.data?.filter_category)}
       <div className="flex flex-col gap-6 md:flex-row lg:items-center justify-between">
         <div className="flex flex-col md:flex-row lg:items-center gap-4">
           <Input
@@ -167,24 +176,19 @@ const Inventory: React.FC = ({ props }) => {
             placeholder="Search Product"
           />
           <div>
-            <Select>
+            <Select onValueChange={handleCategoryChange}>
               <SelectTrigger className="w-36">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">All</SelectItem>
                 {inventoryResData?.data?.filter_category.map((filt, index) => (
-                  <SelectItem
-                    key={index}
-                    value={filt}
-                    onClick={handleCategoryChange} // Changed from onChange to onClick
-                    selected={filteredCategory === filt}
-                  >
+                  <SelectItem key={index} value={filt}>
                     {filt}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {filteredCategory && <p>Selected Category: {filteredCategory}</p>}
           </div>
         </div>
 
@@ -252,13 +256,9 @@ const Inventory: React.FC = ({ props }) => {
       </div>
 
       <div className="flex flex-col gap-4 py-4">
-        {inventoryResData && (
-          <InventoryList
-            filteredData={filteredData}
-            // dataInventory={dataInventory}
-          />
-        )}
+        {inventoryResData && <InventoryList filteredData={filteredData} />}
       </div>
+      {/* <Outlet /> */}
     </>
   );
 };
