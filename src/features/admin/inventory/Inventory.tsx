@@ -182,11 +182,14 @@ const Inventory: React.FC = ({ props }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
-                {inventoryResData?.data?.filter_category.map((filt, index) => (
-                  <SelectItem key={index} value={filt}>
-                    {filt}
-                  </SelectItem>
-                ))}
+                {inventoryResData &&
+                  inventoryResData?.data?.filter_category?.map(
+                    (filt, index) => (
+                      <SelectItem key={index} value={filt}>
+                        {filt}
+                      </SelectItem>
+                    )
+                  )}
               </SelectContent>
             </Select>
           </div>
@@ -258,7 +261,6 @@ const Inventory: React.FC = ({ props }) => {
       <div className="flex flex-col gap-4 py-4">
         {inventoryResData && <InventoryList filteredData={filteredData} />}
       </div>
-      {/* <Outlet /> */}
     </>
   );
 };

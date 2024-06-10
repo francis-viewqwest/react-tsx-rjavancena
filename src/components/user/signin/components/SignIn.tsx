@@ -35,11 +35,7 @@ const SignIn: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      // const res = await axios.post(import.meta.env.VITE_BASE_URL + "login", {
-      //   ...data,
-      //   eu_device: euDevice,
-      // });
-      const res = await axiosClient.post('/login',{
+      const res = await axiosClient.post("/login", {
         ...data,
         eu_device: euDevice,
       });
@@ -49,7 +45,7 @@ const SignIn: React.FC = () => {
       // setToken(access_token);
 
       if (access_token) {
-        navigate("/dashboard");
+        navigate("/app/menu");
       }
     } catch (error: any) {
       console.log(error);

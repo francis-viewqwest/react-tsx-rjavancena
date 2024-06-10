@@ -1,23 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { columnsProduct } from "@/components/ui/columns";
+// import { columnsProduct } from "@/components/ui/columns";
+import useColumnsProduct from "@/components/ui/columns";
 import { DataTable } from "@/components/ui/data-table";
 import DataJson from "@/data/productData.json";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Link, useParams } from "react-router-dom";
 import { ProductType } from "@/interface/InterfaceType";
-// import { useDispatch } from "react-redux";
-// import { getInventoryDataChild } from "@/app/slice/inventorySlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getInventoryDataChild,
+  inventoryData,
+  loadingStatus,
+} from "@/app/slice/inventorySlice";
 
 const ProductList: React.FC = () => {
-  // useDispatch(getInventoryDataChild({ url: props.routeData.path_key }));
+  const dispatch = useDispatch();
+  const inventoryChild = useSelector(inventoryData);
+  const inventoryLoading = useSelector(loadingStatus);
   const [data, setData] = useState<ProductType[]>([]);
+  const { id } = useParams();
+  const columnsProduct = useColumnsProduct();
 
   useEffect(() => {
-    setData(DataJson.data);
-  }, []);
+    dispatch(getInventoryDataChild({ url: id }));
+  }, [dispatch, id]);
 
-  const { id } = useParams();
-  console.log(id);
+  useEffect(() => {
+    if (inventoryLoading === "getInventoryDataChild/success") {
+      setData(inventoryChild.data);
+    }
+  }, [inventoryChild, inventoryLoading]);
 
   return (
     <>

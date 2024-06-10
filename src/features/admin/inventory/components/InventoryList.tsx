@@ -42,7 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
-import _, { update } from "lodash";
+import _ from "lodash";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {

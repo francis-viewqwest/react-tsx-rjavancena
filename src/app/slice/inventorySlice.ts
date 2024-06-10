@@ -15,7 +15,7 @@ interface InventoryState {
 
 const initialState: InventoryState = {
     data: {},
-    status: false,
+    status: "",
     error: false,
     createInventoryParentResponse: {},
     updateInventoryParentResponse: {},
@@ -132,9 +132,11 @@ export const getInventoryData = createAsyncThunk("inventory/getInventoryData", a
 
 //* GET INVENTORY CHILD
 export const getInventoryDataChild = createAsyncThunk("inventory/getInventoryDataChild", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+
+    console.log(apiconfig)
     try {
         const res = await axiosClient({
-            url: apiconfig.url,
+            url: `inventory/product/show/${apiconfig.url}`,
             method: "GET"
         })
 
