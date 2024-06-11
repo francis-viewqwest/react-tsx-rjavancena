@@ -64,7 +64,7 @@ const useColumnsProduct = () => {
 
   // Map dynamic columns from inventoryChild
   const dynamicColumns =
-    inventoryChild?.columns?.map((column, index) => {
+    inventoryChild?.data?.columns?.map((column, index) => {
       const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");
       console.log(accessorKey);
       return {
@@ -98,130 +98,6 @@ const useColumnsProduct = () => {
 };
 
 export default useColumnsProduct;
-
-// export const columnsProduct: ColumnDef<ProductType>[] = [
-//   {
-//     id: "select",
-//     header: ({ table }) => (
-//       <Checkbox
-//         checked={
-//           table.getIsAllPageRowsSelected() ||
-//           (table.getIsSomePageRowsSelected() && "indeterminate")
-//         }
-//         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//         aria-label="Select all"
-//       />
-//     ),
-//     cell: ({ row }) => (
-//       <Checkbox
-//         checked={row.getIsSelected()}
-//         onCheckedChange={(value) => row.toggleSelected(!!value)}
-//         aria-label="Select row"
-//       />
-//     ),
-//   },
-//   {
-//     accessorKey: "productId",
-//     header: "Product ID",
-//   },
-//   {
-//     accessorKey: "img",
-//     header: "Image",
-//     cell: () => {
-//       return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
-//     },
-//   },
-//   {
-//     accessorKey: "name",
-//     header: ({ column }) => {
-//       return (
-//         <span
-//           className="text-xs flex items-center cursor-pointer"
-//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//         >
-//           Product Name
-//           <ArrowUpIcon className="ml-2 h-3 w-3" />
-//         </span>
-//       );
-//     },
-//   },
-//   {
-//     accessorKey: "retail",
-//     header: "Retail",
-//     cell: ({ row }) => {
-//       const retail = parseFloat(row.getValue("retail"));
-//       const formatted = new Intl.NumberFormat("en-PH", {
-//         style: "currency",
-//         currency: "PHP",
-//       }).format(retail);
-
-//       return <div className="text-right font-medium">{formatted}</div>;
-//     },
-//   },
-//   {
-//     accessorKey: "discPrice",
-//     header: "Disc. Price",
-//     cell: ({ row }) => {
-//       const discPrice = parseFloat(row.getValue("discPrice"));
-//       const formatted = new Intl.NumberFormat("en-PH", {
-//         style: "currency",
-//         currency: "PHP",
-//       }).format(discPrice);
-
-//       return <div className="text-right font-medium">{formatted}</div>;
-//     },
-//   },
-//   {
-//     accessorKey: "sells",
-//     header: ({ column }) => {
-//       return (
-//         <span
-//           className="text-xs flex items-center cursor-pointer"
-//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//         >
-//           Sells
-//           <ArrowUpIcon className="ml-2 h-3 w-3" />
-//         </span>
-//       );
-//     },
-//   },
-//   {
-//     accessorKey: "returnProduct",
-//     header: ({ column }) => {
-//       return (
-//         <span
-//           className="text-xs flex items-center cursor-pointer"
-//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//         >
-//           Return
-//           <ArrowUpIcon className="ml-2 h-3 w-3" />
-//         </span>
-//       );
-//     },
-//   },
-//   {
-//     accessorKey: "stocks",
-//     header: ({ column }) => {
-//       return (
-//         <span
-//           className="text-xs flex items-center cursor-pointer"
-//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//         >
-//           Stocks
-//           <ArrowUpIcon className="ml-2 h-3 w-3" />
-//         </span>
-//       );
-//     },
-//   },
-//   {
-//     accessorKey: "supplier",
-//     header: "Supplier",
-//   },
-//   {
-//     id: "actions",
-//     cell: ({ row }) => <RowInventoryActions row={row} />,
-//   },
-// ];
 
 export const ColumnsTransac: ColumnDef<TransactionType>[] = [
   {

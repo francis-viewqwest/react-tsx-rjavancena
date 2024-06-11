@@ -97,6 +97,21 @@ const inventorySlice = createSlice({
                 state.error = action.payload;
             })
 
+        //* CREATE INVENTORY CHILD
+        builder
+            .addCase(createInventoryChildData.pending, (state) => {
+                state.status = "createInventoryChild/loading";
+                state.error = null;
+            })
+            .addCase(createInventoryChildData.fulfilled, (state, action) => {
+                state.status = "createInventoryChild/success";
+                state.data = action.payload;
+            })
+            .addCase(createInventoryChildData.rejected, (state, action) => {
+                state.status = "createInventoryChild/failed";
+                state.error = action.payload;
+            })
+
         //* DELETE INVENTORY 
         builder
             .addCase(deleteInventoryData.pending, (state) => {
@@ -163,6 +178,22 @@ export const createInventoryData = createAsyncThunk("inventory/createInventoryDa
     }
 })
 
+//* CREATE INVENTORY CHILD
+export const createInventoryChildData = createAsyncThunk("inventory/createInventoryChildData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+    try {
+
+        const res = await axiosClient({
+            url: apiconfig.url,
+            method: apiconfig.method,
+            data: apiconfig.data
+        })
+
+        return res.data;
+    } catch (error: any) {
+        return rejectWithValue(error.response?.data?.message || error.response.data.message);
+    }
+})
+
 
 //* UPDATE EDIT INVENTORY DATA
 export const updateInventoryParent = createAsyncThunk("inventory/updateInventoryParent", async (apiconfig: ApiConfig, { rejectWithValue }) => {
@@ -203,7 +234,7 @@ export const deleteInventoryData = createAsyncThunk("inventory/deleteInventoryDa
 //Create Inventory Response:
 export const getCreateInventoryParentResponse = (state: any) => state.inventory.createInventoryParentResponse;
 
-export const inventoryData = (state: any) => state.inventory?.data
+export const inventoryData = (state: any) => state.inventory.data
 export const loadingStatus = (state: any) => state.inventory.status;
 export const inventoryError = (state: any) => state.inventory.error
 

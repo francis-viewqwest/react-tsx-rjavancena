@@ -12,6 +12,7 @@ import {
   inventoryData,
   loadingStatus,
 } from "@/app/slice/inventorySlice";
+import { TableProvider } from "@/hooks/TableContext";
 
 const ProductList: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,25 +26,29 @@ const ProductList: React.FC = () => {
     dispatch(getInventoryDataChild({ url: id }));
   }, [dispatch, id]);
 
+  console.log(inventoryChild?.data?.inventory_product);
+
   useEffect(() => {
     if (inventoryLoading === "getInventoryDataChild/success") {
-      setData(inventoryChild.data);
+      setData(inventoryChild.data.inventory_product);
     }
   }, [inventoryChild, inventoryLoading]);
 
   return (
     <>
-      <Link
-        to="/app/inventory"
-        className="flex gap-2 items-center mb-6 text-xs w-32"
-      >
-        <ArrowLeftIcon className="w-3 h-3" />
-        Back to inventory
-      </Link>
+      <TableProvider page="Inventory" inventoryId={id}>
+        <Link
+          to="/app/inventory"
+          className="flex gap-2 items-center mb-6 text-xs w-32"
+        >
+          <ArrowLeftIcon className="w-3 h-3" />
+          Back to inventory
+        </Link>
 
-      <div>
-        <DataTable title="Product in " columns={columnsProduct} data={data} />
-      </div>
+        <div>
+          <DataTable title="Product in " columns={columnsProduct} data={data} />
+        </div>
+      </TableProvider>
     </>
   );
 };
