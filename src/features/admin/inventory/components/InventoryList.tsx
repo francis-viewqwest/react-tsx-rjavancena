@@ -142,8 +142,6 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
     product_category: updateErrorMessage?.category,
   };
 
-  const navigate = useNavigate();
-
   return (
     <>
       {inventoryLoading === "getInventoryData/loading" ? (
@@ -197,7 +195,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                     <div className="flex items-center gap-1">
                       <IconCircleFilled size="9" color="green" />
                       <Label className="text-xs font-medium">
-                        Product Stocked: {item.stock}
+                        Product Stocked: {item.stocks}
                       </Label>
                     </div>
                   </CardDescription>

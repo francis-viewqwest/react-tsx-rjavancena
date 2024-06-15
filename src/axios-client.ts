@@ -1,23 +1,29 @@
 import axios from "axios";
+// import { useAuth } from "./app/AuthProvider";
 import Cookies from "js-cookie";
 
 
-const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
-});
+const useAxiosClient = () => {
+  // const { token } = useAuth();
 
-axiosClient.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("token");
+  const axiosClient = axios.create({
+    baseURL: import.meta.env.VITE_BASE_URL,
+  });
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  axiosClient.interceptors.request.use(
+    (config) => {
+      const token = Cookies.get("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  );
 
-export default axiosClient;
+  return axiosClient;
+};
+
+export default useAxiosClient;

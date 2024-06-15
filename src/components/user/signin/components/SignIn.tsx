@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/app/AuthProvider";
 import axiosClient from "@/axios-client";
+import useAxiosClient from "@/axios-client";
 
 interface FormValues {
   email: String;
@@ -32,6 +33,7 @@ const SignIn: React.FC = () => {
   const euDevice = Cookies.get("eu");
 
   const { toast } = useToast();
+  const axiosClient = useAxiosClient();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {

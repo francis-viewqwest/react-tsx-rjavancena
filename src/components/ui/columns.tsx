@@ -34,24 +34,15 @@ import _ from "lodash";
 
 import { inventoryData } from "@/app/slice/inventorySlice";
 import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 const useColumnsProduct = () => {
   const inventoryChild = useSelector(inventoryData);
 
-  // Create base columns (static)
-  const baseColumns: ColumnDef<ProductType>[] = [
+  const baseColumns: ColumnDef<any>[] = [
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
+      accessorKey: "select",
+      header: "Select",
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
@@ -62,37 +53,46 @@ const useColumnsProduct = () => {
     },
   ];
 
-  // Map dynamic columns from inventoryChild
-  const dynamicColumns =
-    inventoryChild?.data?.columns?.map((column, index) => {
-      const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");
-      console.log(accessorKey);
-      return {
-        accessorKey: accessorKey,
-        header: column,
-        cell: ({ row }) => {
-          const columnHeader = _.lowerCase(column);
-          if (columnHeader.includes("retailprice")) {
-            const value = parseFloat(row.getValue(accessorKey));
-            const formatted = new Intl.NumberFormat("en-PH", {
-              style: "currency",
-              currency: "PHP",
-            }).format(value);
-            return <div className="text-right font-medium">{formatted}</div>;
-          }
-          if (columnHeader.includes("image")) {
-            return <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />;
-          }
-          if (columnHeader.includes("actions")) {
-            return <RowInventoryActions row={row} />;
-          }
-          return <div>{row.getValue(accessorKey)}</div>;
-        },
-      };
-    }) || [];
+  // Memoize dynamic columns based on inventoryChild dependency
+  const dynamicColumns = useMemo(() => {
+    return (
+      inventoryChild?.data?.columns?.map((column: string) => {
+        const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");
+
+        return {
+          accessorKey: accessorKey,
+          header: column,
+          cell: ({ row }: { row: any }) => {
+            const columnHeader = _.lowerCase(column);
+
+            if (columnHeader.includes("retailprice")) {
+              const value = parseFloat(row.getValue(accessorKey));
+              const formatted = new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+              }).format(value);
+              return <div className="text-right font-medium">{formatted}</div>;
+            }
+            if (columnHeader.includes("image")) {
+              return (
+                <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />
+              );
+            }
+            if (columnHeader.includes("actions")) {
+              return <RowInventoryActions row={row} />;
+            }
+            return <div>{row.getValue(accessorKey)}</div>;
+          },
+        };
+      }) || []
+    );
+  }, [inventoryChild]);
 
   // Combine base columns and dynamic columns
-  const columns = [...baseColumns, ...dynamicColumns];
+  const columns = useMemo(
+    () => [...baseColumns, ...dynamicColumns],
+    [baseColumns, dynamicColumns]
+  );
 
   return columns;
 };

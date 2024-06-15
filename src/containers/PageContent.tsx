@@ -16,26 +16,43 @@ import FailedDelivery from "../pages/admin/protected/FailedDelivery";
 import Cancellation from "../pages/admin/protected/Cancellation";
 import { setNavbar } from "@/app/slice/UserSlice";
 import { useDispatch } from "react-redux";
+import { useAuth } from "@/app/AuthProvider";
+import useRefreshToken from "@/hooks/useRefreshToken";
+import PersistLogin from "@/hooks/PersistLogin";
+import useAxiosClient from "@/axios-client";
 
 const PageContent: React.FC = () => {
+  // const { token } = useAuth();
   const [routes, setRoutes] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const refresh = useRefreshToken();
+
+  const axiosClient = useAxiosClient();
 
   const requestRoutes = async () => {
-    const newToken = Cookies.get("token");
+    // const token = Cookies.get("token");
 
     try {
-      const res = await axios.get(
-        import.meta.env.VITE_BASE_URL + "role-nav-links",
-        { headers: { Authorization: `Bearer ${newToken}` } }
-      );
+      const res = await axiosClient.get("/role-nav-links");
 
       console.log(res);
       setRoutes(res.data.nav_links);
       dispatch(setNavbar(res.data.nav_links));
     } catch (error) {
+      // refresh();
       navigate("/");
+      // console.log
+      // await refresh();
+      // try {
+      //   const res = await axiosClient.get("/role-nav-links");
+      //   console.log(res);
+      //   setRoutes(res.data.nav_links);
+      //   dispatch(setNavbar(res.data.nav_links));
+      // } catch (error) {
+      //   console.error("Error after refreshing token:", error);
+      //   // Handle error, navigate to login, etc.
+      // }
     }
   };
 

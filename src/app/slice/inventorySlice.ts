@@ -1,24 +1,23 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ApiConfig } from "@/interface/InterfaceType"
-import axiosClient from "@/axios-client";
-import Cookies from "js-cookie";
+
+import useAxiosClient from "@/axios-client";
+
+const axiosClient = useAxiosClient();
+
 
 
 interface InventoryState {
     data: object;
     status: string;
     error: string | null | any;
-    createInventoryParentResponse: object,
-    updateInventoryParentResponse: object
 }
 
 const initialState: InventoryState = {
     data: {},
     status: "",
     error: false,
-    createInventoryParentResponse: {},
-    updateInventoryParentResponse: {},
 }
 
 interface ApiConfig {
@@ -112,6 +111,21 @@ const inventorySlice = createSlice({
                 state.error = action.payload;
             })
 
+        //* UPDATE INVENTORY CHILD
+        builder
+            .addCase(updateInventoryChild.pending, (state) => {
+                state.status = "updateInventoryChild/loading";
+                state.error = null;
+            })
+            .addCase(updateInventoryChild.fulfilled, (state, action) => {
+                state.status = "updateInventoryChild/success";
+                state.data = action.payload;
+            })
+            .addCase(updateInventoryChild.rejected, (state, action) => {
+                state.status = "updateInventoryChild/failed";
+                state.error = action.payload;
+            })
+
         //* DELETE INVENTORY 
         builder
             .addCase(deleteInventoryData.pending, (state) => {
@@ -124,6 +138,21 @@ const inventorySlice = createSlice({
             })
             .addCase(deleteInventoryData.rejected, (state, action) => {
                 state.status = "deleteInventoryData/failed";
+                state.error = action.payload
+            })
+
+        //* DELETE INVENTORY CHILD
+        builder
+            .addCase(deleteInventoryChildData.pending, (state) => {
+                state.status = "deleteInventoryChildData/loading";
+                state.error = null;
+            })
+            .addCase(deleteInventoryChildData.fulfilled, (state, action) => {
+                state.status = "deleteInventoryChildData/success";
+                state.data = action.payload;
+            })
+            .addCase(deleteInventoryChildData.rejected, (state, action) => {
+                state.status = "deleteInventoryChildData/failed";
                 state.error = action.payload
             })
     }
@@ -151,7 +180,7 @@ export const getInventoryDataChild = createAsyncThunk("inventory/getInventoryDat
     console.log(apiconfig)
     try {
         const res = await axiosClient({
-            url: `inventory/product/show/${apiconfig.url}`,
+            url: `inventory/parent/product/show/${apiconfig.url}`,
             method: "GET"
         })
 
@@ -174,6 +203,7 @@ export const createInventoryData = createAsyncThunk("inventory/createInventoryDa
 
         return res.data;
     } catch (error: any) {
+        console.log(error)
         return rejectWithValue(error.response?.data?.message || error.response.data.message);
     }
 })
@@ -199,9 +229,9 @@ export const createInventoryChildData = createAsyncThunk("inventory/createInvent
 export const updateInventoryParent = createAsyncThunk("inventory/updateInventoryParent", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {
         console.log("apiconfig: ", apiconfig)
-        const res = await axios({
+        const res = await axiosClient({
             method: apiconfig?.method,
-            url: `${import.meta.env.VITE_BASE_URL}${apiconfig.url}`,
+            url: apiconfig.url,
             data: apiconfig?.data
         });
 
@@ -211,6 +241,20 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
         return rejectWithValue(error.response?.data?.message || error.message);
     }
 });
+
+export const updateInventoryChild = createAsyncThunk("inventory/updateInventoryChildData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            method: apiconfig?.method,
+            url: apiconfig?.url,
+            data: apiconfig?.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        return rejectWithValue(error.response?.data?.message || error.message);
+    }
+})
 
 //* DELETE INVENTORY DATA
 export const deleteInventoryData = createAsyncThunk("inventory/deleteInventoryData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
@@ -230,9 +274,24 @@ export const deleteInventoryData = createAsyncThunk("inventory/deleteInventoryDa
 
 })
 
+//* DELETE INVENTORY CHILD DATA
+export const deleteInventoryChildData = createAsyncThunk("inventory/deleteInventoryChildData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
 
-//Create Inventory Response:
-export const getCreateInventoryParentResponse = (state: any) => state.inventory.createInventoryParentResponse;
+    try {
+        const res = await axiosClient({
+            method: apiconfig.method,
+            url: apiconfig.url,
+            data: apiconfig?.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error.response.data.message);
+        return rejectWithValue(error.response?.data?.message || error.message);
+    }
+
+})
+
 
 export const inventoryData = (state: any) => state.inventory.data
 export const loadingStatus = (state: any) => state.inventory.status;

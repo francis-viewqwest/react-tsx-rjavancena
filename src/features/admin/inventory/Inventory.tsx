@@ -32,7 +32,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
-import { Outlet } from "react-router-dom";
 
 const Inventory: React.FC = ({ props }) => {
   const inventoryResData: any[] = useSelector(inventoryData);
@@ -227,7 +226,8 @@ const Inventory: React.FC = ({ props }) => {
                         })}
                       />
                       <Label className="text-red-500">
-                        {inventoryErrorMess?.name}
+                        {inventoryErrorMess?.name ||
+                          inventoryErrorMess?.message}
                       </Label>
                     </div>
                     <div className="flex flex-col gap-2">
