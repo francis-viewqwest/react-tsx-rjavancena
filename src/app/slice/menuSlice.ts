@@ -1,0 +1,124 @@
+import useAxiosClient from "@/axios-client";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+
+const axiosClient = useAxiosClient();
+
+interface menuState {
+    data: object;
+    status: string;
+    error: string | null | any;
+}
+
+interface ApiConfig {
+    url: string;
+    method: string;
+    data?: any;
+}
+
+
+const initialState: menuState = {
+    data: {},
+    status: "",
+    error: false,
+}
+
+const menuSlice = createSlice({
+    name: "menu",
+    initialState,
+    reducers: {
+
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(getMenuData.pending, (state) => {
+                state.status = "menuData/loading"
+                state.error = null
+            })
+            .addCase(getMenuData.fulfilled, (state, action) => {
+                state.status = "menuData/success"
+                state.data = action.payload
+            })
+            .addCase(getMenuData.rejected, (state, action) => {
+                state.status = "menuData/failed",
+                    state.error = action.payload
+            })
+
+        builder
+            .addCase(menuAddCart.pending, (state) => {
+                state.status = "menuAddCart/loading"
+                state.error = null
+            })
+            .addCase(menuAddCart.fulfilled, (state, action) => {
+                state.status = "menuAddCart/success"
+                state.data = action.payload
+            })
+            .addCase(menuAddCart.rejected, (state, action) => {
+                state.status = "menuAddCart/failed",
+                    state.error = action.payload
+            })
+
+        builder
+            .addCase(getCustomerData.pending, (state) => {
+                state.status = "customerData/loading"
+                state.error = null
+            })
+            .addCase(getCustomerData.fulfilled, (state, action) => {
+                state.status = "customerData/success"
+                state.data = action.payload
+            })
+            .addCase(getCustomerData.rejected, (state, action) => {
+                state.status = "customerData/failed",
+                    state.error = action.payload
+            })
+    }
+
+})
+
+export const getMenuData = createAsyncThunk("inventory/getMenuData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const menuAddCart = createAsyncThunk("inventory/menuAddCart", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const getCustomerData = createAsyncThunk("inventory/getCustomerData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const menuData = (state: any) => state.menu.data
+export const loadingStatus = (state: any) => state.menu.status;
+export const menuError = (state: any) => state.menu.error
+
+export default menuSlice.reducer

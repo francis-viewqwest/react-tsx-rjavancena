@@ -26,28 +26,55 @@ const ProductList: React.FC = () => {
 
   useEffect(() => {
     dispatch(getInventoryDataChild({ url: id }));
-  }, [dispatch, id]);
+  }, [id]);
 
   useEffect(() => {
     if (inventoryLoading === "getInventoryDataChild/success") {
-      toast({ title: inventoryChild.message });
-      setData(inventoryChild.data.inventory_product);
+      toast({ title: inventoryChild?.message || inventoryChild });
+      setData(inventoryChild?.data?.inventory_product);
     }
 
     if (inventoryLoading === "createInventoryChild/success") {
-      toast({ title: inventoryChild.message });
+      toast({ title: inventoryChild?.message || inventoryChild });
       dispatch(getInventoryDataChild({ url: id }));
     }
 
+    if (inventoryLoading === "createInventoryChild/failed") {
+      toast({
+        variant: "destructive",
+        title:
+          (inventoryChildError?.message && inventoryChildError) ||
+          "Uh oh! Something went wrong.",
+      });
+    }
+
+    if (inventoryLoading === "updateInventoryChild/success") {
+      toast({
+        title: inventoryChildError?.message || inventoryChildError,
+      });
+      dispatch(getInventoryDataChild({ url: id }));
+    }
+
+    if (inventoryLoading === "updateInventoryChild/failed") {
+      toast({
+        variant: "destructive",
+        title:
+          (inventoryChildError?.message && inventoryChildError) ||
+          "Uh oh! Something went wrong.",
+      });
+    }
+
     if (inventoryLoading === "deleteInventoryChildData/success") {
-      toast({ title: inventoryChild.message });
+      toast({ title: inventoryChild.message || inventoryChild });
       dispatch(getInventoryDataChild({ url: id }));
     }
     if (inventoryLoading === "deleteInventoryChildData/failed") {
-      // toast({ title: inventoryChild.message });
       toast({
         variant: "destructive",
-        title: inventoryChildError || "Uh oh! Something went wrong.",
+        title:
+          inventoryChildError ||
+          inventoryChildError.message ||
+          "Uh oh! Something went wrong.",
         description: "There was a problem with your request.",
       });
     }

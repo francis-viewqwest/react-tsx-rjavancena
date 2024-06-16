@@ -78,7 +78,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   interface CreateProduct {
     item_code: number;
     image: string;
-    is_refund: boolean;
+    refundable: string;
     name: string;
     retail_price: number;
     discounted_price: number;
@@ -115,7 +115,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
         eu_device: euDevice,
         item_code: data.item_code,
         image: imageFile,
-        is_refund: data.is_refund,
+        refundable: data.refundable,
         name: data.name,
         retail_price: data.retail_price,
         discounted_price: data.discounted_price,
@@ -124,6 +124,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       };
 
       console.log("PAYLOAD: ", payload);
+      console.log(inventoryChildError?.message?.item_code);
 
       dispatch(
         createInventoryChildData({
@@ -144,7 +145,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
             inventoryChildData.data?.buttons.map((btn: any, index: any) => (
               <Dialog key={index}>
                 <DialogTrigger asChild>
-                  <Button size="sm">{btn.button_name}</Button>
+                  <Button size="sm" className="font-semibold">
+                    {btn.button_name}
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader className="sm:px-5">
@@ -161,7 +164,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       className="grid py-4 gap-6 px-2 sm:px-5"
                     >
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Product Barcode</Label>
+                        <Label className="text-sm font-semibold">
+                          Product Barcode
+                        </Label>
                         <Input
                           type="number"
                           placeholder="Enter product name"
@@ -175,7 +180,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Product Name</Label>
+                        <Label className="text-sm font-semibold">
+                          Product Name
+                        </Label>
                         <Input
                           type="text"
                           placeholder="Enter product name"
@@ -189,7 +196,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Unit Price</Label>
+                        <Label className="text-sm font-semibold">
+                          Unit Price
+                        </Label>
                         <Input
                           type="number"
                           placeholder="Enter unit price"
@@ -203,7 +212,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Stocks</Label>
+                        <Label className="text-sm font-semibold">Stocks</Label>
                         <Input
                           type="number"
                           placeholder="Enter product quantity"
@@ -217,7 +226,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Product Image</Label>
+                        <Label className="text-sm font-semibold">
+                          Product Image
+                        </Label>
                         <Input
                           id="productImg"
                           type="file"
@@ -232,7 +243,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Supplier Name</Label>
+                        <Label className="text-sm font-semibold">
+                          Supplier Name
+                        </Label>
                         <Input
                           type="text"
                           placeholder="Enter product name"
@@ -241,10 +254,12 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Can be refund?</Label>
+                        <Label className="text-sm font-semibold">
+                          Can be refund?
+                        </Label>
                         <Select
                           onValueChange={(value) =>
-                            setValue("is_refund", value)
+                            setValue("refundable", value)
                           }
                           // value=""
                         >
@@ -258,14 +273,16 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             </SelectGroup>
                           </SelectContent>
                         </Select>
-                        {inventoryChildError?.is_refund && (
+                        {inventoryChildError?.refundable && (
                           <small className="text-xs text-red-500">
-                            {inventoryChildError?.is_refund}
+                            {inventoryChildError?.refundable}
                           </small>
                         )}
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Discounted Price</Label>
+                        <Label className="text-sm font-semibold">
+                          Discounted Price
+                        </Label>
                         <Input
                           type="number"
                           placeholder="Enter discounted price"

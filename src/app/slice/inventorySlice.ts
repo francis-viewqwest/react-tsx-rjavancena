@@ -210,8 +210,8 @@ export const createInventoryData = createAsyncThunk("inventory/createInventoryDa
 
 //* CREATE INVENTORY CHILD
 export const createInventoryChildData = createAsyncThunk("inventory/createInventoryChildData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+    console.log(apiconfig.data)
     try {
-
         const res = await axiosClient({
             url: apiconfig.url,
             method: apiconfig.method,

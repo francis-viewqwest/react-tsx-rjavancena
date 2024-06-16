@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,8 +6,59 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MenuList from "./components/MenuList";
 import OrdersList from "./components/OrdersList";
 import Payment from "./components/Payment";
+import { useDispatch, useSelector } from "react-redux";
+import _ from "lodash";
+import {
+  loadingStatus,
+  menuError,
+  menuData,
+  getCustomerData,
+} from "@/app/slice/menuSlice";
 
-const Menu: React.FC = () => {
+const Menu: React.FC = ({ props }) => {
+  const dispatch = useDispatch();
+  const [dataMenu, setDataMenu] = useState<any[]>([]);
+  const [dataCustomer, setDataCustomer] = useState<any[]>([]);
+  const [tabsMenu, setTabsMenu] = useState<any[]>([]);
+  const [quantities, setQuantities] = useState({});
+
+  const menuRes = useSelector(menuData);
+  const customerRes = useSelector(menuData);
+  const menuStatus = useSelector(loadingStatus);
+
+  console.log(dataMenu);
+  console.log(customerRes);
+
+  useEffect(() => {
+    if (menuStatus === "menuData/success") {
+      setDataMenu(menuRes?.data?.inventory_product);
+      setTabsMenu(menuRes?.data?.filter_category);
+      const initialQuantities = menuRes.data.inventory_product.reduce(
+        (acc, item) => {
+          acc[item.inventory_id] = 0;
+          return acc;
+        },
+        {}
+      );
+      setQuantities(initialQuantities);
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
+    if (menuStatus === "customerData/success") {
+      setDataCustomer(customerRes.data);
+    }
+  }, [menuStatus]);
+
+  const [activeTab, setActiveTab] = useState(null);
+  const handleTabChange = (value) => {
+    setActiveTab((prevValue) => (prevValue === value ? null : value));
+  };
+
   return (
     <>
       <div className="py-7 lg:grid lg:grid-cols-4 lg:grid-rows-4 lg:py-4 lg:gap-4">
@@ -17,56 +68,50 @@ const Menu: React.FC = () => {
             <Input className="pl-12" placeholder="Search Product" />
           </div>
           <div className="py-4">
-            <MenuList />
+            {menuRes && (
+              <MenuList
+                dataMenu={dataMenu}
+                customerId={activeTab}
+                dataCustomer={dataCustomer}
+                tabsMenu={tabsMenu}
+                quantities={quantities}
+                setQuantities={setQuantities}
+              />
+            )}
           </div>
         </div>
         <div className="py-4 lg:py-0 lg:row-span-4 lg:w-full lg:h-full lg:col-start-4">
-          <Tabs className="bg-white" defaultValue="customer01">
+          <Tabs defaultValue={activeTab} className="bg-white">
             <ScrollArea className="whitespace-nowrap rounded-md border">
-              <TabsList className="bg-white">
-                <TabsTrigger
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
-                  value="customer01"
-                >
-                  Customer 01
-                </TabsTrigger>
-                <TabsTrigger
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
-                  value="Customer02"
-                >
-                  Customer 02
-                </TabsTrigger>
-                <TabsTrigger
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
-                  value="Customer03"
-                >
-                  Customer 03
-                </TabsTrigger>
-                <TabsTrigger
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
-                  value="Customer04"
-                >
-                  Customer 04
-                </TabsTrigger>
-                <TabsTrigger
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
-                  value="Customer05"
-                >
-                  Customer 05
-                </TabsTrigger>
-                <TabsTrigger
-                  className="data-[state=active]:bg-primary data-[state=active]:text-white text-xs"
-                  value="Customer06"
-                >
-                  Customer 06
-                </TabsTrigger>
+              <TabsList className="bg-white h-12">
+                {dataCustomer.map((customer, index) => (
+                  <TabsTrigger
+                    key={index}
+                    className={`  text-xs ${
+                      activeTab === customer.customer_id
+                        ? "data-[state=active]:bg-primary data-[state=active]:text-white"
+                        : "data-[state=active]:text-black"
+                    }`}
+                    value={customer.customer_id}
+                    onClick={() => handleTabChange(customer.customer_id)}
+                  >
+                    {_.replace(customer.customer_id, "-", " ")}
+                  </TabsTrigger>
+                ))}
               </TabsList>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
-            <TabsContent value="customer01">
-              <OrdersList />
-              <Payment />
-            </TabsContent>
+            {activeTab ? (
+              <TabsContent value={activeTab}>
+                <OrdersList
+                  customerId={activeTab}
+                  dataCustomer={dataCustomer}
+                />
+                <Payment />
+              </TabsContent>
+            ) : (
+              <div className="p-4">Select a customer.</div>
+            )}
           </Tabs>
         </div>
       </div>

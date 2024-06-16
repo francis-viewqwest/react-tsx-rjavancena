@@ -61,9 +61,11 @@ const PageContent: React.FC = () => {
   }
 
   const routeComponent = (key: string, routeData: RouteData) => {
+    console.log(routeData);
+
     switch (key) {
       case "parent-Menu":
-        return <Menu />;
+        return <Menu routeData={routeData} />;
       case "parent-Dashboard":
         return <Dashboard />;
       case "parent-Inventory":

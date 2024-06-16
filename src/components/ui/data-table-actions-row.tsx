@@ -98,7 +98,9 @@ export function RowInventoryActions<TData>({
       item_code: formValues.item_code,
       name: formValues.product_name,
       retail_price: formValues.retail_price,
-      is_refund: formValues.can_be_refunded,
+      discounted_price: formValues.discounted_price,
+      unit_supplier_price: formValues.unit_supplier_price,
+      refundable: formValues.refundable,
       supplier_name: formValues.supplier_name,
       stocks: formValues.stocks,
       eu_device: euDevice,
@@ -136,7 +138,7 @@ export function RowInventoryActions<TData>({
   const errorMessages = {
     product_name: inventoryChildError?.name,
     item_code: inventoryChildError?.item_code,
-    can_be_refunded: inventoryChildError?.can_be_refunded,
+    refundable: inventoryChildError?.refundable,
     retail_price: inventoryChildError?.retail_price,
     stocks: inventoryChildError?.stocks,
   };
@@ -209,7 +211,7 @@ export function RowInventoryActions<TData>({
                     <div className="grid grid-cols-auto items-center gap-2 w-full">
                       {detail.type === "input" && (
                         <>
-                          <Label className="font-medium text-xs">
+                          <Label className="font-semibold text-xs">
                             {detail?.label}
                           </Label>
                           <>
@@ -237,7 +239,9 @@ export function RowInventoryActions<TData>({
                       )}
                       {detail.type === "file" && (
                         <>
-                          <Label className="text-xs">{detail.label}</Label>
+                          <Label className="text-xs font-semibold">
+                            {detail.label}
+                          </Label>
                           <Input
                             id="productImg"
                             type="file"
@@ -251,7 +255,7 @@ export function RowInventoryActions<TData>({
                       )}
                       {detail.type === "select" && (
                         <>
-                          <Label className="font-medium text-xs">
+                          <Label className="font-semibold text-xs">
                             {detail?.label}
                           </Label>
                           <Select

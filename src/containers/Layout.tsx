@@ -1,38 +1,28 @@
 import React from "react";
 import { useAuth } from "../app/AuthProvider";
-import { Navigate, Outlet } from "react-router-dom";
-import Navbar from "../components/user/navbar/components/Navbar";
-import Footer from "../components/user/footer/Components/Footer";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Navigate } from "react-router-dom";
+
 import Sidebar from "./Sidebar";
 import PageContent from "./PageContent";
 import { SidebarProvider } from "../hooks/SidebarContext";
+import useRefreshToken from "@/hooks/useRefreshToken";
 
 interface LayoutProps {
   token: string;
 }
 
 const Layout: React.FC<LayoutProps> = () => {
-  const { token } = useAuth();
+  // const { authentication } = useAuth();
 
-  if (!token) {
-    return <Navigate to="/" />;
-  }
+  // const refresh = useRefreshToken();
+
+  // if (!authentication.accessToken) {
+  //   refresh();
+  //   return <Navigate to="/" />;
+  // }
 
   return (
     <div className="flex flex-1 overflow-hidden w-screen h-screen relative">
-      {/* <Navbar token={token} />
-      <Outlet />
-      <Footer /> */}
       <SidebarProvider>
         <Sidebar />
       </SidebarProvider>

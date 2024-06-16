@@ -16,7 +16,7 @@ interface AddCartItem {
   price: number;
 }
 
-const OrdersList: React.FC = () => {
+const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
   const addCartItem: AddCartItem[] = [
     {
       productName: "Power Drill Set",
@@ -45,12 +45,24 @@ const OrdersList: React.FC = () => {
     },
   ];
 
+  console.log(customerId);
+
+  console.log(dataCustomer);
+
+  const customer = dataCustomer.find(
+    (customer) => customer.customer_id === customerId
+  );
+
+  if (!customer) {
+    return <div>No customer found for {customerId}</div>;
+  }
+
   return (
     <>
       <h1 className="font-bold flex items-center gap-2">
         Orders
         <div className="bg-primary rounded-full w-7 h-7 text-white flex items-center">
-          <span className="m-auto text-xs">5</span>
+          <span className="m-auto text-xs">{customer.total_orders}</span>
         </div>
       </h1>
       <div className="text-sm text-muted-foreground py-3 items-center flex gap-3">
@@ -60,7 +72,7 @@ const OrdersList: React.FC = () => {
       <div>
         <ScrollArea className="h-[400px] rounded-md border p-2">
           <div className=" flex flex-col gap-4">
-            {addCartItem.map((item, index) => (
+            {customer.items.map((item, index) => (
               <Card key={index} className="p-2">
                 <div className="flex gap-2">
                   <Skeleton className="max-w-full max-h-full p-8" />
@@ -68,10 +80,10 @@ const OrdersList: React.FC = () => {
                     <div>
                       <div className="flex w-full items-center justify-between">
                         <h1 className="text-xs font-bold text-primary">
-                          {item.productName}
+                          {item.name}
                         </h1>
                         <h1 className="text-xs font-bold text-primary">
-                          {item.price}
+                          ₱{item.retail_price}
                         </h1>
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -83,7 +95,7 @@ const OrdersList: React.FC = () => {
                         <Button className="rounded-r-none" size="sm">
                           <MinusIcon />
                         </Button>
-                        <div className="bg-white p-0.5 px-3">0</div>
+                        <div className="bg-white p-0.5 px-3">{item.count}</div>
                         <Button className="rounded-l-none" size="sm">
                           <PlusIcon />
                         </Button>
