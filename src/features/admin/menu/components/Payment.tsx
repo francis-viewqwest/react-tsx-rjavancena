@@ -15,7 +15,7 @@ interface Payment {
   label: string;
 }
 
-const Payment: React.FC = () => {
+const Payment: React.FC = ({ customerId, dataCustomer }) => {
   const paymentMethod: Payment[] = [
     {
       icon: <IconCashBanknoteFilled />,
@@ -31,37 +31,48 @@ const Payment: React.FC = () => {
     },
   ];
 
+  const customer = dataCustomer.find(
+    (customer: any) => customer.customer_id === customerId
+  );
+
+  console.log(customer.payment);
+
   return (
     <>
       <div className="py-5">
         <h1 className="font-bold">Payment Summary</h1>
-        <div className="flex flex-col gap-3 pt-8 pb-6">
-          <div className="flex items-center justify-between">
-            <h1>Discount</h1>
-            <Button className="flex gap-2">
-              <PlusIcon />
-              Discount
-            </Button>
-          </div>
-          <div className="flex items-center justify-between">
-            <h1>Total Discount</h1>
-            <p>₱0</p>
-          </div>
-          <div className="flex items-center justify-between">
-            <h1>Sub Total</h1>
-            <p>₱499.95</p>
-          </div>
-          <div className="flex items-center justify-between">
-            <h1>Tax</h1>
-            <p>₱10.95</p>
-          </div>
-        </div>
-        <div>
-          <div className="flex items-center justify-between border-dashed border-t-2 border-stone-400 py-4">
-            <h1 className="font-bold text-lg">Total Amount</h1>
-            <p className="font-bold text-lg">₱499.95</p>
-          </div>
-        </div>
+        {customer.payment.map((payment) => (
+          <>
+            <div className="flex flex-col gap-3 pt-8 pb-6">
+              <div className="flex items-center justify-between">
+                <h1>Voucher</h1>
+                <Button className="flex gap-2 font-medium">
+                  <PlusIcon />
+                  Voucher
+                </Button>
+              </div>
+              <div className="flex items-center justify-between">
+                <h1>Total Discount</h1>
+                <p>₱{payment?.total_discounted_amount}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <h1>Sub Total</h1>
+                <p>₱{payment?.total_amount}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <h1>Tax</h1>
+                <p>₱0</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between border-dashed border-t-2 border-stone-400 py-4">
+                <h1 className="font-bold text-lg">Total Amount</h1>
+                <p className="font-bold text-lg">₱{payment?.total_amount}</p>
+              </div>
+            </div>
+          </>
+        ))}
         <div className="w-full">
           <h1 className="font-semibold">Payment Method</h1>
           <div className="pt-4">

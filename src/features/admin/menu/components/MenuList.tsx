@@ -61,8 +61,12 @@ const MenuList: React.FC = ({
     console.log("Adding to cart", { itemId, quantity });
 
     const payload = {
-      user_id_customer: customer.user_id_customer,
-      purchase_group_id: customer.purchase_group_id,
+      ...(customer?.user_id_customer && {
+        user_id_customer: customer?.user_id_customer,
+      }),
+      ...(customer?.purchase_group_id && {
+        purchase_group_id: customer?.purchase_group_id,
+      }),
       inventory_product_id: itemId,
       quantity: quantity,
       eu_device: Cookies.get("eu"),
@@ -107,45 +111,62 @@ const MenuList: React.FC = ({
           <h1 className="font-bold text-lg my-8">Select menu</h1>
           <div className="gap-y-5 grid grid-cols-2 sm:grid-cols-3 sm:flex-row lg:grid lg:grid-cols-4 lg:gap-3">
             {filteredDataMenu.map((item, index) => (
-              <Card key={index} className="bg-primary max-w-72 p-1">
+              <Card key={index} className=" max-w-72 p-1">
                 <CardHeader className="p-2">
                   <Skeleton className="max-w-full max-h-full p-12 bg-neutral-300" />
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3 p-2">
                   <div>
-                    <h1 className="text-white font-bold text-md">
+                    <p className=" text-sm text-neutral-500 font-semibold">
+                      {item.category}
+                    </p>
+                    <h1 className="text-primary font-bold text-md">
                       {item.name}
                     </h1>
-                    <p className=" text-xs text-muted-foreground">
-                      {item.category}
+                    <p className="text-xs text-neutral-400 font-medium flex items-center gap-2">
+                      <span>{item.stocks} Available</span>•
+                      <span>{item.sold} Sold</span>
                     </p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-white font-bold text-lg">
-                      ₱{item.retail_price}
-                    </p>
+                    <div className="flex items-center">
+                      {item?.discounted_price > 0 && (
+                        <p className="text-primary font-bold text-lg mr-2">
+                          ₱{item.discounted_price}
+                        </p>
+                      )}
+                      <p
+                        className={`font-bold ${
+                          item.discounted_price
+                            ? "text-red-500 line-through text-sm font-medium"
+                            : "text-lg text-primary "
+                        }`}
+                      >
+                        ₱{item.retail_price}
+                      </p>
+                    </div>
                     <div className="flex items-center gap-3 justify-end">
                       <Button
                         variant="outline"
                         size="sm"
-                        className="bg-inherit border-white hover:bg-white/10"
+                        className="border-black hover:bg-white/10"
                         onClick={() => handleDecrement(item.inventory_id)}
                         disabled={quantities[item.id] <= 0}
                       >
-                        <MinusIcon color="white" />
+                        <MinusIcon color="black" />
                       </Button>
-                      <span className="text-white font-semibold">
+                      <span className="text-primary font-semibold">
                         {quantities[item.inventory_id]}
                       </span>
                       <Button
-                        className="bg-white hover:bg-white/90"
+                        className="bg-primary hover:bg-primary/90"
                         size="sm"
                         onClick={() =>
                           handleIncrement(item.inventory_id, item.stocks)
                         }
                         disabled={quantities[item.id] >= item.stocks}
                       >
-                        <PlusIcon color="black" />
+                        <PlusIcon color="white" />
                       </Button>
                     </div>
                   </div>
@@ -153,7 +174,7 @@ const MenuList: React.FC = ({
                   <Button
                     variant="outline"
                     size="default"
-                    className=" hover:bg-white/90 font-semibold my-1"
+                    className="bg-primary text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
                     onClick={() =>
                       handleAddToCart(
                         item.inventory_product_id,

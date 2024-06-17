@@ -1,5 +1,6 @@
 import useAxiosClient from "@/axios-client";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { method } from "lodash";
 
 
 const axiosClient = useAxiosClient();
@@ -71,14 +72,57 @@ const menuSlice = createSlice({
                 state.status = "customerData/failed",
                     state.error = action.payload
             })
+
+        builder
+            .addCase(incrementQty.pending, (state) => {
+                state.status = "incrementQty/loading"
+                state.error = null
+            })
+            .addCase(incrementQty.fulfilled, (state, action) => {
+                state.status = "incrementQty/success"
+                state.data = action.payload
+            })
+            .addCase(incrementQty.rejected, (state, action) => {
+                state.status = "incrementQty/failed",
+                    state.error = action.payload
+            })
+
+        builder
+            .addCase(decrementQty.pending, (state) => {
+                state.status = "decrementQty/loading"
+                state.error = null
+            })
+            .addCase(decrementQty.fulfilled, (state, action) => {
+                state.status = "decrementQty/success"
+                state.data = action.payload
+            })
+            .addCase(decrementQty.rejected, (state, action) => {
+                state.status = "decrementQty/failed",
+                    state.error = action.payload
+            })
+
+        builder
+            .addCase(editCustomerName.pending, (state) => {
+                state.status = "editCustomerName/loading"
+                state.error = null
+            })
+            .addCase(editCustomerName.fulfilled, (state, action) => {
+                state.status = "editCustomerName/success"
+                state.data = action.payload
+            })
+            .addCase(editCustomerName.rejected, (state, action) => {
+                state.status = "editCustomerName/failed",
+                    state.error = action.payload
+            })
     }
 
 })
 
-export const getMenuData = createAsyncThunk("inventory/getMenuData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+export const getMenuData = createAsyncThunk("menu/getMenuData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
-            url: ApiConfig.url
+            url: ApiConfig.url,
+            method: ApiConfig.method
         })
         console.log(res)
         return res.data
@@ -88,7 +132,7 @@ export const getMenuData = createAsyncThunk("inventory/getMenuData", async (ApiC
     }
 })
 
-export const menuAddCart = createAsyncThunk("inventory/menuAddCart", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+export const menuAddCart = createAsyncThunk("menu/menuAddCart", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
             url: ApiConfig.url,
@@ -103,11 +147,56 @@ export const menuAddCart = createAsyncThunk("inventory/menuAddCart", async (ApiC
     }
 })
 
-export const getCustomerData = createAsyncThunk("inventory/getCustomerData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+export const getCustomerData = createAsyncThunk("menu/getCustomerData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
             url: ApiConfig.url,
             method: ApiConfig.method,
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const incrementQty = createAsyncThunk("menu/incrementQty", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const decrementQty = createAsyncThunk("menu/decrementQty", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const editCustomerName = createAsyncThunk("menu/editCustomerName", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
         })
         console.log(res)
         return res.data

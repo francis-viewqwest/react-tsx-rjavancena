@@ -12,6 +12,7 @@ import {
   loadingStatus,
   menuError,
   menuData,
+  getMenuData,
   getCustomerData,
 } from "@/app/slice/menuSlice";
 
@@ -49,8 +50,69 @@ const Menu: React.FC = ({ props }) => {
       );
     }
 
+    if (menuStatus === "menuAddCart/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
     if (menuStatus === "customerData/success") {
       setDataCustomer(customerRes.data);
+    }
+
+    if (menuStatus === "incrementQty/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
+    if (menuStatus === "decrementQty/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
+    if (menuStatus === "editCustomerName/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
     }
   }, [menuStatus]);
 
@@ -95,7 +157,15 @@ const Menu: React.FC = ({ props }) => {
                     value={customer.customer_id}
                     onClick={() => handleTabChange(customer.customer_id)}
                   >
-                    {_.replace(customer.customer_id, "-", " ")}
+                    {_.startCase(
+                      _.replace(
+                        customer.customer_name
+                          ? customer.customer_name
+                          : customer.customer_id,
+                        "-",
+                        " "
+                      )
+                    )}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -107,7 +177,7 @@ const Menu: React.FC = ({ props }) => {
                   customerId={activeTab}
                   dataCustomer={dataCustomer}
                 />
-                <Payment />
+                <Payment customerId={activeTab} dataCustomer={dataCustomer} />
               </TabsContent>
             ) : (
               <div className="p-4">Select a customer.</div>
