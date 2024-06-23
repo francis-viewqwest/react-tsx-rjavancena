@@ -32,16 +32,14 @@ const Payment: React.FC = ({ customerId, dataCustomer }) => {
   ];
 
   const customer = dataCustomer.find(
-    (customer: any) => customer.customer_id === customerId
+    (customer: any) => customer?.customer_id === customerId
   );
-
-  console.log(customer.payment);
 
   return (
     <>
       <div className="py-5">
         <h1 className="font-bold">Payment Summary</h1>
-        {customer.payment.map((payment) => (
+        {customer?.payment.map((payment) => (
           <>
             <div className="flex flex-col gap-3 pt-8 pb-6">
               <div className="flex items-center justify-between">
@@ -77,19 +75,19 @@ const Payment: React.FC = ({ customerId, dataCustomer }) => {
           <h1 className="font-semibold">Payment Method</h1>
           <div className="pt-4">
             <RadioGroup className="grid grid-cols-3 gap-2 w-full">
-              {paymentMethod.map((item) => (
+              {paymentMethod?.map((item) => (
                 <div>
                   <RadioGroupItem
-                    value={item.label}
-                    id={item.label}
+                    value={item?.label}
+                    id={item?.label}
                     className="peer sr-only"
                   />
                   <Label
-                    htmlFor={item.label}
+                    htmlFor={item?.label}
                     className="flex flex-col text-xs items-center font-semibold justify-between rounded-md border-2 border-primary bg-popover p-3 hover:bg-primary hover:text-white peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                   >
-                    {item.icon}
-                    {item.label}
+                    {item?.icon}
+                    {item?.label}
                   </Label>
                 </div>
               ))}

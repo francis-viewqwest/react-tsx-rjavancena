@@ -15,7 +15,7 @@ const useRefreshToken = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const newAccessToken = res.data.access_token;
+      const newAccessToken = res.data.token;
 
       // Update state and cookies
       setAuthentication((prev) => ({

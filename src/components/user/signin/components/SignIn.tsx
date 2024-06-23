@@ -42,11 +42,11 @@ const SignIn: React.FC = () => {
         eu_device: euDevice,
       });
       console.log(res);
-      const access_token = res.data.access_token;
-      Cookies.set("token", res.data.access_token);
-      // setToken(access_token);
+      const token = res.data.token;
+      Cookies.set("token", res.data.token);
+      // setToken(token);
 
-      if (access_token) {
+      if (token) {
         navigate("/app/menu");
       }
     } catch (error: any) {

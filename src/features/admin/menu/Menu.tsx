@@ -85,6 +85,21 @@ const Menu: React.FC = ({ props }) => {
       );
     }
 
+    if (menuStatus === "incrementQty/failed") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
     if (menuStatus === "decrementQty/success") {
       dispatch(
         getMenuData({
@@ -114,7 +129,37 @@ const Menu: React.FC = ({ props }) => {
         })
       );
     }
-  }, [menuStatus]);
+
+    if (menuStatus === "removeCustomerName/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
+    // if (menuStatus === "deleteProduct/success") {
+    //   dispatch(
+    //     getMenuData({
+    //       url: "inventory/product/index",
+    //       method: "GET",
+    //     })
+    //   );
+    //   dispatch(
+    //     getCustomerData({
+    //       url: "purchase/get-user-id-menu-costumer",
+    //       method: "GET",
+    //     })
+    //   );
+    // }
+  }, [menuStatus, dispatch]);
 
   const [activeTab, setActiveTab] = useState(null);
   const handleTabChange = (value) => {

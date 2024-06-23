@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MinusIcon,
   PlusIcon,
@@ -10,11 +10,28 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   decrementQty,
   editCustomerName,
   incrementQty,
+  loadingStatus,
+  removeCustomerName,
+  menuError,
+  deleteProduct,
+  getMenuData,
+  getCustomerData,
 } from "@/app/slice/menuSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import _ from "lodash";
 import { Input } from "@/components/ui/input";
@@ -29,107 +46,202 @@ interface AddCartItem {
 
 const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
   const dispatch = useDispatch();
-
-  const [quantities, setQuantities] = useState({});
-  // const [countQty, setCountQty] = useState(0);
-  const [isEdit, setIsEdit] = useState(false);
-
-  console.log(quantities);
+  const orderListError = useSelector(menuError);
+  const menuStatus = useSelector(loadingStatus);
 
   const customer = dataCustomer.find(
-    (customer: any) => customer.customer_id === customerId
+    (customer: any) => customer?.customer_id === customerId
   );
 
   if (!customer) {
     return <div>No customer found for {customerId}</div>;
   }
 
-  const handleIncrementQty = (
-    purchaseId,
-    quantity,
-    stocks,
-    purchaseGroupId,
-    userId,
-    inventoryId,
-    invProductId
-  ) => {
-    console.log(stocks);
-    const newQuantity = (quantities[quantity] || quantity) + 1;
+  const [itemQuantities, setItemQuantities] = useState({});
+  const [isEdit, setIsEdit] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isDelete, setIsDelete] = useState(false);
+  const [payloadData, setPayloadData] = useState({});
+  const [btnOperator, setBtnOperator] = useState("");
+  const [customerName, setCustomerName] = useState(
+    customer?.customer_name ? customer?.customer_name : customer?.customer_id
+  );
 
-    if (stocks === 0) {
-      return;
+  useEffect(() => {
+    let timer;
+
+    if (payloadData && Object.keys(payloadData).length > 0) {
+      timer = setTimeout(() => {
+        Object.keys(payloadData).forEach((key) => {
+          const payload = payloadData[key];
+          if (btnOperator === "plus") {
+            dispatch(
+              incrementQty({
+                url: "purchase/update-qty",
+                method: "POST",
+                data: payload,
+              })
+            );
+          } else if (btnOperator === "minus") {
+            dispatch(
+              decrementQty({
+                url: "purchase/update-qty",
+                method: "POST",
+                data: payload,
+              })
+            );
+          }
+        });
+        setPayloadData({});
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
+  }, [payloadData, btnOperator, dispatch]);
 
-    const payload = {
-      purchase_id: purchaseId,
-      quantity: newQuantity,
-      purchase_group_id: purchaseGroupId,
-      user_id_customer: userId,
-      inventory_id: inventoryId,
-      inventory_product_id: invProductId,
-      eu_device: Cookies.get("eu"),
-    };
-
-    setQuantities((prev) => ({
-      ...prev,
-      [quantity]: newQuantity,
-    }));
-
-    dispatch(
-      incrementQty({
-        url: "purchase/add-qty",
-        method: "POST",
-        data: payload,
-      })
-    );
-  };
-
-  const handleDecrementQty = (
-    purchaseId,
-    quantity,
-    purchaseGroupId,
-    userId,
-    inventoryId,
-    invProductId
-  ) => {
-    // const newQuantity = Math.max((quantities[quantity] || quantity) - 1, 0);
-
-    // const newQuantity = (quantities[quantity] || quantity) - 1;
-    const newQuantity = (quantities[quantity] || quantity) - 1;
-
-    if (newQuantity === 0) {
-      return;
+  useEffect(() => {
+    if (menuStatus === "customerData/success") {
+      setItemQuantities({});
+      setPayloadData(null);
     }
-
-    if (newQuantity >= 0) {
-      const payload = {
-        purchase_id: purchaseId,
-        quantity: newQuantity,
-        purchase_group_id: purchaseGroupId,
-        user_id_customer: userId,
-        inventory_id: inventoryId,
-        inventory_product_id: invProductId,
-        eu_device: Cookies.get("eu"),
-      };
-
-      setQuantities((prev) => ({
-        ...prev,
-        [quantity]: newQuantity,
-      }));
-
+    if (menuStatus === "incrementQty/failed") {
+      setErrorMessage(orderListError);
+    }
+    if (menuStatus === "deleteProduct/success") {
       dispatch(
-        decrementQty({
-          url: "purchase/minus-qty",
-          method: "POST",
-          data: payload,
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
         })
       );
     }
+  }, [menuStatus]);
+
+  const handleIncrementQty = (item) => {
+    setBtnOperator("plus");
+    setItemQuantities((prevQuantities) => {
+      const currentQuantity =
+        (prevQuantities[item.inventory_product_id]?.quantity ?? item.count) + 1;
+
+      if (item.stocks === 0) {
+        return prevQuantities;
+      }
+
+      const newQuantities = {
+        ...prevQuantities,
+        [item.inventory_product_id]: {
+          ...prevQuantities[item.inventory_product_id],
+          quantity: currentQuantity,
+        },
+      };
+
+      const newPayload = {
+        ...payloadData,
+        [item.inventory_product_id]: {
+          purchase_id: item.purchase_id,
+          quantity: currentQuantity,
+          purchase_group_id: item.purchase_group_id,
+          user_id_customer: item.user_id_customer,
+          inventory_id: item.inventory_id,
+          inventory_product_id: item.inventory_product_id,
+          eu_device: Cookies.get("eu"),
+        },
+      };
+
+      setPayloadData(newPayload);
+
+      return newQuantities;
+    });
   };
 
-  const [customerName, setCustomerName] = useState(
-    customer.customer_name ? customer.customer_name : customer.customer_id
-  );
+  const handleDecrementQty = (item) => {
+    setBtnOperator("minus");
+    setItemQuantities((prevQuantities) => {
+      const currentQuantity =
+        (prevQuantities[item.inventory_product_id]?.quantity ?? item.count) - 1;
+
+      if (currentQuantity === 0) {
+        return prevQuantities;
+      }
+
+      const newQuantities = {
+        ...prevQuantities,
+        [item.inventory_product_id]: {
+          ...prevQuantities[item.inventory_product_id],
+          quantity: currentQuantity,
+        },
+      };
+
+      const newPayload = {
+        ...payloadData,
+        [item.inventory_product_id]: {
+          purchase_id: item.purchase_id,
+          quantity: currentQuantity,
+          purchase_group_id: item.purchase_group_id,
+          user_id_customer: item.user_id_customer,
+          inventory_id: item.inventory_id,
+          inventory_product_id: item.inventory_product_id,
+          eu_device: Cookies.get("eu"),
+        },
+      };
+
+      setPayloadData(newPayload);
+
+      return newQuantities;
+    });
+  };
+
+  const getQuantity = (item) => {
+    return itemQuantities[item.inventory_product_id]?.quantity || item?.count;
+  };
+
+  useEffect(() => {
+    let timer;
+
+    if (payloadData && Object.keys(payloadData).length > 0) {
+      timer = setTimeout(() => {
+        Object.keys(payloadData).forEach((key) => {
+          const payload = payloadData[key];
+          if (btnOperator === "plus") {
+            dispatch(
+              incrementQty({
+                url: "purchase/update-qty",
+                method: "POST",
+                data: payload,
+              })
+            );
+          } else if (btnOperator === "minus") {
+            dispatch(
+              decrementQty({
+                url: "purchase/update-qty",
+                method: "POST",
+                data: payload,
+              })
+            );
+          }
+        });
+        setPayloadData({});
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [payloadData, btnOperator, dispatch]);
+
+  useEffect(() => {
+    if (menuStatus === "customerData/success") {
+      setItemQuantities({});
+      setPayloadData(null);
+    }
+    if (menuStatus === "incrementQty/failed") {
+      setErrorMessage(orderListError);
+    }
+  }, [menuStatus]);
 
   const handleSaveName = (purchaseGroupId, userId) => {
     setIsEdit(false);
@@ -153,12 +265,79 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
   const handleEditName = (e: any) => {
     setCustomerName(e.target.value);
   };
+
+  const handleDeleteCustomer = (values: any) => {
+    console.log(values);
+
+    const payload = {
+      payment_id: values.payment_id,
+      user_id: values.user_id_customer,
+      purchase_group_id: values.purchase_group_id,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      removeCustomerName({
+        url: "purchase/delete-customer",
+        method: "DELETE",
+        data: payload,
+      })
+    );
+  };
+
+  const handleDeleteProduct = (values) => {
+    console.log(values);
+
+    const payload = {
+      purchase_id: values.arr_purchase_id.map((item) => item),
+      purchase_group_id: values.purchase_group_id,
+      inventory_id: values.inventory_id,
+      inventory_product_id: values.inventory_product_id,
+      user_id_customer: values.user_id_customer,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      deleteProduct({
+        url: "purchase/delete-all-qty",
+        method: "DELETE",
+        data: payload,
+      })
+    );
+  };
+
   return (
     <>
+      {isDelete && (
+        <AlertDialog open={isDelete} onOpenChange={setIsDelete}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Are you sure you want to delete this customer?
+              </AlertDialogTitle>
+              <AlertDialogTitle className="text-sm">
+                {_.startCase(_.replace(customerName, "-", " "))}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                All customer data, including items currently in the cart, will
+                be removed. If you proceed, the customer will lose any items
+                saved in their cart.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleDeleteCustomer(customer)}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
       <h1 className="font-bold flex items-center gap-2">
         Orders
         <div className="bg-primary rounded-full w-6 h-6 text-white flex items-center">
-          <span className="m-auto text-xs">{customer.total_orders}</span>
+          <span className="m-auto text-xs">{customer?.total_orders}</span>
         </div>
       </h1>
       <div className="text-muted-foreground py-8 items-center flex gap-3 relative">
@@ -181,19 +360,28 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
             Save
           </Label>
         ) : (
-          <Icon
-            onClick={() => setIsEdit(true)}
-            fontSize={20}
-            className="z-20 flex right-4 absolute cursor-pointer"
-            color="black"
-            icon="radix-icons:pencil-2"
-          />
+          <div className="flex right-4 absolute items-center gap-2">
+            <Button className="z-20 bg-neutral-200 px-2 h-7 hover:bg-neutral-300 cursor-pointer">
+              <Icon
+                onClick={() => setIsEdit(true)}
+                // className="z-20 flex right-4 absolute cursor-pointer"
+                color="black"
+                icon="radix-icons:pencil-2"
+              />
+            </Button>
+            <Icon
+              onClick={() => setIsDelete(true)}
+              fontSize={16}
+              color="red"
+              icon="radix-icons:trash"
+            />
+          </div>
         )}
       </div>
       <div>
         <ScrollArea className="h-[400px] rounded-md border p-2">
           <div className=" flex flex-col gap-4">
-            {customer.items.map((item, index) => (
+            {customer?.items?.map((item, index) => (
               <Card key={index} className="p-2">
                 <div className="flex gap-2">
                   <Skeleton className="max-w-full max-h-full p-8" />
@@ -201,50 +389,37 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
                     <div>
                       <div className="flex w-full items-center justify-between">
                         <h1 className="text-xs font-bold text-primary">
-                          {item.name}
+                          {item?.name}
                         </h1>
                         <h1 className="text-xs font-bold text-primary">
-                          ₱{item.retail_price}
+                          ₱{item?.retail_price}
                         </h1>
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {item.category}
+                        {item?.category}
                       </p>
                     </div>
+                    <span className="text-red-500 text-xs">
+                      {errorMessage?.parameter === item?.item_code && (
+                        <>{errorMessage?.item}</>
+                      )}
+                    </span>
                     <div className="flex w-full h-full items-center justify-between">
                       <div className="flex items-center  ">
                         <Button
-                          onClick={() =>
-                            handleDecrementQty(
-                              item.purchase_id,
-                              item.count,
-                              item.purchase_group_id,
-                              item.user_id_customer,
-                              item.inventory_id,
-                              item.inventory_product_id
-                            )
-                          }
+                          // onClick={() => handleUpdateQty(item, "decrement")}
+                          onClick={() => handleDecrementQty(item)}
                           className="rounded-r-none"
                           size="sm"
                         >
                           <MinusIcon />
                         </Button>
                         <div className="bg-white p-0.5 px-3">
-                          {quantities[item.count] || item.count || 0}
-                          {/* {item.count} */}
+                          {getQuantity(item)}
                         </div>
                         <Button
-                          onClick={() =>
-                            handleIncrementQty(
-                              item.purchase_id,
-                              item.count,
-                              item.stocks,
-                              item.purchase_group_id,
-                              item.user_id_customer,
-                              item.inventory_id,
-                              item.inventory_product_id
-                            )
-                          }
+                          // onClick={() => handleUpdateQty(item, "increment")}
+                          onClick={() => handleIncrementQty(item)}
                           className="rounded-l-none"
                           size="sm"
                         >
@@ -253,6 +428,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
                       </div>
                       <div>
                         <Icon
+                          onClick={() => handleDeleteProduct(item)}
                           fontSize={20}
                           color="red"
                           icon="radix-icons:trash"
