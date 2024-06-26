@@ -142,6 +142,20 @@ const menuSlice = createSlice({
                 state.status = "deleteProduct/failed",
                     state.error = action.payload
             })
+
+        builder
+            .addCase(placeOrder.pending, (state) => {
+                state.status = "placeOrder/loading"
+                state.error = null
+            })
+            .addCase(placeOrder.fulfilled, (state, action) => {
+                state.status = "placeOrder/success"
+                state.data = action.payload
+            })
+            .addCase(placeOrder.rejected, (state, action) => {
+                state.status = "placeOrder/failed",
+                    state.error = action.payload
+            })
     }
 
 })
@@ -250,6 +264,21 @@ export const removeCustomerName = createAsyncThunk("menu/removeCustomerName", as
 })
 
 export const deleteProduct = createAsyncThunk("menu/deleteProduct", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+        console.log(res)
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const placeOrder = createAsyncThunk("menu/placerOrder", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
             url: ApiConfig.url,

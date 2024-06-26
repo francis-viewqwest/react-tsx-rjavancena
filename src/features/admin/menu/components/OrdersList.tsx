@@ -49,13 +49,9 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
   const orderListError = useSelector(menuError);
   const menuStatus = useSelector(loadingStatus);
 
-  const customer = dataCustomer.find(
-    (customer: any) => customer?.customer_id === customerId
+  const customer = dataCustomer?.find(
+    (customer) => customer?.customer_id === customerId
   );
-
-  if (!customer) {
-    return <div>No customer found for {customerId}</div>;
-  }
 
   const [itemQuantities, setItemQuantities] = useState({});
   const [isEdit, setIsEdit] = useState(false);
@@ -64,7 +60,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
   const [payloadData, setPayloadData] = useState({});
   const [btnOperator, setBtnOperator] = useState("");
   const [customerName, setCustomerName] = useState(
-    customer?.customer_name ? customer?.customer_name : customer?.customer_id
+    customer?.customer_name || customer?.customer_id
   );
 
   useEffect(() => {
@@ -102,7 +98,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
   useEffect(() => {
     if (menuStatus === "customerData/success") {
       setItemQuantities({});
-      setPayloadData(null);
+      setPayloadData({});
     }
     if (menuStatus === "incrementQty/failed") {
       setErrorMessage(orderListError);
@@ -116,18 +112,19 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
       );
       dispatch(
         getCustomerData({
-          url: "purchase/get-user-id-menu-costumer",
+          url: "purchase/get-user-id-menu-customer",
           method: "GET",
         })
       );
     }
-  }, [menuStatus]);
+  }, [menuStatus, dispatch, orderListError]);
 
   const handleIncrementQty = (item) => {
     setBtnOperator("plus");
     setItemQuantities((prevQuantities) => {
       const currentQuantity =
-        (prevQuantities[item.inventory_product_id]?.quantity ?? item.count) + 1;
+        (prevQuantities[item?.inventory_product_id]?.quantity ?? item?.count) +
+        1;
 
       if (item.stocks === 0) {
         return prevQuantities;
@@ -135,8 +132,8 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
 
       const newQuantities = {
         ...prevQuantities,
-        [item.inventory_product_id]: {
-          ...prevQuantities[item.inventory_product_id],
+        [item?.inventory_product_id]: {
+          ...prevQuantities[item?.inventory_product_id],
           quantity: currentQuantity,
         },
       };
@@ -201,48 +198,6 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     return itemQuantities[item.inventory_product_id]?.quantity || item?.count;
   };
 
-  useEffect(() => {
-    let timer;
-
-    if (payloadData && Object.keys(payloadData).length > 0) {
-      timer = setTimeout(() => {
-        Object.keys(payloadData).forEach((key) => {
-          const payload = payloadData[key];
-          if (btnOperator === "plus") {
-            dispatch(
-              incrementQty({
-                url: "purchase/update-qty",
-                method: "POST",
-                data: payload,
-              })
-            );
-          } else if (btnOperator === "minus") {
-            dispatch(
-              decrementQty({
-                url: "purchase/update-qty",
-                method: "POST",
-                data: payload,
-              })
-            );
-          }
-        });
-        setPayloadData({});
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [payloadData, btnOperator, dispatch]);
-
-  useEffect(() => {
-    if (menuStatus === "customerData/success") {
-      setItemQuantities({});
-      setPayloadData(null);
-    }
-    if (menuStatus === "incrementQty/failed") {
-      setErrorMessage(orderListError);
-    }
-  }, [menuStatus]);
-
   const handleSaveName = (purchaseGroupId, userId) => {
     setIsEdit(false);
 
@@ -250,7 +205,6 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
       purchase_group_id: purchaseGroupId,
       user_id_customer: userId,
       customer_name: customerName,
-      purchase_group_id: purchaseGroupId,
       eu_device: Cookies.get("eu"),
     };
     dispatch(
@@ -262,17 +216,15 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     );
   };
 
-  const handleEditName = (e: any) => {
+  const handleEditName = (e) => {
     setCustomerName(e.target.value);
   };
 
-  const handleDeleteCustomer = (values: any) => {
-    console.log(values);
-
+  const handleDeleteCustomer = () => {
     const payload = {
-      payment_id: values.payment_id,
-      user_id: values.user_id_customer,
-      purchase_group_id: values.purchase_group_id,
+      payment_id: customer.payment_id,
+      user_id: customer.user_id_customer,
+      purchase_group_id: customer.purchase_group_id,
       eu_device: Cookies.get("eu"),
     };
 
@@ -285,15 +237,9 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     );
   };
 
-  const handleDeleteProduct = (values) => {
-    console.log(values);
-
+  const handleDeleteProduct = (item) => {
     const payload = {
-      purchase_id: values.arr_purchase_id.map((item) => item),
-      purchase_group_id: values.purchase_group_id,
-      inventory_id: values.inventory_id,
-      inventory_product_id: values.inventory_product_id,
-      user_id_customer: values.user_id_customer,
+      purchase_id: item.arr_purchase_id,
       eu_device: Cookies.get("eu"),
     };
 
@@ -306,6 +252,9 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     );
   };
 
+  if (!customer) {
+    return <div>No customer found</div>;
+  }
   return (
     <>
       {isDelete && (
@@ -351,11 +300,11 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
           <Label
             onClick={() =>
               handleSaveName(
-                customer.purchase_group_id,
-                customer.user_id_customer
+                customer?.purchase_group_id,
+                customer?.user_id_customer
               )
             }
-            className="z-20 flex right-4 absolute"
+            className="z-20 flex right-4 absolute cursor-pointer"
           >
             Save
           </Label>
@@ -364,12 +313,13 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
             <Button className="z-20 bg-neutral-200 px-2 h-7 hover:bg-neutral-300 cursor-pointer">
               <Icon
                 onClick={() => setIsEdit(true)}
-                // className="z-20 flex right-4 absolute cursor-pointer"
+                className="cursor-pointer"
                 color="black"
                 icon="radix-icons:pencil-2"
               />
             </Button>
             <Icon
+              className="cursor-pointer"
               onClick={() => setIsDelete(true)}
               fontSize={16}
               color="red"

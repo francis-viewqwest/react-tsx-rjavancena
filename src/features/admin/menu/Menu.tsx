@@ -22,13 +22,11 @@ const Menu: React.FC = ({ props }) => {
   const [dataCustomer, setDataCustomer] = useState<any[]>([]);
   const [tabsMenu, setTabsMenu] = useState<any[]>([]);
   const [quantities, setQuantities] = useState({});
+  const [activeTab, setActiveTab] = useState(null);
 
   const menuRes = useSelector(menuData);
   const customerRes = useSelector(menuData);
   const menuStatus = useSelector(loadingStatus);
-
-  console.log(dataMenu);
-  console.log(customerRes);
 
   useEffect(() => {
     if (menuStatus === "menuData/success") {
@@ -131,6 +129,7 @@ const Menu: React.FC = ({ props }) => {
     }
 
     if (menuStatus === "removeCustomerName/success") {
+      setDataCustomer(customerRes.data);
       dispatch(
         getMenuData({
           url: "inventory/product/index",
@@ -145,23 +144,37 @@ const Menu: React.FC = ({ props }) => {
       );
     }
 
-    // if (menuStatus === "deleteProduct/success") {
-    //   dispatch(
-    //     getMenuData({
-    //       url: "inventory/product/index",
-    //       method: "GET",
-    //     })
-    //   );
-    //   dispatch(
-    //     getCustomerData({
-    //       url: "purchase/get-user-id-menu-costumer",
-    //       method: "GET",
-    //     })
-    //   );
-    // }
+    if (menuStatus === "deleteProduct/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
+
+    if (menuStatus === "placeOrder/success") {
+      dispatch(
+        getMenuData({
+          url: "inventory/product/index",
+          method: "GET",
+        })
+      );
+      dispatch(
+        getCustomerData({
+          url: "purchase/get-user-id-menu-costumer",
+          method: "GET",
+        })
+      );
+    }
   }, [menuStatus, dispatch]);
 
-  const [activeTab, setActiveTab] = useState(null);
   const handleTabChange = (value) => {
     setActiveTab((prevValue) => (prevValue === value ? null : value));
   };
@@ -191,28 +204,29 @@ const Menu: React.FC = ({ props }) => {
           <Tabs defaultValue={activeTab} className="bg-white">
             <ScrollArea className="whitespace-nowrap rounded-md border">
               <TabsList className="bg-white h-12">
-                {dataCustomer.map((customer, index) => (
-                  <TabsTrigger
-                    key={index}
-                    className={`  text-xs ${
-                      activeTab === customer.customer_id
-                        ? "data-[state=active]:bg-primary data-[state=active]:text-white"
-                        : "data-[state=active]:text-black"
-                    }`}
-                    value={customer.customer_id}
-                    onClick={() => handleTabChange(customer.customer_id)}
-                  >
-                    {_.startCase(
-                      _.replace(
-                        customer.customer_name
-                          ? customer.customer_name
-                          : customer.customer_id,
-                        "-",
-                        " "
-                      )
-                    )}
-                  </TabsTrigger>
-                ))}
+                {dataCustomer &&
+                  dataCustomer?.map((customer, index) => (
+                    <TabsTrigger
+                      key={index}
+                      className={`  text-xs ${
+                        activeTab === customer.customer_id
+                          ? "data-[state=active]:bg-primary data-[state=active]:text-white"
+                          : "data-[state=active]:text-black"
+                      }`}
+                      value={customer.customer_id}
+                      onClick={() => handleTabChange(customer.customer_id)}
+                    >
+                      {_.startCase(
+                        _.replace(
+                          customer.customer_name
+                            ? customer.customer_name
+                            : customer.customer_id,
+                          "-",
+                          " "
+                        )
+                      )}
+                    </TabsTrigger>
+                  ))}
               </TabsList>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
@@ -222,7 +236,11 @@ const Menu: React.FC = ({ props }) => {
                   customerId={activeTab}
                   dataCustomer={dataCustomer}
                 />
-                <Payment customerId={activeTab} dataCustomer={dataCustomer} />
+                <Payment
+                  menuStatus={menuStatus}
+                  customerId={activeTab}
+                  dataCustomer={dataCustomer}
+                />
               </TabsContent>
             ) : (
               <div className="p-4">Select a customer.</div>

@@ -34,8 +34,8 @@ const MenuList: React.FC = ({
     setActiveTab(value);
   };
 
-  const customer = dataCustomer.find(
-    (customer) => customer.customer_id === customerId
+  const customer = dataCustomer?.find(
+    (customer) => customer?.customer_id === customerId
   );
 
   const filteredDataMenu =
@@ -93,7 +93,7 @@ const MenuList: React.FC = ({
             >
               All
             </TabsTrigger>
-            {tabsMenu.map((item, index) => (
+            {tabsMenu?.map((item, index) => (
               <>
                 <TabsTrigger
                   key={index}
@@ -110,7 +110,7 @@ const MenuList: React.FC = ({
         <TabsContent value={activeTab}>
           <h1 className="font-bold text-lg my-8">Select menu</h1>
           <div className="gap-y-5 grid grid-cols-2 sm:grid-cols-3 sm:flex-row lg:grid lg:grid-cols-4 lg:gap-3">
-            {filteredDataMenu.map((item, index) => (
+            {filteredDataMenu?.map((item, index) => (
               <Card key={index} className=" max-w-72 p-1">
                 <CardHeader className="p-2">
                   <Skeleton className="max-w-full max-h-full p-12 bg-neutral-300" />
