@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { placeOrder } from "@/app/slice/menuSlice";
+import { placeOrder, loading, menuError } from "@/app/slice/menuSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
@@ -41,11 +41,12 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
     },
   ];
   const [cashInput, setCashInput] = useState("");
-  // const menuLoading = useSelector(loadingStatus);
+  const errorPayment = useSelector(menuError);
+  const loadingPayment = useSelector(loading);
 
   const dispatch = useDispatch();
 
-  console.log(menuStatus);
+  console.log(errorPayment?.message);
 
   const customer = dataCustomer?.find(
     (customer: any) => customer?.customer_id === customerId
@@ -87,28 +88,32 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
               </div>
               <div className="flex items-center justify-between">
                 <h1>Total Discount</h1>
-                <p>₱{payment?.total_discounted_amount}</p>
+                <p>
+                  {loadingPayment
+                    ? "Calculating..."
+                    : `₱${payment?.total_discounted_amount}`}
+                </p>
               </div>
               <div className="flex items-center justify-between">
                 <h1>Sub Total</h1>
                 <p>
-                  {menuStatus === "customerData/success"
-                    ? `₱${payment?.total_amount}`
-                    : "calculating..."}
+                  {loadingPayment
+                    ? "Calculating..."
+                    : `₱${payment?.total_amount}`}
                 </p>
               </div>
               <div className="flex items-center justify-between">
                 <h1>Tax</h1>
-                <p>₱0</p>
+                <p>{loadingPayment ? "Calculating..." : "₱0"}</p>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between border-dashed border-t-2 border-stone-400 py-4">
                 <h1 className="font-bold text-lg">Total Amount</h1>
                 <p className="font-bold text-lg">
-                  {menuStatus === "customerData/success"
-                    ? `₱${payment?.total_amount}`
-                    : "calculating..."}
+                  {loadingPayment
+                    ? "Calculating..."
+                    : `₱${payment?.total_amount}`}
                 </p>
               </div>
             </div>
@@ -128,7 +133,7 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
                       />
                       <Label
                         htmlFor={item?.label}
-                        className="flex flex-col text-xs items-center font-semibold justify-between rounded-md border-2 border-neutral-300 bg-popover p-3 hover:bg-primary hover:text-white peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white [&:has([data-state=checked])]:text-white"
+                        className="flex cursor-pointer flex-col text-xs items-center font-semibold justify-between rounded-md border-2 border-neutral-300 bg-popover p-3 hover:bg-primary hover:text-white peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white [&:has([data-state=checked])]:text-white"
                       >
                         {item?.icon}
                         {item?.label}
@@ -141,14 +146,17 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
                 <div className="grid gap-2">
                   <Label htmlFor="name">Cash</Label>
                   <Input
+                    type="number"
                     value={cashInput}
                     onChange={(e) => setCashInput(e.target.value)}
                     className="w-full"
                     id="name"
                     placeholder="Enter cash"
                   />
+                  <span className="text-red-500">{errorPayment?.message}</span>
                 </div>
                 <Button
+                  disabled={!cashInput}
                   onClick={() => handlePlaceOrder(customer)}
                   size="lg"
                   className="w-full font-semibold"

@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { ApiConfig } from "@/interface/InterfaceType"
-
 import useAxiosClient from "@/axios-client";
 
 const axiosClient = useAxiosClient();

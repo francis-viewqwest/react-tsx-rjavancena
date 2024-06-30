@@ -73,7 +73,7 @@ const PageContent: React.FC = () => {
       case "child-Inventory":
         return <ProductList />;
       case "parent-Users":
-        return <Users />;
+        return <Users routeData={routeData} />;
       case "Customer Order":
         return <CustomerOrder />;
       case "Return Order":

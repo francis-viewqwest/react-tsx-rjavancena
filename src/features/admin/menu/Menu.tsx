@@ -8,6 +8,8 @@ import OrdersList from "./components/OrdersList";
 import Payment from "./components/Payment";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@radix-ui/react-toast";
 import {
   loadingStatus,
   menuError,
@@ -27,6 +29,13 @@ const Menu: React.FC = ({ props }) => {
   const menuRes = useSelector(menuData);
   const customerRes = useSelector(menuData);
   const menuStatus = useSelector(loadingStatus);
+  const { toast } = useToast();
+  const errorMessage = useSelector(menuError);
+
+  const [tabCategory, setTabCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+  const [filteredCategory, setFilteredCategory] = useState("");
 
   useEffect(() => {
     if (menuStatus === "menuData/success") {
@@ -172,8 +181,31 @@ const Menu: React.FC = ({ props }) => {
           method: "GET",
         })
       );
+      toast({
+        title: menuRes?.message,
+      });
     }
   }, [menuStatus, dispatch]);
+
+  const handleTabCategory = (value: string) => {
+    setTabCategory(value);
+  };
+
+  useEffect(() => {
+    const filtered = dataMenu.filter((item) => {
+      const matchesCategory =
+        tabCategory === "all" || item.category === tabCategory;
+      const matchesSearchQuery =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearchQuery;
+    });
+    setFilteredData(filtered);
+  }, [tabCategory, searchQuery, dataMenu]);
+
+  const handleSearch = (event: any) => {
+    setSearchQuery(event.target.value);
+  };
 
   const handleTabChange = (value) => {
     setActiveTab((prevValue) => (prevValue === value ? null : value));
@@ -185,11 +217,19 @@ const Menu: React.FC = ({ props }) => {
         <div className="lg:col-span-3 lg:row-span-4">
           <div className="w-full relative flex items-center lg:w-96">
             <MagnifyingGlassIcon className="absolute ml-4 text-neutral-500 h-5 w-5" />
-            <Input className="pl-12" placeholder="Search Product" />
+            <Input
+              value={searchQuery}
+              onChange={handleSearch}
+              className="pl-12"
+              placeholder="Search Product"
+            />
           </div>
           <div className="py-4">
             {menuRes && (
               <MenuList
+                filteredData={filteredData}
+                tabCategory={tabCategory}
+                handleTabCategory={handleTabCategory}
                 dataMenu={dataMenu}
                 customerId={activeTab}
                 dataCustomer={dataCustomer}

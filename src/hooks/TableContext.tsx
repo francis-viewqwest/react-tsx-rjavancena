@@ -48,7 +48,11 @@ import {
   inventoryError,
   inventoryData,
 } from "@/app/slice/inventorySlice";
+
+import { addUser } from "@/app/slice/usersManagementSlice";
+
 import { useParams } from "react-router-dom";
+
 interface TableContextType {
   children: ReactNode;
   page: string;
@@ -103,6 +107,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
 
   const inventoryChildData = useSelector(inventoryData);
   const inventoryChildError = useSelector(inventoryError);
+
+  //* ADD USER MANAGEMENT
+  
 
   const handleFormSubmit =
     (url: string): SubmitHandler<CreateProduct> =>

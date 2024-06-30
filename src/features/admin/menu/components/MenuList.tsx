@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IconZoomExclamation } from "@tabler/icons-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,28 +21,26 @@ interface MenuItem {
 }
 
 const MenuList: React.FC = ({
-  dataMenu,
+  filteredData,
+  // dataMenu,
+  tabCategory,
+  handleTabCategory,
   tabsMenu,
   quantities,
   setQuantities,
   customerId,
   dataCustomer,
 }) => {
-  const [activeTab, setActiveTab] = useState("all");
   const dispatch = useDispatch();
-
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-  };
 
   const customer = dataCustomer?.find(
     (customer) => customer?.customer_id === customerId
   );
 
-  const filteredDataMenu =
-    activeTab === "all"
-      ? dataMenu
-      : dataMenu.filter((item: any) => item.category === activeTab);
+  // const filteredDataMenu =
+  //   activeTab === "all"
+  //     ? dataMenu
+  //     : dataMenu.filter((item: any) => item.category === activeTab);
 
   const handleIncrement = (itemId: string, stock: number) => {
     setQuantities((prev: any) => ({
@@ -84,7 +83,7 @@ const MenuList: React.FC = ({
   return (
     <>
       <h1 className="font-bold text-lg mb-3">Categories</h1>
-      <Tabs defaultValue={activeTab} onValueChange={handleTabChange}>
+      <Tabs defaultValue={tabCategory} onValueChange={handleTabCategory}>
         <ScrollArea className="whitespace-nowrap rounded-md border">
           <TabsList className="bg-white">
             <TabsTrigger
@@ -107,86 +106,94 @@ const MenuList: React.FC = ({
           </TabsList>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
-        <TabsContent value={activeTab}>
+        <TabsContent value={tabCategory}>
           <h1 className="font-bold text-lg my-8">Select menu</h1>
-          <div className="gap-y-5 grid grid-cols-2 sm:grid-cols-3 sm:flex-row lg:grid lg:grid-cols-4 lg:gap-3">
-            {filteredDataMenu?.map((item, index) => (
-              <Card key={index} className=" max-w-72 p-1">
-                <CardHeader className="p-2">
-                  <Skeleton className="max-w-full max-h-full p-12 bg-neutral-300" />
-                </CardHeader>
-                <CardContent className="flex flex-col gap-3 p-2">
-                  <div>
-                    <p className=" text-sm text-neutral-500 font-semibold">
-                      {item.category}
-                    </p>
-                    <h1 className="text-primary font-bold text-md">
-                      {item.name}
-                    </h1>
-                    <p className="text-xs text-neutral-400 font-medium flex items-center gap-2">
-                      <span>{item.stocks} Available</span>•
-                      <span>{item.sold} Sold</span>
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      {item?.discounted_price > 0 && (
-                        <p className="text-primary font-bold text-lg mr-2">
-                          ₱{item.discounted_price}
-                        </p>
-                      )}
-                      <p
-                        className={`font-bold ${
-                          item.discounted_price
-                            ? "text-red-500 line-through text-sm font-medium"
-                            : "text-lg text-primary "
-                        }`}
-                      >
-                        ₱{item.retail_price}
+          <div className="gap-y-5 grid grid-cols-2 sm:grid-cols-3 sm:flex-row lg:grid lg:grid-cols-4 lg:gap-3 relative">
+            {filteredData?.length > 0 ? (
+              filteredData?.map((item, index) => (
+                <Card key={index} className=" max-w-72 p-1">
+                  <CardHeader className="p-2">
+                    <Skeleton className="max-w-full max-h-full p-12 bg-neutral-300" />
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-3 p-2">
+                    <div>
+                      <p className=" text-sm text-neutral-500 font-semibold">
+                        {item.category}
+                      </p>
+                      <h1 className="text-primary font-bold text-md">
+                        {item.name}
+                      </h1>
+                      <p className="text-xs text-neutral-400 font-medium flex items-center gap-2">
+                        <span>{item.stocks} Available</span>•
+                        <span>{item.sold} Sold</span>
                       </p>
                     </div>
-                    <div className="flex items-center gap-3 justify-end">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-black hover:bg-white/10"
-                        onClick={() => handleDecrement(item.inventory_id)}
-                        disabled={quantities[item.id] <= 0}
-                      >
-                        <MinusIcon color="black" />
-                      </Button>
-                      <span className="text-primary font-semibold">
-                        {quantities[item.inventory_id]}
-                      </span>
-                      <Button
-                        className="bg-primary hover:bg-primary/90"
-                        size="sm"
-                        onClick={() =>
-                          handleIncrement(item.inventory_id, item.stocks)
-                        }
-                        disabled={quantities[item.id] >= item.stocks}
-                      >
-                        <PlusIcon color="white" />
-                      </Button>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        {item?.discounted_price > 0 && (
+                          <p className="text-primary font-bold text-lg mr-2">
+                            ₱{item.discounted_price}
+                          </p>
+                        )}
+                        <p
+                          className={`font-bold ${
+                            item.discounted_price
+                              ? "text-red-500 line-through text-sm font-medium"
+                              : "text-lg text-primary "
+                          }`}
+                        >
+                          ₱{item.retail_price}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3 justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-black hover:bg-white/10"
+                          onClick={() => handleDecrement(item.inventory_id)}
+                          disabled={quantities[item.id] <= 0}
+                        >
+                          <MinusIcon color="black" />
+                        </Button>
+                        <span className="text-primary font-semibold">
+                          {quantities[item.inventory_id]}
+                        </span>
+                        <Button
+                          className="bg-primary hover:bg-primary/90"
+                          size="sm"
+                          onClick={() =>
+                            handleIncrement(item.inventory_id, item.stocks)
+                          }
+                          disabled={quantities[item.id] >= item.stocks}
+                        >
+                          <PlusIcon color="white" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
 
-                  <Button
-                    variant="outline"
-                    size="default"
-                    className="bg-primary text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
-                    onClick={() =>
-                      handleAddToCart(
-                        item.inventory_product_id,
-                        quantities[item.inventory_id]
-                      )
-                    }
-                  >
-                    Add to cart
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    <Button
+                      variant="outline"
+                      size="default"
+                      className="bg-primary text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
+                      onClick={() =>
+                        handleAddToCart(
+                          item.inventory_product_id,
+                          quantities[item.inventory_id]
+                        )
+                      }
+                    >
+                      Add to cart
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="w-full flex pt-40 items-center justify-center absolute">
+                <h1 className="text-sm flex items-center gap-2 text-neutral-600">
+                  No products found. <IconZoomExclamation size={18} />
+                </h1>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

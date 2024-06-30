@@ -8,6 +8,7 @@ const axiosClient = useAxiosClient();
 interface menuState {
     data: object;
     status: string;
+    loading: boolean;
     error: string | null | any;
 }
 
@@ -21,6 +22,7 @@ interface ApiConfig {
 const initialState: menuState = {
     data: {},
     status: "",
+    loading: true,
     error: false,
 }
 
@@ -62,15 +64,18 @@ const menuSlice = createSlice({
         builder
             .addCase(getCustomerData.pending, (state) => {
                 state.status = "customerData/loading"
+                state.loading = true;
                 state.error = null
             })
             .addCase(getCustomerData.fulfilled, (state, action) => {
                 state.status = "customerData/success"
+                state.loading = false;
                 state.data = action.payload
             })
             .addCase(getCustomerData.rejected, (state, action) => {
                 state.status = "customerData/failed",
-                    state.error = action.payload
+                    state.loading = false;
+                state.error = action.payload
             })
 
         builder
@@ -295,6 +300,7 @@ export const placeOrder = createAsyncThunk("menu/placerOrder", async (ApiConfig:
 
 export const menuData = (state: any) => state.menu.data
 export const loadingStatus = (state: any) => state.menu.status;
+export const loading = (state: any) => state.menu.loading;
 export const menuError = (state: any) => state.menu.error
 
 export default menuSlice.reducer
