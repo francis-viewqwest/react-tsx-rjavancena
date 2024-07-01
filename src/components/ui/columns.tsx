@@ -7,11 +7,11 @@ import {
   RowInventoryActions,
   RowPackOrdersAction,
   RowReturnOrderAction,
-  RowUsersAction,
   RowShippingAction,
   RowFailedDeliverAction,
   RowCancelledDeliverAction,
   RowHandoverAction,
+  RowUsersActions,
 } from "./data-table-actions-row";
 import {
   ProductType,
@@ -35,9 +35,13 @@ import _ from "lodash";
 import { inventoryData } from "@/app/slice/inventorySlice";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
+import { usersData } from "@/app/slice/usersManagementSlice";
 
-const useColumnsProduct = () => {
+const useColumnsProduct = (dataSource: "inventory" | "users") => {
   const inventoryChild = useSelector(inventoryData);
+  const usersParent = useSelector(usersData);
+
+  console.log(usersParent?.data?.columns);
 
   const baseColumns: ColumnDef<any>[] = [
     {
@@ -55,8 +59,10 @@ const useColumnsProduct = () => {
 
   // Memoize dynamic columns based on inventoryChild dependency
   const dynamicColumns = useMemo(() => {
+    const currentData =
+      dataSource === "inventory" ? inventoryChild : usersParent;
     return (
-      inventoryChild?.data?.columns?.map((column: string) => {
+      currentData?.data?.columns?.map((column: string) => {
         const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");
 
         return {
@@ -78,15 +84,25 @@ const useColumnsProduct = () => {
                 <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />
               );
             }
+            if (columnHeader.includes("status")) {
+              return <Badge>{row.getValue(accessorKey)}</Badge>;
+            }
             if (columnHeader.includes("actions")) {
-              return <RowInventoryActions row={row} />;
+              switch (dataSource) {
+                case "inventory":
+                  return <RowInventoryActions row={row} />;
+                case "users":
+                  return <RowUsersActions row={row} />;
+                default:
+                  return null;
+              }
             }
             return <div>{row.getValue(accessorKey)}</div>;
           },
         };
       }) || []
     );
-  }, [inventoryChild]);
+  }, [dataSource, inventoryChild, usersParent]);
 
   // Combine base columns and dynamic columns
   const columns = useMemo(

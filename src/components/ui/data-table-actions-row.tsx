@@ -338,25 +338,58 @@ export function RowInventoryActions<TData>({
   );
 }
 
-export function RowUsersAction<TData>({}: DataTableRowActionsProps<TData>) {
+export function RowUsersActions<TData>({row}: DataTableRowActionsProps<TData>) {
+
+  console.log(row.original)
+
   return (
+    <Dialog>
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex p-0 data-[state=open]:bg-muted">
-          <DotsHorizontalIcon className="h-4 w-4" />
+      <DropdownMenuTrigger>
+        <Button variant="ghost">
+          <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent className="w-full">
         <DropdownMenuLabel>Action</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>View</DropdownMenuItem>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem className="flex items-center justify-between">
-          Delete
-          <TrashIcon className="w-4 h-4" color="red" />
-        </DropdownMenuItem>
+        {row.original.actions.map((act) => (
+          <>
+            {act.button_name == "Edit" ? (
+              <>
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="flex items-center w-full justify-between"
+                    // onClick={() => handleEdit(act)}
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="flex items-center w-full justify-between"
+                    // onClick={() => handleRemove(act)}
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              </>
+            )}
+          </>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
+   
+  </Dialog>
   );
 }
 

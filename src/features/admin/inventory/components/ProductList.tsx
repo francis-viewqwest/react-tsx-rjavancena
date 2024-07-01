@@ -22,7 +22,7 @@ const ProductList: React.FC = () => {
   const inventoryLoading = useSelector(loadingStatus);
   const [data, setData] = useState<ProductType[]>([]);
   const { id } = useParams();
-  const columnsProduct = useColumnsProduct();
+  const columnsProduct = useColumnsProduct("inventory");
 
   useEffect(() => {
     dispatch(getInventoryDataChild({ url: id }));

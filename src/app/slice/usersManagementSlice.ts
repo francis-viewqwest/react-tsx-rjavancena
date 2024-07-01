@@ -41,7 +41,8 @@ const usersManagementSlice = createSlice({
             .addCase(getUsersData.fulfilled, (state, action) => {
                 state.status = "getInventoryData/success";
                 state.loading = false
-                state.error = action.payload
+                state.data = action.payload
+                state.error = null
             })
             .addCase(getUsersData.rejected, (state, action) => {
                 state.status = "getInventoryData/failed";

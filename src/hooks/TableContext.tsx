@@ -49,7 +49,11 @@ import {
   inventoryData,
 } from "@/app/slice/inventorySlice";
 
-import { addUser } from "@/app/slice/usersManagementSlice";
+import {
+  addUser,
+  usersData,
+  usersError,
+} from "@/app/slice/usersManagementSlice";
 
 import { useParams } from "react-router-dom";
 
@@ -79,7 +83,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   children,
   page: initialPage,
 }) => {
-  interface CreateProduct {
+  interface FormSubmit {
     item_code: number;
     image: string;
     refundable: string;
@@ -88,6 +92,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     discounted_price: number;
     stocks: number;
     supplier_name: string;
+    email: string;
+    password: any;
+    password_confirmation: any;
+    role: string;
+    status: string;
   }
 
   const [page, setPage] = useState<string | any>(initialPage);
@@ -100,19 +109,23 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   let jsx;
   let rowsSelection;
 
-  const { register, handleSubmit, setValue } = useForm<CreateProduct>();
+  const { register, handleSubmit, setValue } = useForm<FormSubmit>();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const { id } = useParams();
 
+  //* INVENTORY PRODUCT LIST
   const inventoryChildData = useSelector(inventoryData);
   const inventoryChildError = useSelector(inventoryError);
 
   //* ADD USER MANAGEMENT
-  
+  const usersParentData = useSelector(usersData);
+  const usersParentError = useSelector(usersError);
+
+  console.log(usersParentData?.data?.buttons);
 
   const handleFormSubmit =
-    (url: string): SubmitHandler<CreateProduct> =>
+    (url: string, formType: string): SubmitHandler<FormSubmit> =>
     async (data) => {
       const euDevice = Cookies.get("eu");
       const imageFile = imageInputRef.current?.files?.[0] || null;
@@ -130,16 +143,43 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
         supplier_name: data.supplier_name,
       };
 
-      console.log("PAYLOAD: ", payload);
-      console.log(inventoryChildError?.message?.item_code);
+      const usersPayload = {
+        email: data.email,
+        password: data.password,
+        password_confirmation: data.password_confirmation,
+        role: data.role,
+        status: data.status,
+        eu_device: euDevice,
+      };
 
-      dispatch(
-        createInventoryChildData({
-          url: url,
-          method: "POST",
-          data: payload,
-        })
-      );
+      console.log(data);
+
+      switch (formType) {
+        case "inventory":
+          dispatch(
+            createInventoryChildData({
+              url: url,
+              method: "POST",
+              data: payload,
+            })
+          );
+
+          break;
+
+        case "users":
+          dispatch(
+            addUser({
+              url: url,
+              method: "POST",
+              data: usersPayload,
+            })
+          );
+
+          break;
+
+        default:
+          break;
+      }
     };
 
   switch (page) {
@@ -167,7 +207,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                   </DialogHeader>
                   <ScrollArea className="h-72 w-full">
                     <form
-                      onSubmit={handleSubmit(handleFormSubmit(btn.url))}
+                      onSubmit={handleSubmit(
+                        handleFormSubmit(btn.url, "inventory")
+                      )}
                       className="grid py-4 gap-6 px-2 sm:px-5"
                     >
                       <div className="flex flex-col gap-2">
@@ -320,55 +362,146 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       columnName = "customerName";
       jsx = (
         <>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm">Add User</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader className="sm:px-5">
-                <DialogTitle>Add New User</DialogTitle>
-              </DialogHeader>
-              <ScrollArea className="h-72 w-full">
-                <div className="grid py-4 gap-6 px-2 sm:px-5">
-                  <div className="flex flex-col gap-2">
-                    <Label className="text-sm">Customer Name</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="Enter product name"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Label className="text-sm">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter unit price"
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Label className="text-sm">User Role</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select user role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="cashier">Cashier</SelectItem>
-                        <SelectItem value="delivery">Delivery</SelectItem>
-                        <SelectItem value="customer">Customer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </ScrollArea>
-              <DialogFooter>
-                <Button type="submit">Insert to table</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          {Array.isArray(usersParentData.data?.buttons) &&
+            usersParentData.data?.buttons.map((btn: any, index: any) => (
+              <Dialog key={index}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="font-semibold">
+                    {btn.button_name}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader className="sm:px-5">
+                    <DialogTitle>Add New User</DialogTitle>
+                    <DialogDescription>
+                      Enter the details below to add a new user to the system.
+                      Ensure all required fields are completed accurately.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ScrollArea className="h-72 w-full">
+                    <form
+                      onSubmit={handleSubmit(
+                        handleFormSubmit(btn.url, "users")
+                      )}
+                      className="grid py-4 gap-6 px-2 sm:px-5"
+                    >
+                      {/* <div className="flex flex-col gap-2">
+                        <Label className="text-sm font-semibold">Name</Label>
+                        <Input
+                          type="number"
+                          placeholder="Enter product name"
+                          className="col-span-3"
+                          {...register("name")}
+                        />
+                        {inventoryChildError?.item_code && (
+                          <small className="text-xs text-red-500">
+                            {inventoryChildError?.item_code}
+                          </small>
+                        )}
+                      </div> */}
+                      <div className="flex flex-col gap-2">
+                        <Label className="text-sm font-semibold">Email</Label>
+                        <Input
+                          type="email"
+                          placeholder="Enter product name"
+                          className="col-span-3"
+                          {...register("email")}
+                        />
+                        {usersParentError?.email && (
+                          <small className="text-xs text-red-500">
+                            {usersParentError?.email}
+                          </small>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label className="text-sm font-semibold">
+                          Password
+                        </Label>
+                        <Input
+                          type="password"
+                          placeholder="Enter product name"
+                          className="col-span-3"
+                          {...register("password")}
+                        />
+                        {usersParentError?.password && (
+                          <small className="text-xs text-red-500">
+                            {usersParentError?.password}
+                          </small>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label className="text-sm font-semibold">
+                          Confirm Password
+                        </Label>
+                        <Input
+                          type="password"
+                          placeholder="Enter product name"
+                          className="col-span-3"
+                          {...register("password_confirmation")}
+                        />
+                        {usersParentError?.password_confirmation && (
+                          <small className="text-xs text-red-500">
+                            {usersParentError?.password_confirmation}
+                          </small>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label className="text-sm font-semibold">Role</Label>
+                        <Select
+                          onValueChange={(value) => setValue("role", value)}
+                          // value=""
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="superadmin">
+                                Super Admin
+                              </SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="cashier">Cashier</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        {usersParentError?.role && (
+                          <small className="text-xs text-red-500">
+                            {usersParentError?.role}
+                          </small>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label className="text-sm font-semibold">Status</Label>
+                        <Select
+                          onValueChange={(value) => setValue("status", value)}
+                          // value=""
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="incative">
+                                In Active
+                              </SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        {usersParentError?.status && (
+                          <small className="text-xs text-red-500">
+                            {usersParentError?.status}
+                          </small>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Create User</Button>
+                      </DialogFooter>
+                    </form>
+                  </ScrollArea>
+                </DialogContent>
+              </Dialog>
+            ))}
         </>
       );
       rowsSelection = false;
