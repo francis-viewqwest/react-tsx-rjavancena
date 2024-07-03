@@ -44,6 +44,7 @@ import {
   deleteInventoryChildData,
 } from "@/app/slice/inventorySlice";
 import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "@/app/slice/usersManagementSlice";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -154,7 +155,7 @@ export function RowInventoryActions<TData>({
         <DropdownMenuContent className="w-full">
           <DropdownMenuLabel>Action</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {row.original.action.map((act) => (
+          {row?.original?.action.map((act) => (
             <>
               {act.button_name == "Edit" ? (
                 <>
@@ -338,58 +339,272 @@ export function RowInventoryActions<TData>({
   );
 }
 
-export function RowUsersActions<TData>({row}: DataTableRowActionsProps<TData>) {
+export function RowUsersActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
+  const { control, handleSubmit, getValues, setValue, register, watch } =
+    useForm({});
 
-  console.log(row.original)
+  const [modalData, setModalData] = useState({});
+  const [funcData, setFuncData] = useState({});
+  const dispatch = useDispatch();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  console.log(showEditDialog);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const inventoryChildError = useSelector(inventoryError);
+
+  const handleEdit = (values: any) => {
+    console.log(values);
+    setFuncData(values);
+
+    values.details.forEach((val) => {
+      const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+      setValue(fieldName, val.value);
+    });
+
+    setModalData(values);
+    setShowEditDialog(true);
+    setShowRemoveDialog(false);
+  };
+
+  const handleRemove = (values: any) => {
+    setFuncData(values);
+    setModalData(values);
+    setShowRemoveDialog(true);
+    setShowEditDialog(false);
+  };
+
+  const handleSaveClick = () => {
+    const formValues = getValues();
+
+    const euDevice = Cookies.get("eu");
+
+
+    const payload = {
+      user_id: funcData.user_id,
+      phone_number: formValues.phone_number,
+      email: formValues.email,
+      password: formValues.password,
+      password_confirmation: formValues.password_confirmation,
+      role: formValues.role,
+      status: formValues.status,
+      eu_device: euDevice,
+    };
+
+    dispatch(
+      addUser({
+        url: funcData.url,
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleDeleteClick = () => {
+    const euDevice = Cookies.get("eu");
+
+    const payload = {
+      inventory_product_id: funcData.inventory_product_id,
+      inventory_id: funcData.inventory_id,
+      eu_device: euDevice,
+    };
+
+    console.log(payload);
+
+    dispatch(
+      deleteInventoryChildData({
+        url: funcData.url,
+        method: funcData.method,
+        data: payload,
+      })
+    );
+  };
+
+  const errorMessages = {
+    product_name: inventoryChildError?.name,
+    item_code: inventoryChildError?.item_code,
+    refundable: inventoryChildError?.refundable,
+    retail_price: inventoryChildError?.retail_price,
+    stocks: inventoryChildError?.stocks,
+  };
 
   return (
     <Dialog>
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="ghost">
-          <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full">
-        <DropdownMenuLabel>Action</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {row.original.actions.map((act) => (
-          <>
-            {act.button_name == "Edit" ? (
-              <>
-                <DropdownMenuItem>
-                  <DialogTrigger
-                    className="flex items-center w-full justify-between"
-                    // onClick={() => handleEdit(act)}
-                  >
-                    {act.button_name}
-                    <DropdownMenuShortcut>
-                      <Icon fontSize={16} icon={act.icon} />
-                    </DropdownMenuShortcut>
-                  </DialogTrigger>
-                </DropdownMenuItem>
-              </>
-            ) : (
-              <>
-                <DropdownMenuItem>
-                  <DialogTrigger
-                    className="flex items-center w-full justify-between"
-                    // onClick={() => handleRemove(act)}
-                  >
-                    {act.button_name}
-                    <DropdownMenuShortcut>
-                      <Icon fontSize={16} icon={act.icon} />
-                    </DropdownMenuShortcut>
-                  </DialogTrigger>
-                </DropdownMenuItem>
-              </>
-            )}
-          </>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-   
-  </Dialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="ghost">
+            <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-full">
+          <DropdownMenuLabel>Action</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {row?.original?.actions?.map((act) => (
+            <>
+              {act.button_name == "Edit" ? (
+                <>
+                  <DropdownMenuItem>
+                    <DialogTrigger
+                      className="flex items-center w-full justify-between"
+                      onClick={() => handleEdit(act)}
+                    >
+                      {act.button_name}
+                      <DropdownMenuShortcut>
+                        <Icon fontSize={16} icon={act.icon} />
+                      </DropdownMenuShortcut>
+                    </DialogTrigger>
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem>
+                    <DialogTrigger
+                      className="flex items-center w-full justify-between"
+                      onClick={() => handleRemove(act)}
+                    >
+                      {act.button_name}
+                      <DropdownMenuShortcut>
+                        <Icon fontSize={16} icon={act.icon} />
+                      </DropdownMenuShortcut>
+                    </DialogTrigger>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DialogPortal>
+        {showEditDialog && (
+          <DialogContent className="sm:max-w-[34rem]">
+            <DialogHeader>
+              <DialogTitle>Edit account details</DialogTitle>
+              <DialogDescription>
+                Edit user account details below. Update information and click
+                save to apply changes.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-3 ">
+              {modalData?.details?.map((detail: any) => {
+                const fieldName = detail.label
+                  .replace(/\s+/g, "_")
+                  .toLowerCase();
+
+                return (
+                  <>
+                    <div className="grid grid-cols-auto items-center gap-2 w-full">
+                      {detail.type !== "select" && (
+                        <>
+                          <Label className="font-semibold text-xs">
+                            {detail?.label}
+                          </Label>
+                          <>
+                            <Input
+                              type={detail.type}
+                              {...register(
+                                detail.label.replace(/\s+/g, "_").toLowerCase()
+                              )}
+                              className="col-span-4"
+                            />
+                            <small className="text-red-500 w-full col-span-3">
+                              {/* {inventoryChildError &&
+                                inventoryChildError[fieldName] && (
+                                  <small className="text-xs text-red-500">
+                                    {inventoryChildError[fieldName]}
+                                  </small>
+                                )} */}
+                              {errorMessages &&
+                                errorMessages[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ]}
+                            </small>
+                          </>
+                        </>
+                      )}
+                      {detail.type === "select" && (
+                        <>
+                          <Label className="font-semibold text-xs">
+                            {detail?.label}
+                          </Label>
+                          <Select
+                            onValueChange={(value) =>
+                              setValue(
+                                detail.label.replace(/\s+/g, "_").toLowerCase(),
+                                value
+                              )
+                            }
+                            value={watch(detail.value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={detail.value} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {detail?.option?.map((opt) => (
+                                  <SelectItem key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </>
+                      )}
+                    </div>
+                  </>
+                );
+              })}
+            </div>
+            <DialogFooter>
+              <Button type="submit" onClick={() => handleSaveClick()}>
+                Save changes
+              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        )}
+
+        {showRemoveDialog && (
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                Delete Product{" "}
+                {modalData?.details?.map((detail, index) => (
+                  <>
+                    {detail.label === "Product Name" && (
+                      <span>{detail.value}</span>
+                    )}
+                  </>
+                ))}
+              </DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete your
+                product and remove it from your inventory.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="destructive"
+                type="submit"
+                onClick={() => handleDeleteClick()}
+              >
+                Delete
+              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Cancel
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </DialogPortal>
+    </Dialog>
   );
 }
 

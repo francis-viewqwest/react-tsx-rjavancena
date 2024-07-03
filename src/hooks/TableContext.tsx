@@ -122,7 +122,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   const usersParentData = useSelector(usersData);
   const usersParentError = useSelector(usersError);
 
-  console.log(usersParentData?.data?.buttons);
+  console.log(usersParentError?.message?.password);
 
   const handleFormSubmit =
     (url: string, formType: string): SubmitHandler<FormSubmit> =>
@@ -169,7 +169,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
         case "users":
           dispatch(
             addUser({
-              url: url,
+              url: "accounts/admin/store",
               method: "POST",
               data: usersPayload,
             })
@@ -403,13 +403,13 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         <Label className="text-sm font-semibold">Email</Label>
                         <Input
                           type="email"
-                          placeholder="Enter product name"
+                          placeholder="Enter email"
                           className="col-span-3"
                           {...register("email")}
                         />
-                        {usersParentError?.email && (
+                        {usersParentError?.message?.email && (
                           <small className="text-xs text-red-500">
-                            {usersParentError?.email}
+                            {usersParentError?.message?.email}
                           </small>
                         )}
                       </div>
@@ -419,13 +419,13 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         </Label>
                         <Input
                           type="password"
-                          placeholder="Enter product name"
+                          placeholder="Enter password"
                           className="col-span-3"
                           {...register("password")}
                         />
-                        {usersParentError?.password && (
+                        {usersParentError?.message?.password && (
                           <small className="text-xs text-red-500">
-                            {usersParentError?.password}
+                            {usersParentError?.message?.password}
                           </small>
                         )}
                       </div>
@@ -435,13 +435,13 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         </Label>
                         <Input
                           type="password"
-                          placeholder="Enter product name"
+                          placeholder="Enter confirm password"
                           className="col-span-3"
                           {...register("password_confirmation")}
                         />
-                        {usersParentError?.password_confirmation && (
+                        {usersParentError?.message?.password_confirmation && (
                           <small className="text-xs text-red-500">
-                            {usersParentError?.password_confirmation}
+                            {usersParentError?.message?.password_confirmation}
                           </small>
                         )}
                       </div>
@@ -464,9 +464,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             </SelectGroup>
                           </SelectContent>
                         </Select>
-                        {usersParentError?.role && (
+                        {usersParentError?.message?.role && (
                           <small className="text-xs text-red-500">
-                            {usersParentError?.role}
+                            {usersParentError?.message?.role}
                           </small>
                         )}
                       </div>
@@ -488,9 +488,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             </SelectGroup>
                           </SelectContent>
                         </Select>
-                        {usersParentError?.status && (
+                        {usersParentError?.message?.status && (
                           <small className="text-xs text-red-500">
-                            {usersParentError?.status}
+                            {usersParentError?.message?.status}
                           </small>
                         )}
                       </div>
