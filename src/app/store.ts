@@ -4,6 +4,7 @@ import userReducer from "@/app/slice/UserSlice"
 import inventoryReducer from "@/app/slice/inventorySlice"
 import menuReducer from "@/app/slice/menuSlice"
 import usersManagementReducer from "@/app/slice/usersManagementSlice"
+import dashboardReducer from "@/app/slice/dashboardSlice"
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     menu: menuReducer,
     inventory: inventoryReducer,
     usersManagement: usersManagementReducer,
+    dashboard: dashboardReducer,
   },
 });
 

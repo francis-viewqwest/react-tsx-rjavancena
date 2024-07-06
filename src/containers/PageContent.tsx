@@ -67,7 +67,7 @@ const PageContent: React.FC = () => {
       case "parent-Menu":
         return <Menu routeData={routeData} />;
       case "parent-Dashboard":
-        return <Dashboard />;
+        return <Dashboard routeData={routeData} />;
       case "parent-Inventory":
         return <Inventory routeData={routeData} />;
       case "child-Inventory":

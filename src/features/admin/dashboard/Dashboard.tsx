@@ -5,6 +5,8 @@ import transactionData from "@/data/transactionData.json";
 import TodaysSale from "./components/TodaysSale";
 import CardSales from "./components/CardSales";
 import SalesOverview from "./components/SalesOverview";
+import { dashboardData, dashboardStatus } from "@/app/slice/dashboardSlice";
+import { useSelector } from "react-redux";
 
 interface DataTransaction {
   transactId: number;
@@ -18,10 +20,21 @@ interface DataTransaction {
 
 const Dashboard: React.FC = () => {
   const [dataTransaction, setDataTransaction] = useState<DataTransaction[]>([]);
+  const status = useSelector(dashboardStatus);
+  const dashData = useSelector(dashboardData);
+  const [data, setData] = useState({});
 
   useEffect(() => {
     setDataTransaction(transactionData);
   }, []);
+
+  useEffect(() => {
+    if (status === "getDashboardData/success") {
+      setData(dashData);
+    }
+  }, [status, dashData]);
+
+  console.log(data);
 
   return (
     <>
@@ -29,7 +42,7 @@ const Dashboard: React.FC = () => {
         <div className="lg:col-span-4 lg:row-span-5">
           <CardSales />
           <div className="py-6">
-            <SalesOverview />
+            <SalesOverview data={data} />
           </div>
 
           <div>

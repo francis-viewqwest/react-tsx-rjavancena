@@ -13,15 +13,19 @@ const Internal: React.FC<Props> = (props) => {
   const { setPage } = useTableContext();
   const dispatch = useDispatch();
 
+  const {
+    routeData: { path_key },
+  } = props;
+
   useEffect(() => {
     setPage("Users");
     dispatch(setTitle("Users"));
-    dispatch(getUsersData({ url: props.routeData.path_key, method: "GET" }));
+    dispatch(getUsersData({ url: path_key, method: "GET" }));
   }, []);
 
   return (
     <>
-      <Users />
+      <Users path_key={path_key} />
     </>
   );
 };

@@ -44,7 +44,11 @@ import {
   deleteInventoryChildData,
 } from "@/app/slice/inventorySlice";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "@/app/slice/usersManagementSlice";
+import {
+  editUser,
+  usersError,
+  deleteUser,
+} from "@/app/slice/usersManagementSlice";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -345,6 +349,10 @@ export function RowUsersActions<TData>({
   const { control, handleSubmit, getValues, setValue, register, watch } =
     useForm({});
 
+  const errorMessage = useSelector(usersError);
+
+  console.log(errorMessage?.message);
+
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
   const dispatch = useDispatch();
@@ -369,6 +377,7 @@ export function RowUsersActions<TData>({
   };
 
   const handleRemove = (values: any) => {
+    console.log(values);
     setFuncData(values);
     setModalData(values);
     setShowRemoveDialog(true);
@@ -379,7 +388,6 @@ export function RowUsersActions<TData>({
     const formValues = getValues();
 
     const euDevice = Cookies.get("eu");
-
 
     const payload = {
       user_id: funcData.user_id,
@@ -393,7 +401,7 @@ export function RowUsersActions<TData>({
     };
 
     dispatch(
-      addUser({
+      editUser({
         url: funcData.url,
         method: "POST",
         data: payload,
@@ -405,15 +413,12 @@ export function RowUsersActions<TData>({
     const euDevice = Cookies.get("eu");
 
     const payload = {
-      inventory_product_id: funcData.inventory_product_id,
-      inventory_id: funcData.inventory_id,
+      user_id: funcData.user_id,
       eu_device: euDevice,
     };
 
-    console.log(payload);
-
     dispatch(
-      deleteInventoryChildData({
+      deleteUser({
         url: funcData.url,
         method: funcData.method,
         data: payload,
@@ -422,11 +427,7 @@ export function RowUsersActions<TData>({
   };
 
   const errorMessages = {
-    product_name: inventoryChildError?.name,
-    item_code: inventoryChildError?.item_code,
-    refundable: inventoryChildError?.refundable,
-    retail_price: inventoryChildError?.retail_price,
-    stocks: inventoryChildError?.stocks,
+    password: errorMessage?.message?.password,
   };
 
   return (
@@ -487,10 +488,6 @@ export function RowUsersActions<TData>({
             </DialogHeader>
             <div className="grid grid-cols-2 gap-3 ">
               {modalData?.details?.map((detail: any) => {
-                const fieldName = detail.label
-                  .replace(/\s+/g, "_")
-                  .toLowerCase();
-
                 return (
                   <>
                     <div className="grid grid-cols-auto items-center gap-2 w-full">
@@ -508,12 +505,6 @@ export function RowUsersActions<TData>({
                               className="col-span-4"
                             />
                             <small className="text-red-500 w-full col-span-3">
-                              {/* {inventoryChildError &&
-                                inventoryChildError[fieldName] && (
-                                  <small className="text-xs text-red-500">
-                                    {inventoryChildError[fieldName]}
-                                  </small>
-                                )} */}
                               {errorMessages &&
                                 errorMessages[
                                   _.replace(_.lowerCase(detail.label), " ", "_")
@@ -573,7 +564,7 @@ export function RowUsersActions<TData>({
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>
-                Delete Product{" "}
+                Delete this user?{" "}
                 {modalData?.details?.map((detail, index) => (
                   <>
                     {detail.label === "Product Name" && (
@@ -583,8 +574,8 @@ export function RowUsersActions<TData>({
                 ))}
               </DialogTitle>
               <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                product and remove it from your inventory.
+                Are you sure you want to delete this user? This action cannot be
+                undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

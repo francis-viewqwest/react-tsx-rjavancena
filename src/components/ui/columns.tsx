@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import {
   RowInventoryActions,
   RowPackOrdersAction,
@@ -13,6 +14,7 @@ import {
   RowHandoverAction,
   RowUsersActions,
 } from "./data-table-actions-row";
+import { Icon } from "@iconify/react";
 import {
   ProductType,
   TransactionType,
@@ -41,8 +43,6 @@ const useColumnsProduct = (dataSource: "inventory" | "users") => {
   const inventoryChild = useSelector(inventoryData);
   const usersParent = useSelector(usersData);
 
-  console.log(usersParent?.data?.columns);
-
   const baseColumns: ColumnDef<any>[] = [
     {
       accessorKey: "select",
@@ -67,7 +67,20 @@ const useColumnsProduct = (dataSource: "inventory" | "users") => {
 
         return {
           accessorKey: accessorKey,
-          header: column,
+          header: ({ column }) => {
+            const columnHeader = column.id;
+            return (
+              <h1
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                {_.startCase(columnHeader)}
+                <Icon icon="radix-icons:caret-sort" />
+              </h1>
+            );
+          },
           cell: ({ row }: { row: any }) => {
             const columnHeader = _.lowerCase(column);
 

@@ -7,6 +7,10 @@ import {
   IconCash,
   IconMoneybag,
 } from "@tabler/icons-react";
+import { Icon } from "@iconify/react";
+
+import { getDashboardData, dashboardData } from "@/app/slice/dashboardSlice";
+import { useSelector } from "react-redux";
 
 interface CardsContent {
   title: string;
@@ -21,48 +25,74 @@ const formatted = new Intl.NumberFormat("en-PH", {
   currency: "PHP",
 });
 
-const cardsContent: CardsContent[] = [
-  {
-    title: "Monthly Sales",
-    icon: <IconPackage color="black" />,
-    data: 1299,
-    icon2: <IconCircleFilled size="9" color="green" />,
-    analytic: "In Stock",
-  },
-  {
-    title: "Total Products",
-    icon: <IconCash color="black" />,
-    data: 1299,
-    icon2: <IconTrendingUp size="14" color="green" />,
-    analytic: "+ 3.21 Than last month",
-  },
-  {
-    title: "Yearly Sales",
-    icon: <IconMoneybag color="black" />,
-    data: 534000,
-    icon2: <IconTrendingUp size="14" color="green" />,
-    analytic: "+ 2.21 Than last year",
-  },
-];
+// const cardsContent: CardsContent[] = [
+//   {
+//     title: "Total Products",
+//     icon: <IconPackage color="black" />,
+//     data: 1299,
+//     icon2: <IconTrendingUp size="14" color="green" />,
+//     analytic: "In Stock",
+//   },
+//   {
+//     title: "Monthly Sales",
+
+//     icon: <IconCash color="black" />,
+//     data: 1299,
+//     icon2: <IconCircleFilled size="9" color="green" />,
+//     analytic: "+ 3.21 Than last month",
+//   },
+//   {
+//     title: "Yearly Sales",
+//     icon: <IconMoneybag color="black" />,
+//     data: 534000,
+//     icon2: <IconTrendingUp size="14" color="green" />,
+//     analytic: "+ 2.21 Than last year",
+//   },
+// ];
 
 const CardSales: React.FC = () => {
+  const data = useSelector(dashboardData);
+  console.log(data.sale);
+
+  const cardsContent: CardsContent[] = [
+    {
+      title: "Total Products",
+      icon: <IconPackage color="black" />,
+      data: data.stocks,
+      icon2: <IconTrendingUp size="14" color="green" />,
+      analytic: "In Stock",
+    },
+    {
+      title: "Monthly Sales",
+      icon: <IconCash color="black" />,
+      data: formatted.format(1299),
+      icon2: <IconCircleFilled size="9" color="green" />,
+      analytic: "+ 3.21 Than last month",
+    },
+    {
+      title: "Yearly Sales",
+      icon: <IconMoneybag color="black" />,
+      data: formatted.format(534000),
+      icon2: <IconTrendingUp size="14" color="green" />,
+      analytic: "+ 2.21 Than last year",
+    },
+  ];
   return (
     <>
       <div className="flex flex-col gap-4 sm:grid-flow-row sm:grid sm:grid-cols-3">
-        {cardsContent.map((item, index) => (
+        {data?.sale?.map((item, index) => (
           <Card key={index}>
             <CardHeader className="space-y-0 pb-2">
               <CardTitle className="text-sm font-medium flex justify-between items-center">
                 {item.title}
-                {item.icon}
+                <Icon icon={item.card_icon} fontSize={24} />
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {formatted.format(item.data)}
-              </div>
+              <div className="text-2xl font-bold">{item.current}</div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                {item.icon2} {item.analytic}
+                <Icon icon={item.icon} fontSize={14} />
+                {item.analytic}
               </div>
             </CardContent>
           </Card>

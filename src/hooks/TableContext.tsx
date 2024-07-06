@@ -359,7 +359,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       break;
     case "Users":
       placeHolder = "Search Users";
-      columnName = "customerName";
+      columnName = "email";
       jsx = (
         <>
           {Array.isArray(usersParentData.data?.buttons) &&
