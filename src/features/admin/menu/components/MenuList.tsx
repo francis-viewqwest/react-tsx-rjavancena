@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IconZoomExclamation } from "@tabler/icons-react";
@@ -6,23 +6,14 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDispatch } from "react-redux";
 import { menuAddCart } from "@/app/slice/menuSlice";
 import Cookies from "js-cookie";
 
-interface TabsCategory {
-  category: string;
-}
+import { MenuListProps } from "@/interface/InterfaceType";
+import { useAppDispatch } from "@/app/hooks";
 
-interface MenuItem {
-  productName: string;
-  category: string;
-  price: number;
-}
-
-const MenuList: React.FC = ({
+const MenuList: React.FC<MenuListProps> = ({
   filteredData,
-  // dataMenu,
   tabCategory,
   handleTabCategory,
   tabsMenu,
@@ -31,16 +22,11 @@ const MenuList: React.FC = ({
   customerId,
   dataCustomer,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const customer = dataCustomer?.find(
     (customer) => customer?.customer_id === customerId
   );
-
-  // const filteredDataMenu =
-  //   activeTab === "all"
-  //     ? dataMenu
-  //     : dataMenu.filter((item: any) => item.category === activeTab);
 
   const handleIncrement = (itemId: string, stock: number) => {
     setQuantities((prev: any) => ({
@@ -56,9 +42,7 @@ const MenuList: React.FC = ({
     }));
   };
 
-  const handleAddToCart = (itemId, quantity) => {
-    console.log("Adding to cart", { itemId, quantity });
-
+  const handleAddToCart = (itemId: string, quantity: number) => {
     const payload = {
       ...(customer?.user_id_customer && {
         user_id_customer: customer?.user_id_customer,

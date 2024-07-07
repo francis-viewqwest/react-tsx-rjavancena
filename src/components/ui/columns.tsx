@@ -38,10 +38,14 @@ import { inventoryData } from "@/app/slice/inventorySlice";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import { usersData } from "@/app/slice/usersManagementSlice";
+import { dashboardData } from "@/app/slice/dashboardSlice";
 
-const useColumnsProduct = (dataSource: "inventory" | "users") => {
+const useColumnsProduct = (
+  dataSource: "inventory" | "users" | "transaction"
+) => {
   const inventoryChild = useSelector(inventoryData);
   const usersParent = useSelector(usersData);
+  const dashboardTransaction = useSelector(dashboardData);
 
   const baseColumns: ColumnDef<any>[] = [
     {
@@ -59,8 +63,21 @@ const useColumnsProduct = (dataSource: "inventory" | "users") => {
 
   // Memoize dynamic columns based on inventoryChild dependency
   const dynamicColumns = useMemo(() => {
-    const currentData =
-      dataSource === "inventory" ? inventoryChild : usersParent;
+    const getColumns = () => {
+      switch (dataSource) {
+        case "inventory":
+          return inventoryChild;
+        case "users":
+          return usersParent;
+        case "transaction":
+          return dashboardTransaction;
+
+        default:
+          break;
+      }
+    };
+
+    const currentData = getColumns();
     return (
       currentData?.data?.columns?.map((column: string) => {
         const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");

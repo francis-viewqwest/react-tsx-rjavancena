@@ -1,6 +1,5 @@
 import useAxiosClient from "@/axios-client";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { method } from "lodash";
 
 
 const axiosClient = useAxiosClient();

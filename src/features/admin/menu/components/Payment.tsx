@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from "react";
+import React, { useState } from "react";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import {
@@ -10,23 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { placeOrder, loading, menuError } from "@/app/slice/menuSlice";
-import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { useForm } from "react-hook-form";
+import { PaymentProps, PaymentMethod } from "@/interface/InterfaceType";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-interface Payment {
-  icon: ReactNode;
-  label: string;
-}
-
-interface PaymentCash {
-  money: number;
-}
-
-// const { register, handleSubmit } = useForm<PaymentCash>();
-
-const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
-  const paymentMethod: Payment[] = [
+const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
+  const paymentMethod: PaymentMethod[] = [
     {
       icon: <IconCashBanknoteFilled />,
       label: "Cash",
@@ -40,11 +29,11 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
       label: "E-Wallet",
     },
   ];
-  const [cashInput, setCashInput] = useState("");
-  const errorPayment = useSelector(menuError);
-  const loadingPayment = useSelector(loading);
+  const [cashInput, setCashInput] = useState<any>("");
+  const errorPayment = useAppSelector(menuError);
+  const loadingPayment = useAppSelector(loading);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   console.log(errorPayment?.message);
 
@@ -75,7 +64,7 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
   return (
     <>
       <div className="py-5">
-        {customer?.payment.map((payment) => (
+        {customer?.payment.map((payment: any) => (
           <>
             <h1 className="font-bold">Payment Summary</h1>
             <div className="flex flex-col gap-3 pt-8 pb-6">
@@ -99,7 +88,10 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
                 <p>
                   {loadingPayment
                     ? "Calculating..."
-                    : `₱${payment?.total_amount}`}
+                    : new Intl.NumberFormat("en-PH", {
+                        style: "currency",
+                        currency: "PHP",
+                      }).format(payment?.total_amount)}
                 </p>
               </div>
               <div className="flex items-center justify-between">
@@ -113,7 +105,10 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
                 <p className="font-bold text-lg">
                   {loadingPayment
                     ? "Calculating..."
-                    : `₱${payment?.total_amount}`}
+                    : new Intl.NumberFormat("en-PH", {
+                        style: "currency",
+                        currency: "PHP",
+                      }).format(payment?.total_amount)}
                 </p>
               </div>
             </div>
@@ -142,7 +137,7 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
                   ))}
                 </RadioGroup>
               </div>
-              <div className="flex flex-col gap-6 py-4 w-full">
+              <div className="flex flex-col gap-6 py-6 w-full">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Cash</Label>
                   <Input
@@ -154,9 +149,17 @@ const Payment: React.FC = ({ menuStatus, customerId, dataCustomer }) => {
                     placeholder="Enter cash"
                   />
                   <span className="text-red-500">{errorPayment?.message}</span>
+                  {cashInput >= payment?.total_amount && (
+                    <Label className="font-medium">
+                      Total change:{" "}
+                      <span className="font-semibold">
+                        {cashInput - payment?.total_amount}
+                      </span>
+                    </Label>
+                  )}
                 </div>
                 <Button
-                  disabled={!cashInput}
+                  disabled={cashInput < payment?.total_amount}
                   onClick={() => handlePlaceOrder(customer)}
                   size="lg"
                   className="w-full font-semibold"

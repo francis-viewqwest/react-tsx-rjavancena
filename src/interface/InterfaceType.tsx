@@ -1,3 +1,5 @@
+import React, { ReactNode } from "react";
+
 //* COMPONENTS INTERFACE
 
 export interface ProductInventory {
@@ -147,3 +149,57 @@ export type ReturnOrderType = {
   returnStatus: string;
   returnDate: string;
 };
+
+//* page content interface
+export interface RouteData {
+  path_key: string;
+  path: string;
+  title: string;
+  icon: string;
+}
+
+export interface Submenu {
+  path: string;
+  path_key: string;
+  title: string;
+  icon: string;
+}
+
+export interface RouteType {
+  path: string;
+  path_key: string;
+  title: string;
+  icon: string;
+  routeData: {
+    path: string;
+    path_key: string;
+    title: string;
+    icon: string;
+  };
+}
+
+export interface MenuListProps {
+  filteredData: any[]; // Adjust type as per your actual data structure
+  tabCategory: string;
+  handleTabCategory: (value: string) => void;
+  tabsMenu: any[]; // Adjust type as per your actual data structure
+  quantities: {} | any; // Adjust type as per your actual data structure
+  setQuantities: React.Dispatch<React.SetStateAction<{}>>;
+  customerId: any; // Adjust type as per your actual data structure
+  dataCustomer: any[]; // Adjust type as per your actual data structure
+}
+
+export interface OrderListProps {
+  customerId: any;
+  dataCustomer: any;
+}
+
+export interface PaymentProps {
+  customerId: any;
+  dataCustomer: any;
+}
+
+export interface PaymentMethod {
+  icon: ReactNode;
+  label: string;
+}

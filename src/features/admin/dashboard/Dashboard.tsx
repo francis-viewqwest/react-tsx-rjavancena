@@ -7,6 +7,7 @@ import CardSales from "./components/CardSales";
 import SalesOverview from "./components/SalesOverview";
 import { dashboardData, dashboardStatus } from "@/app/slice/dashboardSlice";
 import { useSelector } from "react-redux";
+import useColumnsProduct from "@/components/ui/columns";
 
 interface DataTransaction {
   transactId: number;
@@ -23,6 +24,7 @@ const Dashboard: React.FC = () => {
   const status = useSelector(dashboardStatus);
   const dashData = useSelector(dashboardData);
   const [data, setData] = useState({});
+  const columnsProduct = useColumnsProduct("transaction");
 
   useEffect(() => {
     setDataTransaction(transactionData);
@@ -49,7 +51,7 @@ const Dashboard: React.FC = () => {
             <DataTable
               search="transaction"
               title="Recent Transaction"
-              columns={ColumnsTransac}
+              columns={columnsProduct}
               data={dataTransaction}
             />
           </div>

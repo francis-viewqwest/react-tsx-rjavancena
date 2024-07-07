@@ -101,7 +101,7 @@ const SalesOverview: React.FC = ({ data }) => {
         <CardHeader className="pb-10 flex">
           <CardTitle className="tracking-tight">Sales Overview</CardTitle>
           <Select onValueChange={handleChartChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-32">
               <SelectValue placeholder={_.startCase(selectedChart)} />
             </SelectTrigger>
             <SelectContent>

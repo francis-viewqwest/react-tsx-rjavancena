@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import InventoryList from "./components/InventoryList";
-
 import {
   getInventoryData,
   inventoryData,
@@ -27,24 +26,25 @@ import {
   loadingStatus,
   inventoryError,
 } from "@/app/slice/inventorySlice";
-import { useDispatch, useSelector } from "react-redux";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
+import { RouteType } from "@/interface/InterfaceType";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-const Inventory: React.FC = ({ props }) => {
-  const inventoryResData: any[] = useSelector(inventoryData);
-  const inventoryErrorMess: string = useSelector(inventoryError);
+const Inventory: React.FC<RouteType> = (props) => {
+  const inventoryResData: any[] = useAppSelector(inventoryData);
+  const inventoryErrorMess: string = useAppSelector(inventoryError);
   const [dataInventory, setDataInventory] = useState<any[]>([]);
-  const inventoryLoading = useSelector(loadingStatus);
+  const inventoryLoading = useAppSelector(loadingStatus);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCategory, setFilteredCategory] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
 
   const { toast } = useToast();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   interface CreateProduct {
     productName: string;
@@ -53,7 +53,7 @@ const Inventory: React.FC = ({ props }) => {
 
   const { register, handleSubmit } = useForm<CreateProduct>();
 
-  const onSubmit: SubmitHandler<CreateProduct> = (data, invBtn) => {
+  const onSubmit: SubmitHandler<CreateProduct> = (data, invBtn: any) => {
     const euDevice = Cookies.get("eu");
 
     const payload = {

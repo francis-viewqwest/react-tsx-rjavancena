@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import appReducer from "../common/appSlice";
-import userReducer from "@/app/slice/UserSlice"
+import userReducer from "@/app/slice/userSlice"
 import inventoryReducer from "@/app/slice/inventorySlice"
 import menuReducer from "@/app/slice/menuSlice"
 import usersManagementReducer from "@/app/slice/usersManagementSlice"
@@ -16,5 +16,9 @@ const store = configureStore({
     dashboard: dashboardReducer,
   },
 });
+
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

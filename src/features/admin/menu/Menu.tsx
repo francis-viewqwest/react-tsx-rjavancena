@@ -6,43 +6,39 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MenuList from "./components/MenuList";
 import OrdersList from "./components/OrdersList";
 import Payment from "./components/Payment";
-import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
 import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@radix-ui/react-toast";
 import {
   loadingStatus,
-  menuError,
   menuData,
   getMenuData,
   getCustomerData,
 } from "@/app/slice/menuSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-const Menu: React.FC = ({ props }) => {
-  const dispatch = useDispatch();
+const Menu: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [dataMenu, setDataMenu] = useState<any[]>([]);
   const [dataCustomer, setDataCustomer] = useState<any[]>([]);
   const [tabsMenu, setTabsMenu] = useState<any[]>([]);
   const [quantities, setQuantities] = useState({});
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState<any>(null);
 
-  const menuRes = useSelector(menuData);
-  const customerRes = useSelector(menuData);
-  const menuStatus = useSelector(loadingStatus);
+  const menuRes = useAppSelector(menuData);
+  const customerRes = useAppSelector(menuData);
+  const menuStatus = useAppSelector(loadingStatus);
   const { toast } = useToast();
-  const errorMessage = useSelector(menuError);
 
   const [tabCategory, setTabCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-  const [filteredCategory, setFilteredCategory] = useState("");
+  const [filteredData, setFilteredData] = useState<any>([]);
 
   useEffect(() => {
     if (menuStatus === "menuData/success") {
       setDataMenu(menuRes?.data?.inventory_product);
       setTabsMenu(menuRes?.data?.filter_category);
       const initialQuantities = menuRes.data.inventory_product.reduce(
-        (acc, item) => {
+        (acc: any, item: any) => {
           acc[item.inventory_id] = 0;
           return acc;
         },
@@ -207,8 +203,8 @@ const Menu: React.FC = ({ props }) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleTabChange = (value) => {
-    setActiveTab((prevValue) => (prevValue === value ? null : value));
+  const handleTabChange = (value: string) => {
+    setActiveTab((prevValue: string) => (prevValue === value ? null : value));
   };
 
   return (
@@ -230,7 +226,6 @@ const Menu: React.FC = ({ props }) => {
                 filteredData={filteredData}
                 tabCategory={tabCategory}
                 handleTabCategory={handleTabCategory}
-                dataMenu={dataMenu}
                 customerId={activeTab}
                 dataCustomer={dataCustomer}
                 tabsMenu={tabsMenu}
@@ -276,11 +271,7 @@ const Menu: React.FC = ({ props }) => {
                   customerId={activeTab}
                   dataCustomer={dataCustomer}
                 />
-                <Payment
-                  menuStatus={menuStatus}
-                  customerId={activeTab}
-                  dataCustomer={dataCustomer}
-                />
+                <Payment customerId={activeTab} dataCustomer={dataCustomer} />
               </TabsContent>
             ) : (
               <div className="p-4">Select a customer.</div>

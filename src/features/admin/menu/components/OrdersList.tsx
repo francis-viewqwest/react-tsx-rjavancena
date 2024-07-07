@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  MinusIcon,
-  PlusIcon,
-  Pencil2Icon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
+import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +13,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   decrementQty,
@@ -31,40 +25,36 @@ import {
   getMenuData,
   getCustomerData,
 } from "@/app/slice/menuSlice";
-import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import _ from "lodash";
 import { Input } from "@/components/ui/input";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Label } from "@/components/ui/label";
+import { OrderListProps } from "@/interface/InterfaceType";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-interface AddCartItem {
-  productName: string;
-  category: string;
-  price: number;
-}
-
-const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
-  const dispatch = useDispatch();
-  const orderListError = useSelector(menuError);
-  const menuStatus = useSelector(loadingStatus);
+const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
+  const dispatch = useAppDispatch();
+  const orderListError = useAppSelector(menuError);
+  const menuStatus = useAppSelector(loadingStatus);
 
   const customer = dataCustomer?.find(
-    (customer) => customer?.customer_id === customerId
+    (customer: any) => customer?.customer_id === customerId
   );
 
-  const [itemQuantities, setItemQuantities] = useState({});
-  const [isEdit, setIsEdit] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [isDelete, setIsDelete] = useState(false);
-  const [payloadData, setPayloadData] = useState({});
-  const [btnOperator, setBtnOperator] = useState("");
+  const [itemQuantities, setItemQuantities] = useState<any>({});
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<any | null>(null);
+
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [payloadData, setPayloadData] = useState<any>({});
+  const [btnOperator, setBtnOperator] = useState<string>("");
   const [customerName, setCustomerName] = useState(
     customer?.customer_name || customer?.customer_id
   );
 
   useEffect(() => {
-    let timer;
+    let timer: any;
 
     if (payloadData && Object.keys(payloadData).length > 0) {
       timer = setTimeout(() => {
@@ -119,9 +109,9 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     }
   }, [menuStatus, dispatch, orderListError]);
 
-  const handleIncrementQty = (item) => {
+  const handleIncrementQty = (item: any) => {
     setBtnOperator("plus");
-    setItemQuantities((prevQuantities) => {
+    setItemQuantities((prevQuantities: any) => {
       const currentQuantity =
         (prevQuantities[item?.inventory_product_id]?.quantity ?? item?.count) +
         1;
@@ -157,9 +147,9 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     });
   };
 
-  const handleDecrementQty = (item) => {
+  const handleDecrementQty = (item: any) => {
     setBtnOperator("minus");
-    setItemQuantities((prevQuantities) => {
+    setItemQuantities((prevQuantities: any) => {
       const currentQuantity =
         (prevQuantities[item.inventory_product_id]?.quantity ?? item.count) - 1;
 
@@ -194,11 +184,11 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     });
   };
 
-  const getQuantity = (item) => {
+  const getQuantity = (item: any) => {
     return itemQuantities[item.inventory_product_id]?.quantity || item?.count;
   };
 
-  const handleSaveName = (purchaseGroupId, userId) => {
+  const handleSaveName = (purchaseGroupId: string, userId: string) => {
     setIsEdit(false);
 
     const payload = {
@@ -216,7 +206,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     );
   };
 
-  const handleEditName = (e) => {
+  const handleEditName = (e: any) => {
     setCustomerName(e.target.value);
   };
 
@@ -237,7 +227,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
     );
   };
 
-  const handleDeleteProduct = (item) => {
+  const handleDeleteProduct = (item: any) => {
     const payload = {
       purchase_id: item.arr_purchase_id,
       eu_device: Cookies.get("eu"),
@@ -275,7 +265,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => handleDeleteCustomer(customer)}>
+              <AlertDialogAction onClick={() => handleDeleteCustomer()}>
                 Confirm
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -331,18 +321,27 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
       <div>
         <ScrollArea className="h-[400px] rounded-md border p-2">
           <div className=" flex flex-col gap-4">
-            {customer?.items?.map((item, index) => (
+            {customer?.items?.map((item: any, index: any) => (
               <Card key={index} className="p-2">
                 <div className="flex gap-2">
                   <Skeleton className="max-w-full max-h-full p-8" />
                   <CardContent className="w-full relative px-1">
                     <div>
                       <div className="flex w-full items-center justify-between">
-                        <h1 className="text-xs font-bold text-primary">
-                          {item?.name}
+                        <h1
+                          title={item?.name}
+                          className="text-xs font-bold text-primary"
+                        >
+                          {_.truncate(item?.name, {
+                            length: 32,
+                            separator: " ...",
+                          })}
                         </h1>
                         <h1 className="text-xs font-bold text-primary">
-                          ₱{item?.retail_price}
+                          {new Intl.NumberFormat("en-PH", {
+                            style: "currency",
+                            currency: "PHP",
+                          }).format(item?.retail_price)}
                         </h1>
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -357,7 +356,6 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
                     <div className="flex w-full h-full items-center justify-between">
                       <div className="flex items-center  ">
                         <Button
-                          // onClick={() => handleUpdateQty(item, "decrement")}
                           onClick={() => handleDecrementQty(item)}
                           className="rounded-r-none"
                           size="sm"
@@ -368,7 +366,6 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
                           {getQuantity(item)}
                         </div>
                         <Button
-                          // onClick={() => handleUpdateQty(item, "increment")}
                           onClick={() => handleIncrementQty(item)}
                           className="rounded-l-none"
                           size="sm"
@@ -378,6 +375,7 @@ const OrdersList: React.FC = ({ customerId, dataCustomer }) => {
                       </div>
                       <div>
                         <Icon
+                          className="cursor-pointer"
                           onClick={() => handleDeleteProduct(item)}
                           fontSize={20}
                           color="red"
