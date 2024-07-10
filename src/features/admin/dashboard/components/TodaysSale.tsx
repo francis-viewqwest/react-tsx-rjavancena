@@ -3,8 +3,14 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { IconShoppingCart, IconStar } from "@tabler/icons-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { dashboardData } from "@/app/slice/dashboardSlice";
+import { useAppSelector } from "@/app/hooks";
 
 const TodaysSale: React.FC = () => {
+  const todaysSaleData = useAppSelector(dashboardData);
+
+  // console.log(todaysSaleData.today_sale);
+
   const formatted = new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
@@ -82,7 +88,9 @@ const TodaysSale: React.FC = () => {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <h1 className="font-bold text-2xl text-center">₱534000</h1>
+            <h1 className="font-bold text-2xl text-center">
+              {todaysSaleData?.today_sale?.current}
+            </h1>
             <p className="text-xs text-muted-foreground text-center">
               Total Earnings
             </p>
@@ -92,7 +100,7 @@ const TodaysSale: React.FC = () => {
               Top Selling Products
             </p>
             <div className="flex flex-col">
-              {topSelling.map((item, index) => (
+              {todaysSaleData?.today_sale?.top_products?.map((item, index) => (
                 <Card
                   key={index}
                   className="p-4 my-3 border-none shadow-none relative bg-none "
@@ -100,7 +108,7 @@ const TodaysSale: React.FC = () => {
                   <div className="flex items-center gap-4 lg:gap-3">
                     <Skeleton className="h-12 w-12 rounded-3xl  bg-neutral-500 lg:w-10 lg:h-10" />
                     <div>
-                      <h1 className="text-sm lg:text-xs">{item.product}</h1>
+                      <h1 className="text-sm lg:text-xs">{item.name}</h1>
                       <p className="text-xs text-muted-foreground">
                         {item.category}
                       </p>
@@ -111,12 +119,8 @@ const TodaysSale: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-4 bottom-0 right-0 justify-end lg:pt-4">
                     <span className="flex items-center text-xs text-muted-foreground gap-2">
-                      <IconStar color="black" size="14" />
-                      {item.stars}
-                    </span>
-                    <span className="flex items-center text-xs text-muted-foreground gap-2">
                       <IconShoppingCart color="black" size="14" />
-                      {item.cart}
+                      {item.count}
                     </span>
                   </div>
                 </Card>

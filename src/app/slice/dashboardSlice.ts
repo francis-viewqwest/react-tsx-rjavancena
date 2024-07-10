@@ -47,6 +47,21 @@ const dashboardSlice = createSlice({
                 state.error = action.payload
             })
 
+        //* VOID 
+        builder
+            .addCase(voidPaid.pending, (state) => {
+                state.status = "voidPaid/loading";
+                state.error = null
+            })
+            .addCase(voidPaid.fulfilled, (state, action) => {
+                state.status = "voidPaid/success";
+                state.data = action.payload
+            })
+            .addCase(voidPaid.rejected, (state, action) => {
+                state.status = "voidPaid/failed";
+                state.error = action.payload
+            })
+
     }
 })
 
@@ -58,6 +73,23 @@ export const getDashboardData = createAsyncThunk("dashboard/getDashboardData", a
         const res = await axiosClient({
             url: apiconfig.url,
             method: "GET"
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error);
+        return rejectWithValue(error.response.data)
+    }
+});
+
+//* VOICE PAID
+export const voidPaid = createAsyncThunk("dashboard/voidPaid", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+
+    try {
+        const res = await axiosClient({
+            url: apiconfig.url,
+            method: apiconfig.method,
+            data: apiconfig.data
         })
 
         return res.data

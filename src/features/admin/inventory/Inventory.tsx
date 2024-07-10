@@ -32,54 +32,51 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@radix-ui/react-toast";
 import { RouteType } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import {
+  ParentInventory,
+  InventoryItem,
+  InventoryResponse,
+} from "@/interface/InterfaceType";
 
 const Inventory: React.FC<RouteType> = (props) => {
-  const inventoryResData: any[] = useAppSelector(inventoryData);
-  const inventoryErrorMess: string = useAppSelector(inventoryError);
-  const [dataInventory, setDataInventory] = useState<any[]>([]);
+  const inventoryResData: InventoryResponse = useAppSelector(inventoryData);
+  const inventoryErrorMess: any = useAppSelector(inventoryError);
+  const [dataInventory, setDataInventory] = useState<InventoryItem[]>([]);
   const inventoryLoading = useAppSelector(loadingStatus);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredCategory, setFilteredCategory] = useState("");
+  const [filteredCategory, setFilteredCategory] = useState<any>("");
   const [filteredData, setFilteredData] = useState<any[]>([]);
 
   const { toast } = useToast();
-
   const dispatch = useAppDispatch();
 
-  interface CreateProduct {
-    productName: string;
-    productCategory: string;
-  }
+  const { register, handleSubmit } = useForm<ParentInventory>();
 
-  const { register, handleSubmit } = useForm<CreateProduct>();
+  const handleFormSubmit =
+    (invBtn: any): SubmitHandler<ParentInventory> =>
+    async (data: any) => {
+      const euDevice = Cookies.get("eu");
 
-  const onSubmit: SubmitHandler<CreateProduct> = (data, invBtn: any) => {
-    const euDevice = Cookies.get("eu");
+      const payload = {
+        name: data.productName,
+        category: data.productCategory,
+        eu_device: euDevice,
+      };
 
-    const payload = {
-      name: data.productName,
-      category: data.productCategory,
-      eu_device: euDevice,
+      dispatch(
+        createInventoryData({
+          url: invBtn.url,
+          method: invBtn.method,
+          data: payload,
+        })
+      );
     };
 
-    dispatch(
-      createInventoryData({
-        url: invBtn?.url,
-        method: invBtn.method,
-        data: payload,
-      })
-    );
-  };
-
-  const handleFormSubmit = (invBtn) => (data) => {
-    onSubmit(data, invBtn);
-  };
-
-  const handleSearch = (event) => {
+  const handleSearch = (event: any) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange = (category: any) => {
     setFilteredCategory(category === "all" ? "" : category);
   };
 
@@ -115,7 +112,7 @@ const Inventory: React.FC<RouteType> = (props) => {
 
     //* CREATE INVENTORY DATA
     if (inventoryLoading === "createInventoryParent/success") {
-      dispatch(getInventoryData({ url: props.routeData.path_key }));
+      dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
       toast({
         title: inventoryResData.message,
       });
@@ -137,7 +134,7 @@ const Inventory: React.FC<RouteType> = (props) => {
     //* UPDATE INVENTORY DATA
     if (inventoryLoading === "updateInventoryParent/success") {
       toast({ title: inventoryResData.message });
-      dispatch(getInventoryData({ url: props.routeData.path_key }));
+      dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
     }
 
     if (inventoryLoading === "updateInventoryParent/failed") {
@@ -153,7 +150,7 @@ const Inventory: React.FC<RouteType> = (props) => {
     //* DELETE INVENTORY DATA
     if (inventoryLoading === "deleteInventoryData/success") {
       toast({ title: inventoryResData.message });
-      dispatch(getInventoryData({ url: props.routeData.path_key }));
+      dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
     }
 
     if (inventoryLoading === "deleteInventoryData/failed") {
@@ -164,7 +161,7 @@ const Inventory: React.FC<RouteType> = (props) => {
         action: <ToastAction altText="Try again">Try again</ToastAction>,
       });
     }
-  }, [inventoryLoading, toast]);
+  }, [props, inventoryLoading, toast]);
 
   return (
     <>
@@ -186,7 +183,7 @@ const Inventory: React.FC<RouteType> = (props) => {
                 <SelectItem value="all">All</SelectItem>
                 {inventoryResData &&
                   inventoryResData?.data?.filter_category?.map(
-                    (filt, index) => (
+                    (filt: any, index: any) => (
                       <SelectItem key={index} value={filt}>
                         {filt}
                       </SelectItem>
@@ -198,7 +195,7 @@ const Inventory: React.FC<RouteType> = (props) => {
         </div>
 
         {Array.isArray(inventoryResData.data?.buttons) &&
-          inventoryResData.data.buttons.map((invBtn, index) => (
+          inventoryResData.data.buttons.map((invBtn: any, index: any) => (
             <Dialog key={index}>
               <DialogTrigger asChild>
                 <Button size="sm" className="w-32">
@@ -221,12 +218,7 @@ const Inventory: React.FC<RouteType> = (props) => {
                       <Input
                         id="name"
                         placeholder="Enter product name"
-                        {...register("productName", {
-                          // required: {
-                          //   value: true,
-                          //   message: "Product name is required",
-                          // },
-                        })}
+                        {...register("productName", {})}
                       />
                       <Label className="text-red-500">
                         {inventoryErrorMess?.name ||
@@ -240,12 +232,7 @@ const Inventory: React.FC<RouteType> = (props) => {
                       <Input
                         id="name"
                         placeholder="Enter product category"
-                        {...register("productCategory", {
-                          // required: {
-                          //   value: true,
-                          //   message: "Product category is required",
-                          // },
-                        })}
+                        {...register("productCategory", {})}
                       />
                       <Label className="text-red-500">
                         {inventoryErrorMess?.category}

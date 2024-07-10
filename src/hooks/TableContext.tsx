@@ -2,7 +2,6 @@ import React, {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useRef,
   useState,
 } from "react";
@@ -15,17 +14,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import shipmentOrder from "@/data/shipmentOrder.json";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -36,15 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
   SelectGroup,
-  SelectLabel,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Cookies from "js-cookie";
-import { useDispatch, useSelector } from "react-redux";
 import {
   createInventoryChildData,
-  loadingStatus,
   inventoryError,
   inventoryData,
 } from "@/app/slice/inventorySlice";
@@ -56,25 +42,23 @@ import {
 } from "@/app/slice/usersManagementSlice";
 
 import { useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-interface TableContextType {
-  children: ReactNode;
-  page: string;
-  setPage: (page: string) => void;
-  placeHolder: string | any;
-  columnName: string | any;
-  rowsSelection: string | any;
-  jsx: React.ReactNode;
-  tablesOptionsJsx: React.ReactNode;
-  selectedOption: any;
-  tablesOptions: any;
-  setSelectedOption: any;
-  setTablesOptions: any;
-}
+import { TableContextType } from "@/interface/InterfaceType";
 
 const defaultTableContextValue: TableContextType = {
+  children: null,
   page: "",
-  setPage: () => {}, // Dummy function to avoid runtime errors
+  setPage: () => {},
+  placeHolder: "",
+  columnName: "",
+  rowsSelection: "",
+  jsx: <div></div>,
+  tablesOptionsJsx: <div></div>,
+  selectedOption: null,
+  tablesOptions: null,
+  setSelectedOption: () => {},
+  setTablesOptions: () => {},
 };
 
 const TableContext = createContext<TableContextType>(defaultTableContextValue);
@@ -102,7 +86,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   const [page, setPage] = useState<string | any>(initialPage);
   const [selectedOption, setSelectedOption] = useState<any>("packOrders");
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   let placeHolder;
   let columnName;
@@ -115,12 +99,12 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   const { id } = useParams();
 
   //* INVENTORY PRODUCT LIST
-  const inventoryChildData = useSelector(inventoryData);
-  const inventoryChildError = useSelector(inventoryError);
+  const inventoryChildData = useAppSelector(inventoryData);
+  const inventoryChildError = useAppSelector(inventoryError);
 
   //* ADD USER MANAGEMENT
-  const usersParentData = useSelector(usersData);
-  const usersParentError = useSelector(usersError);
+  const usersParentData = useAppSelector(usersData);
+  const usersParentError = useAppSelector(usersError);
 
   console.log(usersParentError?.message?.password);
 
@@ -310,7 +294,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                           onValueChange={(value) =>
                             setValue("refundable", value)
                           }
-                          // value=""
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select option" />
@@ -385,20 +368,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       )}
                       className="grid py-4 gap-6 px-2 sm:px-5"
                     >
-                      {/* <div className="flex flex-col gap-2">
-                        <Label className="text-sm font-semibold">Name</Label>
-                        <Input
-                          type="number"
-                          placeholder="Enter product name"
-                          className="col-span-3"
-                          {...register("name")}
-                        />
-                        {inventoryChildError?.item_code && (
-                          <small className="text-xs text-red-500">
-                            {inventoryChildError?.item_code}
-                          </small>
-                        )}
-                      </div> */}
                       <div className="flex flex-col gap-2">
                         <Label className="text-sm font-semibold">Email</Label>
                         <Input
@@ -449,7 +418,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         <Label className="text-sm font-semibold">Role</Label>
                         <Select
                           onValueChange={(value) => setValue("role", value)}
-                          // value=""
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select role" />
@@ -474,7 +442,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         <Label className="text-sm font-semibold">Status</Label>
                         <Select
                           onValueChange={(value) => setValue("status", value)}
-                          // value=""
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select status" />

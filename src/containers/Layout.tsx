@@ -1,11 +1,8 @@
 import React from "react";
-import { useAuth } from "../app/AuthProvider";
-import { Navigate } from "react-router-dom";
-
 import Sidebar from "./Sidebar";
 import PageContent from "./PageContent";
 import { SidebarProvider } from "../hooks/SidebarContext";
-import useRefreshToken from "@/hooks/useRefreshToken";
+
 
 interface LayoutProps {
   token: string;

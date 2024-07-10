@@ -49,6 +49,7 @@ import {
   usersError,
   deleteUser,
 } from "@/app/slice/usersManagementSlice";
+import { voidPaid } from "@/app/slice/dashboardSlice";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -596,6 +597,124 @@ export function RowUsersActions<TData>({
         )}
       </DialogPortal>
     </Dialog>
+  );
+}
+
+export function RowTransactionActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
+  const { control, handleSubmit, getValues, setValue, register, watch } =
+    useForm({});
+
+  const errorMessage = useSelector(usersError);
+
+  console.log(errorMessage?.message);
+
+  const [modalData, setModalData] = useState({});
+  const [funcData, setFuncData] = useState({});
+  const dispatch = useDispatch();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  console.log(showEditDialog);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const inventoryChildError = useSelector(inventoryError);
+
+  const handleEdit = (values: any) => {
+    console.log(values);
+    setFuncData(values);
+
+    values.details.forEach((val) => {
+      const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+      setValue(fieldName, val.value);
+    });
+
+    setModalData(values);
+    setShowEditDialog(true);
+    setShowRemoveDialog(false);
+  };
+
+  const handleRemove = (values: any) => {
+    console.log(values);
+    setFuncData(values);
+    setModalData(values);
+    setShowRemoveDialog(true);
+    setShowEditDialog(false);
+  };
+
+  const handleSaveClick = () => {
+    const formValues = getValues();
+
+    const euDevice = Cookies.get("eu");
+
+    const payload = {
+      user_id: funcData.user_id,
+      phone_number: formValues.phone_number,
+      email: formValues.email,
+      password: formValues.password,
+      password_confirmation: formValues.password_confirmation,
+      role: formValues.role,
+      status: formValues.status,
+      eu_device: euDevice,
+    };
+
+    dispatch(
+      editUser({
+        url: funcData.url,
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleDeleteClick = () => {
+    const euDevice = Cookies.get("eu");
+
+    const payload = {
+      user_id: funcData.user_id,
+      eu_device: euDevice,
+    };
+
+    dispatch(
+      deleteUser({
+        url: funcData.url,
+        method: funcData.method,
+        data: payload,
+      })
+    );
+  };
+
+  const handleVoidClick = (values) => {
+    console.log(values.payload_value);
+
+    const payload = {
+      payment_id: values.payment_id,
+      user_id: values.user_id,
+      purchase_group_id: values.purchase_group_id,
+      status: values.status,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      voidPaid({
+        url: values.url,
+        method: values.method,
+        data: payload,
+      })
+    );
+  };
+
+  const errorMessages = {
+    password: errorMessage?.message?.password,
+  };
+
+  return (
+    <>
+      {row?.original?.actions?.map((btn, index) => (
+        <Button size="sm" key={index} onClick={() => handleVoidClick(btn)}>
+          {btn?.button_name}
+        </Button>
+      ))}
+    </>
   );
 }
 

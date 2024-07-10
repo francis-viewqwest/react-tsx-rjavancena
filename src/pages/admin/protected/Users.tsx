@@ -1,31 +1,24 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { setTitle } from "../../../common/appSlice";
 import Users from "@/features/admin/users/Users";
 import { useTableContext } from "@/hooks/TableContext";
 import { getUsersData } from "@/app/slice/usersManagementSlice";
+import { useAppDispatch } from "@/app/hooks";
+import { RouteType } from "@/interface/InterfaceType";
 
-interface Props {
-  routeData: { path_key: string | any };
-}
-
-const Internal: React.FC<Props> = (props) => {
+const Internal: React.FC<RouteType> = (props) => {
   const { setPage } = useTableContext();
-  const dispatch = useDispatch();
-
-  const {
-    routeData: { path_key },
-  } = props;
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setPage("Users");
     dispatch(setTitle("Users"));
-    dispatch(getUsersData({ url: path_key, method: "GET" }));
+    dispatch(getUsersData({ url: props.path_key, method: "GET" }));
   }, []);
 
   return (
     <>
-      <Users path_key={path_key} />
+      <Users {...props} />
     </>
   );
 };

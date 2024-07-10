@@ -150,6 +150,22 @@ export type ReturnOrderType = {
   returnDate: string;
 };
 
+//* TABLE CONTEXT HEADER TABLE
+export interface TableContextType {
+  children: ReactNode;
+  page: string | any;
+  setPage: (page: string) => void;
+  placeHolder: string | any;
+  columnName: string | any;
+  rowsSelection: string | any;
+  jsx: React.ReactNode;
+  tablesOptionsJsx: React.ReactNode;
+  selectedOption: any;
+  tablesOptions: any;
+  setSelectedOption: any;
+  setTablesOptions: any;
+}
+
 //* page content interface
 export interface RouteData {
   path_key: string;
@@ -178,15 +194,73 @@ export interface RouteType {
   };
 }
 
+//* DASHBOARD INTERFACE
+
+export interface DashboardInterface {
+  Datatransaction: {
+    transactId: number;
+    img: any;
+    customerId: string;
+    date: string;
+    time: string;
+    amount: number;
+    status: string;
+  };
+
+  chart: any;
+  DataChart: {
+    name: string;
+    total: number;
+  };
+
+  data: {
+    chart: Record<string, any>;
+  };
+
+  routeData: {
+    path: string;
+    path_key: string;
+    title: string;
+    icon: string;
+  };
+
+  path_key: string;
+  path: string;
+  title: string;
+  icon: string;
+  search: string;
+}
+
+export interface DataTransaction {
+  transactId: number;
+  img: any;
+  customerId: string;
+  date: string;
+  time: string;
+  amount: number;
+  status: string;
+}
+
+//* MENU INTERFACE
+
+export interface MenuInterface {
+  routeData: {
+    path: string;
+    path_key: string;
+    title: string;
+    icon: string;
+  };
+}
+
 export interface MenuListProps {
-  filteredData: any[]; // Adjust type as per your actual data structure
+  filteredData: any[];
   tabCategory: string;
   handleTabCategory: (value: string) => void;
-  tabsMenu: any[]; // Adjust type as per your actual data structure
-  quantities: {} | any; // Adjust type as per your actual data structure
+  tabsMenu: any[];
+  quantities: {} | any;
   setQuantities: React.Dispatch<React.SetStateAction<{}>>;
-  customerId: any; // Adjust type as per your actual data structure
-  dataCustomer: any[]; // Adjust type as per your actual data structure
+  customerId: any;
+  dataCustomer: any[];
 }
 
 export interface OrderListProps {
@@ -203,3 +277,41 @@ export interface PaymentMethod {
   icon: ReactNode;
   label: string;
 }
+
+//* INVENTORY INTERFACE TYPE
+export interface ParentInventory {
+  productName: string;
+  productCategory: string;
+}
+
+export interface InventoryItem {
+  id: number;
+  name: string;
+  quantity: number;
+  category: any;
+  title: any;
+}
+export interface InventoryResponse {
+  message: any;
+  data: {
+    inventory_id: any;
+    inventory: InventoryItem[] | any | string;
+    buttons: any;
+    filter_category: any;
+    category: any;
+    title: any;
+    message: any;
+  };
+}
+
+export interface InventoryListProps {
+  filteredData: any[];
+}
+
+export interface ErrorMessages {
+  [key: string]: any;
+  product_name?: any;
+  product_category?: any;
+}
+
+//* USERS MANAGEMENT INTERFACE

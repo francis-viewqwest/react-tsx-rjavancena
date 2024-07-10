@@ -1,28 +1,21 @@
 import { DataTable } from "@/components/ui/data-table";
 import React, { useEffect, useState } from "react";
-import usersJSON from "@/data/users.json";
-import { UsersType } from "@/interface/InterfaceType";
-import { ColumnsUsers } from "@/components/ui/columns";
 import useColumnsProduct from "@/components/ui/columns";
 import {
   loadingStatus,
   usersData,
   getUsersData,
 } from "@/app/slice/usersManagementSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { RouteType } from "@/interface/InterfaceType";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-const Users: React.FC = ({ path_key }) => {
-  // const [usersData, setUsersData] = useState<UsersType[]>([]);
+const Users: React.FC<RouteType> = (props) => {
   const columnsProduct = useColumnsProduct("users");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [data, setData] = useState([]);
-  const usersLoading = useSelector(loadingStatus);
-  const usersParentData = useSelector(usersData);
-
-  // useEffect(() => {
-  //   setUsersData(usersJSON);
-  // }, []);
+  const usersLoading = useAppSelector(loadingStatus);
+  const usersParentData = useAppSelector(usersData);
 
   useEffect(() => {
     if (usersLoading === "getUsersData/success") {
@@ -30,15 +23,15 @@ const Users: React.FC = ({ path_key }) => {
     }
 
     if (usersLoading === "addUser/success") {
-      dispatch(getUsersData({ url: path_key, method: "GET" }));
+      dispatch(getUsersData({ url: props.path_key, method: "GET" }));
     }
 
     if (usersLoading === "editUser/success") {
-      dispatch(getUsersData({ url: path_key, method: "GET" }));
+      dispatch(getUsersData({ url: props.path_key, method: "GET" }));
     }
 
     if (usersLoading === "deleteUser/success") {
-      dispatch(getUsersData({ url: path_key, method: "GET" }));
+      dispatch(getUsersData({ url: props.path_key, method: "GET" }));
     }
   }, [usersParentData, usersLoading]);
 

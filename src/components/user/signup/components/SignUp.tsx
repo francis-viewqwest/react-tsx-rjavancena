@@ -15,7 +15,7 @@ interface FormValues {
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
-  const { setToken } = useAuth();
+  const { token, setToken } = useAuth();
 
   const {
     register,
@@ -34,7 +34,6 @@ const SignUp: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const euDevice = Cookies.get("eu");
-    console.log(euDevice);
     try {
       const res = await axios.post(import.meta.env.VITE_BASE_URL + "register", {
         ...data,
@@ -42,19 +41,13 @@ const SignUp: React.FC = () => {
       });
 
       if (res.status === 200 && res.data.url_token) {
-        const queryParams = new URLSearchParams(
-          res.data.url_token.split("?")[1]
-        );
-        const tjParam = queryParams.get("tj");
-        if (tjParam !== null) {
-          Cookies.set("token", tjParam);
-          setToken(tjParam);
-        }
+        Cookies.set("token", res.data.token);
+        setToken(res.data.token);
+        console.log(res.data.url_token);
 
-        if (tjParam) {
-          navigate(`/signup/verify-email?tj=${tjParam}`);
-          console.log(tjParam);
-          console.log("url_token: ", res.data.url_token);
+        if (token) {
+          navigate(`/signup/verify-email/?${res.data.url_token}`);
+          console.log(res.data.url_token);
         } else {
           console.error("Invalid token format");
         }

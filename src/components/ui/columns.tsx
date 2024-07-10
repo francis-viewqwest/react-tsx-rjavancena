@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   RowInventoryActions,
   RowPackOrdersAction,
+  RowTransactionActions,
   RowReturnOrderAction,
   RowShippingAction,
   RowFailedDeliverAction,
@@ -48,17 +49,7 @@ const useColumnsProduct = (
   const dashboardTransaction = useSelector(dashboardData);
 
   const baseColumns: ColumnDef<any>[] = [
-    {
-      accessorKey: "select",
-      header: "Select",
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-    },
+
   ];
 
   // Memoize dynamic columns based on inventoryChild dependency
@@ -117,22 +108,35 @@ const useColumnsProduct = (
             if (columnHeader.includes("status")) {
               return <Badge>{row.getValue(accessorKey)}</Badge>;
             }
+            if (columnHeader.includes("user id")) {
+              return <>{_.startCase(row.getValue(accessorKey))}</>;
+            }
+            if (columnHeader.includes("total amount")) {
+              const value = parseFloat(row.getValue(accessorKey));
+              const formatted = new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+              }).format(value);
+              return <>{formatted}</>;
+            }
             if (columnHeader.includes("actions")) {
               switch (dataSource) {
                 case "inventory":
                   return <RowInventoryActions row={row} />;
                 case "users":
                   return <RowUsersActions row={row} />;
+                case "transaction":
+                  return <RowTransactionActions row={row} />;
                 default:
                   return null;
               }
             }
-            return <div>{row.getValue(accessorKey)}</div>;
+            return <>{row.getValue(accessorKey)}</>;
           },
         };
       }) || []
     );
-  }, [dataSource, inventoryChild, usersParent]);
+  }, [dataSource, inventoryChild, usersParent, dashboardTransaction]);
 
   // Combine base columns and dynamic columns
   const columns = useMemo(

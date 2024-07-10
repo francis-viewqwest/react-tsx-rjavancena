@@ -228,9 +228,9 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
     try {
         console.log("apiconfig: ", apiconfig)
         const res = await axiosClient({
-            method: apiconfig?.method,
+            method: apiconfig.method,
             url: apiconfig.url,
-            data: apiconfig?.data
+            data: apiconfig.data
         });
 
         return res.data;

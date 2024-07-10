@@ -1,42 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { ColumnsTransac } from "@/components/ui/columns";
 import { DataTable } from "@/components/ui/data-table";
-import transactionData from "@/data/transactionData.json";
 import TodaysSale from "./components/TodaysSale";
 import CardSales from "./components/CardSales";
 import SalesOverview from "./components/SalesOverview";
-import { dashboardData, dashboardStatus } from "@/app/slice/dashboardSlice";
+import {
+  getDashboardData,
+  dashboardData,
+  dashboardStatus,
+} from "@/app/slice/dashboardSlice";
 import { useSelector } from "react-redux";
 import useColumnsProduct from "@/components/ui/columns";
+import { useAppDispatch } from "@/app/hooks";
+import { RouteType } from "@/interface/InterfaceType";
 
-interface DataTransaction {
-  transactId: number;
-  img: any;
-  customerId: string;
-  date: string;
-  time: string;
-  amount: number;
-  status: string;
-}
-
-const Dashboard: React.FC = () => {
-  const [dataTransaction, setDataTransaction] = useState<DataTransaction[]>([]);
+const Dashboard: React.FC<RouteType> = (props) => {
   const status = useSelector(dashboardStatus);
   const dashData = useSelector(dashboardData);
   const [data, setData] = useState({});
+  const [transactionData, setTransactionData] = useState([]);
   const columnsProduct = useColumnsProduct("transaction");
-
-  useEffect(() => {
-    setDataTransaction(transactionData);
-  }, []);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (status === "getDashboardData/success") {
       setData(dashData);
+      setTransactionData(dashData?.data?.recent_transactions);
+    }
+    if (status === "voidPaid/success") {
+      dispatch(getDashboardData({ url: props.path_key, method: "GET" }));
     }
   }, [status, dashData]);
-
-  console.log(data);
 
   return (
     <>
@@ -52,7 +45,7 @@ const Dashboard: React.FC = () => {
               search="transaction"
               title="Recent Transaction"
               columns={columnsProduct}
-              data={dataTransaction}
+              data={transactionData}
             />
           </div>
         </div>

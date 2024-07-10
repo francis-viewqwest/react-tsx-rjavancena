@@ -36,15 +36,14 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
 import { Separator } from "@/components/ui/separator";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { ProductInventory } from "@/interface/InterfaceType";
+import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
 import _ from "lodash";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 import {
   updateInventoryParent,
   deleteInventoryData,
@@ -52,25 +51,20 @@ import {
   loadingStatus,
 } from "@/app/slice/inventorySlice";
 import Cookies from "js-cookie";
+import { useAppDispatch } from "@/app/hooks";
+import { InventoryListProps, ErrorMessages } from "@/interface/InterfaceType";
 
-interface InventoryListProps {
-  dataInventory: {
-    result: {
-      data: ProductInventory[];
-    };
-  };
-}
 
 const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
-  const [modalData, setModalData] = useState({});
-  const [funcData, setFuncData] = useState({});
+  const [modalData, setModalData] = useState<any>({});
+  const [funcData, setFuncData] = useState<any>({});
   const updateErrorMessage = useSelector(inventoryError);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const inventoryLoading = useSelector(loadingStatus);
 
-  const { control, handleSubmit, getValues, setValue, register } = useForm({});
+  const { getValues, setValue, register } = useForm({});
 
   useForm({
     defaultValues: {
@@ -83,7 +77,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
   const handleEdit = (values: any) => {
     setFuncData(values);
 
-    values.details.forEach((val) => {
+    values.details.forEach((val: any) => {
       const fieldName = _.replace(_.lowerCase(val.label), " ", "_");
       setValue(fieldName, val.value);
     });
@@ -114,7 +108,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
     dispatch(
       updateInventoryParent({
         url: funcData.url,
-        method: "POST",
+        method: funcData.method,
         data: payload,
       })
     );
@@ -137,7 +131,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
     );
   };
 
-  const errorMessages = {
+  const errorMessages: ErrorMessages = {
     product_name: updateErrorMessage?.name,
     product_category: updateErrorMessage?.category,
   };
@@ -244,7 +238,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                 <DropdownMenuContent className="w-full">
                   <DropdownMenuLabel>Action</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {item.action.map((act) => (
+                  {item.action.map((act: any) => (
                     <>
                       {act.button_name == "Edit" ? (
                         <>
@@ -327,20 +321,22 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                     <DialogHeader>
                       <DialogTitle>
                         Delete Product{" "}
-                        {modalData?.details?.map((detail, index) => (
-                          <>
-                            {index > 0 &&
-                              modalData.details[index - 1].label ===
-                                "Product Name" &&
-                              " from "}
-                            {detail.label === "Product Name" && (
-                              <span>{detail.value}</span>
-                            )}
-                            {detail.label === "Product Category" && (
-                              <span>{detail.value}</span>
-                            )}
-                          </>
-                        ))}
+                        {modalData?.details?.map(
+                          (detail: any, index: number) => (
+                            <>
+                              {index > 0 &&
+                                modalData.details[index - 1].label ===
+                                  "Product Name" &&
+                                " from "}
+                              {detail.label === "Product Name" && (
+                                <span>{detail.value}</span>
+                              )}
+                              {detail.label === "Product Category" && (
+                                <span>{detail.value}</span>
+                              )}
+                            </>
+                          )
+                        )}
                       </DialogTitle>
                       <DialogDescription>
                         This action cannot be undone. This will permanently
