@@ -34,16 +34,19 @@ const menuSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getMenuData.pending, (state) => {
-                state.status = "menuData/loading"
-                state.error = null
+                state.status = "menuData/loading";
+                state.loading = true;
+                state.error = null;
             })
             .addCase(getMenuData.fulfilled, (state, action) => {
-                state.status = "menuData/success"
+                state.status = "menuData/success";
+                state.loading = false;
                 state.data = action.payload
             })
             .addCase(getMenuData.rejected, (state, action) => {
-                state.status = "menuData/failed",
-                    state.error = action.payload
+                state.status = "menuData/failed";
+                state.loading = false;
+                state.error = action.payload
             })
 
         builder

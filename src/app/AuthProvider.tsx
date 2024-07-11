@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 
 interface AuthContextProps {
-  token: string | undefined;
+  token: string | undefined | any;
   setToken: (newToken: string) => void;
 }
 

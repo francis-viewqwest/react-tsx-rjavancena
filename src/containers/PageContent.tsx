@@ -1,29 +1,36 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Header";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Menu from "../pages/admin/protected/Menu";
 import Dashboard from "../pages/admin/protected/Dashboard";
 import Inventory from "../pages/admin/protected/Inventory";
 import ProductList from "../pages/admin/protected/ProductList";
 import Users from "../pages/admin/protected/Users";
 import { setNavbar } from "@/app/slice/userSlice";
-import { useDispatch } from "react-redux";
-import useAxiosClient from "@/axios-client";
 import { RouteType } from "@/interface/InterfaceType";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+
+//* SKELETON PAGES
+import {
+  MenuSkeleton,
+  DashboardSkeleton,
+} from "../pages/admin/skeleton/SkeletonPage";
 
 const PageContent: React.FC = () => {
-  const [routes, setRoutes] = useState([]);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const axiosClient = useAxiosClient();
+  const dispatch = useAppDispatch();
+  const routes = useAppSelector((state) => state.user.data.nav_links);
+  const pageLoading = useAppSelector((state) => state.user.loading);
+  const location = useLocation();
 
   const requestRoutes = async () => {
     try {
-      const res = await axiosClient.get("/role-nav-links");
-
-      setRoutes(res.data.nav_links);
-      dispatch(setNavbar(res.data.nav_links));
+      await dispatch(
+        setNavbar({
+          url: "/role-nav-links",
+          method: "GET",
+        })
+      );
     } catch (error) {
       navigate("/");
     }
@@ -55,29 +62,35 @@ const PageContent: React.FC = () => {
       <div className="w-full flex flex-col gap-5">
         <Header />
         <main className="bg-white px-4 lg:px-3">
+          {pageLoading && <MenuSkeleton />}
+          {pageLoading && <DashboardSkeleton />}
           <Routes>
-            {routes.map(
-              (route: RouteType, index: number) =>
-                route && (
-                  <Route
-                    key={index}
-                    path={`${route.path}`}
-                    element={routeComponent(route.title, route)}
-                  >
+            {routes &&
+              routes.map(
+                (route: RouteType, index: number) =>
+                  route && (
                     <Route
-                      index
-                      element={routeComponent(`parent-${route.title}`, route)}
-                    />
-                    {route.title === "Inventory" && (
+                      key={index}
+                      path={`${route.path}`}
+                      element={routeComponent(route.title, route)}
+                    >
                       <Route
-                        key={`${index}-child`}
-                        path="inventory-child/:id"
-                        element={routeComponent(`child-${route.title}`, route)}
+                        index
+                        element={routeComponent(`parent-${route.title}`, route)}
                       />
-                    )}
-                  </Route>
-                )
-            )}
+                      {route.title === "Inventory" && (
+                        <Route
+                          key={`${index}-child`}
+                          path="inventory-child/:id"
+                          element={routeComponent(
+                            `child-${route.title}`,
+                            route
+                          )}
+                        />
+                      )}
+                    </Route>
+                  )
+              )}
           </Routes>
         </main>
       </div>

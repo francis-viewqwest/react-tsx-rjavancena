@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const appSlice = createSlice({
   name: "app",
   initialState: {
-    title: "Dashboard",
+    title: null,
   },
   reducers: {
     setTitle: (state, action) => {

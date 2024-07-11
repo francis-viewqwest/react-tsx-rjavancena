@@ -1,17 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import rjlogo from "../../../../assets/rjavancenalogo.svg";
 import Cookies from "js-cookie";
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/app/AuthProvider";
-import axiosClient from "@/axios-client";
 import useAxiosClient from "@/axios-client";
+import { useState } from "react";
+import MoonLoader from "react-spinners/MoonLoader";
 
 interface FormValues {
   email: String;
@@ -26,33 +23,31 @@ const SignIn: React.FC = () => {
     setError,
   } = useForm<FormValues>();
 
-  const { setToken } = useAuth();
+  const { token, setToken } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const euDevice = Cookies.get("eu");
-
-  const { toast } = useToast();
   const axiosClient = useAxiosClient();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setLoading(true);
     try {
       const res = await axiosClient.post("/login", {
         ...data,
         eu_device: euDevice,
       });
-      console.log(res);
-      const token = res.data.token;
+
       Cookies.set("token", res.data.token);
-      // setToken(token);
+      setToken(token);
 
       if (token) {
         navigate("/app/menu");
       }
     } catch (error: any) {
-      console.log(error);
-
       let errorMessage = error.response.data.message;
+      setLoading(false);
 
       setError("email", {
         type: "custom",
@@ -124,8 +119,16 @@ const SignIn: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-col w-full mt-5 gap-4">
-              <Button className="font-bold">Sign In</Button>
-
+              <Button className="font-bold">
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    Signing in...
+                    <MoonLoader size={12} color="#ffffff" />
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
               <div className="text-sm text-center m-auto">
                 Don’t have an account?{" "}
                 <span className="font-bold">

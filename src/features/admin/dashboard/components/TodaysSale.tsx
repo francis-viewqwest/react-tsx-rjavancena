@@ -1,6 +1,6 @@
-import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { IconShoppingCart, IconStar } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { IconShoppingCart } from "@tabler/icons-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { dashboardData } from "@/app/slice/dashboardSlice";
@@ -8,56 +8,24 @@ import { useAppSelector } from "@/app/hooks";
 
 const TodaysSale: React.FC = () => {
   const todaysSaleData = useAppSelector(dashboardData);
-
-  // console.log(todaysSaleData.today_sale);
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   const formatted = new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
   });
 
-  const data = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
-    { name: "Group D", value: 200 },
-  ];
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const [data, setData] = useState([]);
 
-  const topSelling = [
-    {
-      img: null,
-      product: "Power Drill Set",
-      category: "Hardware",
-      price: 999,
-      stars: 593,
-      cart: 1310,
-    },
-    {
-      img: null,
-      product: "Power Drill Set",
-      category: "Hardware",
-      price: 999,
-      stars: 593,
-      cart: 1310,
-    },
-    {
-      img: null,
-      product: "Power Drill Set",
-      category: "Hardware",
-      price: 999,
-      stars: 593,
-      cart: 1310,
-    },
-    {
-      img: null,
-      product: "Power Drill Set",
-      category: "Hardware",
-      price: 999,
-      stars: 593,
-      cart: 1310,
-    },
-  ];
+  useEffect(() => {
+    const transformedData =
+      todaysSaleData?.chart &&
+      todaysSaleData?.chart["week"].map((item: any) => ({
+        name: item.day,
+        value: item.total,
+      }));
+    setData(transformedData);
+  }, [todaysSaleData]);
 
   return (
     <>
@@ -79,13 +47,17 @@ const TodaysSale: React.FC = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {data.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
+                  {todaysSaleData?.chart &&
+                    todaysSaleData?.chart["week"]?.map(
+                      (_: any, index: number) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      )
+                    )}
                 </Pie>
+                <Tooltip />
               </PieChart>
             </ResponsiveContainer>
             <h1 className="font-bold text-2xl text-center">
@@ -100,31 +72,33 @@ const TodaysSale: React.FC = () => {
               Top Selling Products
             </p>
             <div className="flex flex-col">
-              {todaysSaleData?.today_sale?.top_products?.map((item, index) => (
-                <Card
-                  key={index}
-                  className="p-4 my-3 border-none shadow-none relative bg-none "
-                >
-                  <div className="flex items-center gap-4 lg:gap-3">
-                    <Skeleton className="h-12 w-12 rounded-3xl  bg-neutral-500 lg:w-10 lg:h-10" />
-                    <div>
-                      <h1 className="text-sm lg:text-xs">{item.name}</h1>
-                      <p className="text-xs text-muted-foreground">
-                        {item.category}
-                      </p>
-                      <p className="text-xs font-semibold">
-                        {formatted.format(item.price)}
-                      </p>
+              {todaysSaleData?.today_sale?.top_products?.map(
+                (item: any, index: number) => (
+                  <Card
+                    key={index}
+                    className="p-4 my-3 border-none shadow-none relative bg-none "
+                  >
+                    <div className="flex items-center gap-4 lg:gap-3">
+                      <Skeleton className="h-12 w-12 rounded-3xl  bg-neutral-500 lg:w-10 lg:h-10" />
+                      <div>
+                        <h1 className="text-sm lg:text-xs">{item.name}</h1>
+                        <p className="text-xs text-muted-foreground">
+                          {item.category}
+                        </p>
+                        <p className="text-xs font-semibold">
+                          {formatted.format(item.price)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 bottom-0 right-0 justify-end lg:pt-4">
-                    <span className="flex items-center text-xs text-muted-foreground gap-2">
-                      <IconShoppingCart color="black" size="14" />
-                      {item.count}
-                    </span>
-                  </div>
-                </Card>
-              ))}
+                    <div className="flex items-center gap-4 bottom-0 right-0 justify-end lg:pt-4">
+                      <span className="flex items-center text-xs text-muted-foreground gap-2">
+                        <IconShoppingCart color="black" size="14" />
+                        {item.count}
+                      </span>
+                    </div>
+                  </Card>
+                )
+              )}
             </div>
           </div>
         </div>

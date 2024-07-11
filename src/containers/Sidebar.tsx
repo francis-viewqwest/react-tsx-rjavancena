@@ -21,63 +21,14 @@ import {
 } from "@/components/ui/accordion";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "@/hooks/SidebarContext";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "@/app/hooks";
 
 const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
 
   const location = useLocation();
 
-  const sideNavRoutes = useSelector((state) => state.user.sidebar);
-
-  // const menus = [
-  //   {
-  //     title: "Menu",
-  //     path: "/app/menu",
-  //     icon: "heroicons-outline:view-grid",
-  //   },
-  //   {
-  //     title: "Dashboard",
-  //     path: "/app/dashboard",
-  //     icon: "heroicons-outline:chart-pie",
-  //   },
-  //   {
-  //     title: "Inventory",
-  //     path: "/app/inventory",
-  //     icon: "heroicons-outline:cube",
-  //   },
-  //   {
-  //     title: "Users",
-  //     path: "/app/users",
-  //     icon: "heroicons-outline:user-group",
-  //   },
-  //   {
-  //     title: "Orders",
-  //     icon: "heroicons-outline:clipboard-list",
-  //     submenus: [
-  //       {
-  //         title: "Customer Order",
-  //         path: "/app/customer-order",
-  //         icon: "heroicons-outline:user-group",
-  //       },
-  //       {
-  //         title: "Return Order",
-  //         path: "/app/return-order",
-  //         icon: "heroicons-outline:user-group",
-  //       },
-  //       {
-  //         title: "Failed Delivery",
-  //         path: "/app/failed-delivery",
-  //         icon: "heroicons-outline:user-group",
-  //       },
-  //       {
-  //         title: "Cancellation",
-  //         path: "/app/cancellation",
-  //         icon: "heroicons-outline:user-group",
-  //       },
-  //     ],
-  //   },
-  // ];
+  const sideNavRoutes = useAppSelector((state) => state.user.sidebar.nav_links);
 
   return (
     <>
@@ -94,90 +45,96 @@ const Sidebar: React.FC = () => {
             </DrawerHeader>
             <div className="p-4 pb-0 px-3">
               <div className="flex flex-col gap-2">
-                {sideNavRoutes.map((menu, index) => (
-                  <React.Fragment key={index}>
-                    {menu.submenus ? (
-                      <Accordion type="single" collapsible>
-                        <AccordionItem
-                          className="border-b-0"
-                          value={`${index}`}
-                        >
-                          <AccordionTrigger
-                            onClick={() => handleExpandSidebar(true, true)}
-                            className={cn(
-                              buttonVariants({
-                                size: "sm",
-                                variant: "ghost",
-                              }),
-                              "justify-between w-0 hover:no-underline font-medium text-neutral-600"
-                            )}
+                {sideNavRoutes &&
+                  sideNavRoutes.map((menu: any, index: number) => (
+                    <React.Fragment key={index}>
+                      {menu.submenus ? (
+                        <Accordion type="single" collapsible>
+                          <AccordionItem
+                            className="border-b-0"
+                            value={`${index}`}
                           >
-                            <div className="flex items-center gap-3 text-neutral-600">
-                              <Icon fontSize={22} icon={menu.icon} />
-                              <span
-                                className={`${
-                                  !open
-                                    ? "scale-0 ease-in-out transition-all"
-                                    : "ease-in-out scale-100 transition-all"
-                                }`}
-                              >
-                                {menu.title}
-                              </span>
-                            </div>
-                          </AccordionTrigger>
+                            <AccordionTrigger
+                              onClick={() => handleExpandSidebar(true, true)}
+                              className={cn(
+                                buttonVariants({
+                                  size: "sm",
+                                  variant: "ghost",
+                                }),
+                                "justify-between w-0 hover:no-underline font-medium text-neutral-600"
+                              )}
+                            >
+                              <div className="flex items-center gap-3 text-neutral-600">
+                                <Icon fontSize={22} icon={menu.icon} />
+                                <span
+                                  className={`${
+                                    !open
+                                      ? "scale-0 ease-in-out transition-all"
+                                      : "ease-in-out scale-100 transition-all"
+                                  }`}
+                                >
+                                  {menu.title}
+                                </span>
+                              </div>
+                            </AccordionTrigger>
 
-                          {menu.submenus.map((submenu, index) => (
-                            <AccordionContent className="pb-2 pt-2" key={index}>
-                              {open ? (
-                                <div className="w-full flex flex-col">
-                                  <Link
-                                    className={cn(
-                                      buttonVariants({
-                                        size: "sm",
-                                        variant: "ghost",
-                                      }),
-                                      "justify-between ml-7 text-neutral-600 flex gap-10"
-                                    )}
-                                    to={`app${submenu.path}`}
-                                  >
-                                    {submenu.title}
-                                  </Link>
-                                </div>
-                              ) : null}
-                            </AccordionContent>
-                          ))}
-                        </AccordionItem>
-                      </Accordion>
-                    ) : (
-                      <Link
-                        reloadDocument
-                        className={cn(
-                          buttonVariants({
-                            size: "sm",
-                            variant: "ghost",
-                          }),
-                          "justify-between font-medium"
-                        )}
-                        to={`/app${menu.path}`}
-                      >
-                        <div
-                          className={`flex items-center gap-3 text-start text-neutral-600`}
+                            {menu.submenus.map(
+                              (submenu: any, index: number) => (
+                                <AccordionContent
+                                  className="pb-2 pt-2"
+                                  key={index}
+                                >
+                                  {open ? (
+                                    <div className="w-full flex flex-col">
+                                      <Link
+                                        className={cn(
+                                          buttonVariants({
+                                            size: "sm",
+                                            variant: "ghost",
+                                          }),
+                                          "justify-between ml-7 text-neutral-600 flex gap-10"
+                                        )}
+                                        to={`app${submenu.path}`}
+                                      >
+                                        {submenu.title}
+                                      </Link>
+                                    </div>
+                                  ) : null}
+                                </AccordionContent>
+                              )
+                            )}
+                          </AccordionItem>
+                        </Accordion>
+                      ) : (
+                        <Link
+                          reloadDocument
+                          className={cn(
+                            buttonVariants({
+                              size: "sm",
+                              variant: "ghost",
+                            }),
+                            "justify-between font-medium"
+                          )}
+                          to={`/app${menu.path}`}
                         >
-                          <Icon fontSize={22} icon={menu.icon} />
-                          <span
-                            className={`${
-                              !open
-                                ? "scale-0 ease-in-out transition-all"
-                                : "ease-in-out scale-100 transition-all"
-                            }`}
+                          <div
+                            className={`flex items-center gap-3 text-start text-neutral-600`}
                           >
-                            {menu.title}
-                          </span>
-                        </div>
-                      </Link>
-                    )}
-                  </React.Fragment>
-                ))}
+                            <Icon fontSize={22} icon={menu.icon} />
+                            <span
+                              className={`${
+                                !open
+                                  ? "scale-0 ease-in-out transition-all"
+                                  : "ease-in-out scale-100 transition-all"
+                              }`}
+                            >
+                              {menu.title}
+                            </span>
+                          </div>
+                        </Link>
+                      )}
+                    </React.Fragment>
+                  ))}
               </div>
             </div>
             <DrawerFooter></DrawerFooter>
@@ -200,93 +157,94 @@ const Sidebar: React.FC = () => {
           </Button>
         </div>
         <nav className="gap-2 flex flex-col pt-10 ease-in-out transition-all">
-          {sideNavRoutes.map((menu, index) => (
-            <React.Fragment key={index}>
-              {menu.submenus ? (
-                <Accordion type="single" collapsible>
-                  <AccordionItem className="border-b-0" value={`${index}`}>
-                    <AccordionTrigger
-                      open={open}
-                      onClick={() => handleExpandSidebar(true, true)}
-                      className={cn(
-                        buttonVariants({
-                          size: "sm",
-                          variant: "ghost",
-                        }),
-                        "justify-between w-0 hover:no-underline font-medium text-neutral-600"
-                      )}
-                    >
-                      <div
-                        className={`flex items-center gap-3 text-neutral-600`}
+          {sideNavRoutes &&
+            sideNavRoutes.map((menu: any, index: number) => (
+              <React.Fragment key={index}>
+                {menu.submenus ? (
+                  <Accordion type="single" collapsible>
+                    <AccordionItem className="border-b-0" value={`${index}`}>
+                      <AccordionTrigger
+                        open={open}
+                        onClick={() => handleExpandSidebar(true, true)}
+                        className={cn(
+                          buttonVariants({
+                            size: "sm",
+                            variant: "ghost",
+                          }),
+                          "justify-between w-0 hover:no-underline font-medium text-neutral-600"
+                        )}
                       >
-                        <Icon fontSize={17} icon={menu.icon} />
-                        <span
-                          className={`${
-                            !open
-                              ? "scale-0 hidden ease-in-out transition-all"
-                              : "ease-in-out scale-100 transition-all"
-                          }`}
+                        <div
+                          className={`flex items-center gap-3 text-neutral-600`}
                         >
-                          {menu.title}
-                        </span>
-                      </div>
-                    </AccordionTrigger>
+                          <Icon fontSize={17} icon={menu.icon} />
+                          <span
+                            className={`${
+                              !open
+                                ? "scale-0 hidden ease-in-out transition-all"
+                                : "ease-in-out scale-100 transition-all"
+                            }`}
+                          >
+                            {menu.title}
+                          </span>
+                        </div>
+                      </AccordionTrigger>
 
-                    {menu.submenus.map((submenu, index) => (
-                      <AccordionContent className="pb-1" key={index}>
-                        {open ? (
-                          <div className="w-full flex flex-col">
-                            <Link
-                              className={cn(
-                                buttonVariants({
-                                  size: "sm",
-                                  variant: "ghost",
-                                }),
-                                `justify-between ml-7 text-neutral-600 flex gap-10  ${
-                                  location.pathname === submenu.path &&
-                                  "bg-primary text-white hover:bg-primary/90 hover:text-white"
-                                }`
-                              )}
-                              to={`/app${submenu.path}`}
-                            >
-                              {submenu.title}
-                            </Link>
-                          </div>
-                        ) : null}
-                      </AccordionContent>
-                    ))}
-                  </AccordionItem>
-                </Accordion>
-              ) : (
-                <Link
-                  className={cn(
-                    buttonVariants({
-                      size: "sm",
-                      variant: "ghost",
-                    }),
-                    `justify-between font-medium text-neutral-600 ${
-                      location.pathname === menu.path &&
-                      "bg-primary text-white hover:bg-primary/90 hover:text-white"
-                    }`
-                  )}
-                  to={`/app${menu.path}`}
-                >
-                  <div className={`flex items-center gap-3 text-start`}>
-                    <Icon fontSize={17} icon={menu.icon} />
-                    <span
-                      className={`${
-                        !open
-                          ? "scale-0 hidden ease-in-out transition-all"
-                          : "ease-in-out scale-100 transition-all"
-                      }`}
-                    >
-                      {menu.title}
-                    </span>
-                  </div>
-                </Link>
-              )}
-            </React.Fragment>
-          ))}
+                      {menu.submenus.map((submenu: any, index: number) => (
+                        <AccordionContent className="pb-1" key={index}>
+                          {open ? (
+                            <div className="w-full flex flex-col">
+                              <Link
+                                className={cn(
+                                  buttonVariants({
+                                    size: "sm",
+                                    variant: "ghost",
+                                  }),
+                                  `justify-between ml-7 text-neutral-600 flex gap-10  ${
+                                    location.pathname === submenu.path &&
+                                    "bg-primary text-white hover:bg-primary/90 hover:text-white"
+                                  }`
+                                )}
+                                to={`/app${submenu.path}`}
+                              >
+                                {submenu.title}
+                              </Link>
+                            </div>
+                          ) : null}
+                        </AccordionContent>
+                      ))}
+                    </AccordionItem>
+                  </Accordion>
+                ) : (
+                  <Link
+                    className={cn(
+                      buttonVariants({
+                        size: "sm",
+                        variant: "ghost",
+                      }),
+                      `justify-between font-medium text-neutral-600 ${
+                        location.pathname === menu.path &&
+                        "bg-primary text-white hover:bg-primary/90 hover:text-white"
+                      }`
+                    )}
+                    to={`/app${menu.path}`}
+                  >
+                    <div className={`flex items-center gap-3 text-start`}>
+                      <Icon fontSize={17} icon={menu.icon} />
+                      <span
+                        className={`${
+                          !open
+                            ? "scale-0 hidden ease-in-out transition-all"
+                            : "ease-in-out scale-100 transition-all"
+                        }`}
+                      >
+                        {menu.title}
+                      </span>
+                    </div>
+                  </Link>
+                )}
+              </React.Fragment>
+            ))}
         </nav>
       </div>
     </>
