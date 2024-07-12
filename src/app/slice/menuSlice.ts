@@ -8,6 +8,7 @@ interface menuState {
     data: object;
     status: string;
     loading: boolean;
+    loadingAddCart: boolean;
     error: string | null | any;
 }
 
@@ -21,7 +22,8 @@ interface ApiConfig {
 const initialState: menuState = {
     data: {},
     status: "",
-    loading: true,
+    loading: false,
+    loadingAddCart: false,
     error: false,
 }
 
@@ -51,16 +53,19 @@ const menuSlice = createSlice({
 
         builder
             .addCase(menuAddCart.pending, (state) => {
-                state.status = "menuAddCart/loading"
+                state.status = "menuAddCart/loading";
+                state.loadingAddCart = true;
                 state.error = null
             })
             .addCase(menuAddCart.fulfilled, (state, action) => {
-                state.status = "menuAddCart/success"
-                state.data = action.payload
+                state.status = "menuAddCart/success";
+                state.loadingAddCart = false;
+                state.data = action.payload;
             })
             .addCase(menuAddCart.rejected, (state, action) => {
-                state.status = "menuAddCart/failed",
-                    state.error = action.payload
+                state.status = "menuAddCart/failed";
+                state.loadingAddCart = false;
+                state.error = action.payload;
             })
 
         builder
@@ -70,14 +75,14 @@ const menuSlice = createSlice({
                 state.error = null
             })
             .addCase(getCustomerData.fulfilled, (state, action) => {
-                state.status = "customerData/success"
+                state.status = "customerData/success";
                 state.loading = false;
-                state.data = action.payload
+                state.data = action.payload;
             })
             .addCase(getCustomerData.rejected, (state, action) => {
-                state.status = "customerData/failed",
-                    state.loading = false;
-                state.error = action.payload
+                state.status = "customerData/failed";
+                state.loading = false;
+                state.error = action.payload;
             })
 
         builder

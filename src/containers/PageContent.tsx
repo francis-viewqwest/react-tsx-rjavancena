@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Header from "./Header";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Menu from "../pages/admin/protected/Menu";
 import Dashboard from "../pages/admin/protected/Dashboard";
 import Inventory from "../pages/admin/protected/Inventory";
@@ -14,6 +14,8 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   MenuSkeleton,
   DashboardSkeleton,
+  InventorySkeleton,
+  UsersManagementSkeleton,
 } from "../pages/admin/skeleton/SkeletonPage";
 
 const PageContent: React.FC = () => {
@@ -21,7 +23,6 @@ const PageContent: React.FC = () => {
   const dispatch = useAppDispatch();
   const routes = useAppSelector((state) => state.user.data.nav_links);
   const pageLoading = useAppSelector((state) => state.user.loading);
-  const location = useLocation();
 
   const requestRoutes = async () => {
     try {
@@ -64,6 +65,8 @@ const PageContent: React.FC = () => {
         <main className="bg-white px-4 lg:px-3">
           {pageLoading && <MenuSkeleton />}
           {pageLoading && <DashboardSkeleton />}
+          {pageLoading && <InventorySkeleton />}
+          {pageLoading && <UsersManagementSkeleton />}
           <Routes>
             {routes &&
               routes.map(

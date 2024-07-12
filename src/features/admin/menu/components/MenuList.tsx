@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { menuAddCart } from "@/app/slice/menuSlice";
 import Cookies from "js-cookie";
-
 import { MenuListProps } from "@/interface/InterfaceType";
-import { useAppDispatch } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { useToast } from "@/components/ui/use-toast";
 
 const MenuList: React.FC<MenuListProps> = ({
   filteredData,
@@ -23,6 +23,9 @@ const MenuList: React.FC<MenuListProps> = ({
   dataCustomer,
 }) => {
   const dispatch = useAppDispatch();
+  const { toast } = useToast();
+
+  const loadingMenu = useAppSelector((state) => state.menu.loadingAddCart);
 
   const customer = dataCustomer?.find(
     (customer) => customer?.customer_id === customerId
@@ -43,6 +46,13 @@ const MenuList: React.FC<MenuListProps> = ({
   };
 
   const handleAddToCart = (itemId: string, quantity: number) => {
+    if (quantity <= 0) {
+      toast({
+        variant: "destructive",
+        title: "Please select quantity to add to the cart.",
+      });
+      return;
+    }
     const payload = {
       ...(customer?.user_id_customer && {
         user_id_customer: customer?.user_id_customer,
@@ -51,7 +61,7 @@ const MenuList: React.FC<MenuListProps> = ({
         purchase_group_id: customer?.purchase_group_id,
       }),
       inventory_product_id: itemId,
-      quantity: quantity,
+      quantity: quantity || 0,
       eu_device: Cookies.get("eu"),
     };
 
@@ -161,12 +171,12 @@ const MenuList: React.FC<MenuListProps> = ({
                       className="bg-primary text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
                       onClick={() =>
                         handleAddToCart(
-                          item.inventory_product_id,
-                          quantities[item.inventory_id]
+                          item?.inventory_product_id,
+                          quantities[item?.inventory_id]
                         )
                       }
                     >
-                      Add to cart
+                      {loadingMenu ? "Adding to cart..." : "Add to cart"}
                     </Button>
                   </CardContent>
                 </Card>

@@ -287,17 +287,26 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
           disabled={!isEdit}
         />
         {isEdit ? (
-          <Label
-            onClick={() =>
-              handleSaveName(
-                customer?.purchase_group_id,
-                customer?.user_id_customer
-              )
-            }
-            className="z-20 flex right-4 absolute cursor-pointer"
-          >
-            Save
-          </Label>
+          <>
+            <Button
+              onClick={() =>
+                handleSaveName(
+                  customer?.purchase_group_id,
+                  customer?.user_id_customer
+                )
+              }
+              size="xs"
+              className="absolute flex z-20 right-16 text-xs"
+            >
+              Save
+            </Button>
+            <Label
+              onClick={() => setIsEdit(!isEdit)}
+              className="z-20 flex right-4 absolute cursor-pointer text-xs"
+            >
+              Cancel
+            </Label>
+          </>
         ) : (
           <div className="flex right-4 absolute items-center gap-2">
             <Button className="z-20 bg-neutral-200 px-2 h-7 hover:bg-neutral-300 cursor-pointer">

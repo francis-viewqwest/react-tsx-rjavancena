@@ -79,3 +79,68 @@ export const DashboardSkeleton: React.FC = () => {
     </>
   );
 };
+
+export const InventorySkeleton: React.FC = () => {
+  const interfaceLoading = useAppSelector((state) => state.user.loading);
+
+  return (
+    <>
+      {location.pathname === "/app/inventory" && (
+        <>
+          <div className="flex flex-col gap-6 md:flex-row lg:items-center justify-between">
+            <div className="flex flex-col md:flex-row lg:items-center gap-4">
+              {interfaceLoading && (
+                <Skeleton className="h-10 w-[24rem] bg-neutral-200" />
+              )}
+              {interfaceLoading && (
+                <Skeleton className="h-10 w-[7rem] bg-neutral-200" />
+              )}
+            </div>
+            {interfaceLoading && (
+              <Skeleton className="h-10 w-[6rem] bg-neutral-200" />
+            )}
+          </div>
+
+          <div className="flex flex-col gap-4 py-4">
+            {interfaceLoading && (
+              <>
+                <Skeleton className="h-24 w-full bg-neutral-200" />
+                <Skeleton className="h-24 w-full bg-neutral-200" />
+                <Skeleton className="h-24 w-full bg-neutral-200" />
+                <Skeleton className="h-24 w-full bg-neutral-200" />
+                <Skeleton className="h-24 w-full bg-neutral-200" />
+                <Skeleton className="h-24 w-full bg-neutral-200" />
+              </>
+            )}
+            {/* {inventoryResData && <InventoryList filteredData={filteredData} />} */}
+          </div>
+        </>
+      )}
+    </>
+  );
+};
+
+export const UsersManagementSkeleton: React.FC = () => {
+  const interfaceLoading = useAppSelector((state) => state.user.loading);
+
+  return (
+    <>
+      {location.pathname === "/app/users" && (
+        <>
+          <div className="flex justify-between">
+            {interfaceLoading && (
+              <Skeleton className="h-10 w-[24rem] bg-neutral-200" />
+            )}
+            {interfaceLoading && (
+              <Skeleton className="h-10 w-[7rem] bg-neutral-200" />
+            )}
+          </div>
+
+          {interfaceLoading && (
+            <Skeleton className="h-[96rem] w-full bg-neutral-200 mt-7" />
+          )}
+        </>
+      )}
+    </>
+  );
+};
