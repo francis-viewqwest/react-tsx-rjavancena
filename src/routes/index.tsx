@@ -49,7 +49,7 @@ const Routes: React.FC = () => {
       children: [
         {
           path: "/",
-          element: <Home />,
+          element: <SignIn />,
         },
         {
           path: "/shop",

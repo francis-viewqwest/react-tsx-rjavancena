@@ -1,29 +1,16 @@
 import useAxiosClient from "@/axios-client";
+import { menuState, } from "@/interface/InterfaceType";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 
 const axiosClient = useAxiosClient();
-
-interface menuState {
-    data: object;
-    status: string;
-    loading: boolean;
-    loadingAddCart: boolean;
-    error: string | null | any;
-}
-
-interface ApiConfig {
-    url: string;
-    method: string;
-    data?: any;
-}
-
 
 const initialState: menuState = {
     data: {},
     status: "",
     loading: false,
     loadingAddCart: false,
+    loadingPurchase: false,
     error: false,
 }
 
@@ -157,16 +144,19 @@ const menuSlice = createSlice({
 
         builder
             .addCase(placeOrder.pending, (state) => {
-                state.status = "placeOrder/loading"
-                state.error = null
+                state.status = "placeOrder/loading";
+                state.loadingPurchase = true;
+                state.error = null;
             })
             .addCase(placeOrder.fulfilled, (state, action) => {
                 state.status = "placeOrder/success"
+                state.loadingPurchase = false;
                 state.data = action.payload
             })
             .addCase(placeOrder.rejected, (state, action) => {
-                state.status = "placeOrder/failed",
-                    state.error = action.payload
+                state.status = "placeOrder/failed";
+                state.loadingPurchase = false;
+                state.error = action.payload;
             })
     }
 

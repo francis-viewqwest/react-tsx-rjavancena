@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -65,15 +64,15 @@ const SignIn: React.FC = () => {
       <div className="w-full h-screen p-4 md:flex md:flex-col items-center m-auto">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="m-auto pt-20 md:w-96 lg:p-7 flex flex-col gap-3 lg:gap-8 rounded-md lg:border-[1px] lg:shadow-sm"
+          className="m-auto md:w-96 lg:p-7 flex flex-col gap-3 lg:gap-8 rounded-md lg:border-[1px] lg:shadow-sm"
         >
           <div className="flex flex-col items-center m-auto gap-2">
-            <h1 className="text-2xl font-bold">RJ Avancena</h1>
+            <h1 className="text-xl font-bold">Welcome to RJ Avancena</h1>
           </div>
           <div className="flex flex-col gap-5">
             <div className="grid w-full items-center gap-1.5">
-              <Label>Email</Label>
               <Input
+                className="h-12 bg-none"
                 type="email"
                 placeholder="Enter your email address"
                 {...register("email", {
@@ -90,8 +89,8 @@ const SignIn: React.FC = () => {
               )}
             </div>
             <div className="grid w-full items-center gap-1.5">
-              <Label>Password</Label>
               <Input
+                className="h-12 bg-none"
                 type="password"
                 placeholder="Enter your password"
                 {...register("password", {

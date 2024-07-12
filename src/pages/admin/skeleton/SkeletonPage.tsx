@@ -26,6 +26,20 @@ export const MenuSkeleton: React.FC = () => {
                 <Skeleton className="h-6 max-w-[9rem] bg-neutral-200 my-8" />
               )}
             </div>
+            <div className="gap-y-5 grid grid-cols-2 sm:grid-cols-3 sm:flex-row lg:grid lg:grid-cols-4 lg:gap-3 relative">
+              {interfaceLoading && (
+                <>
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                  <Skeleton className="h-64 bg-card bg-neutral-200" />
+                </>
+              )}
+            </div>
           </div>
           <div className="py-4 lg:py-0 lg:row-span-4 lg:w-full lg:h-full lg:col-start-4">
             {interfaceLoading && <Skeleton className="h-12 bg-neutral-200" />}

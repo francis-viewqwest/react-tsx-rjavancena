@@ -13,6 +13,7 @@ import { placeOrder, loading, menuError } from "@/app/slice/menuSlice";
 import Cookies from "js-cookie";
 import { PaymentProps, PaymentMethod } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import MoonLoader from "react-spinners/MoonLoader";
 
 const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
   const paymentMethod: PaymentMethod[] = [
@@ -35,7 +36,7 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
 
   const dispatch = useAppDispatch();
 
-  console.log(errorPayment?.message);
+  const loadingPurchase = useAppSelector((state) => state.menu.loadingPurchase);
 
   const customer = dataCustomer?.find(
     (customer: any) => customer?.customer_id === customerId
@@ -159,12 +160,19 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
                   )}
                 </div>
                 <Button
-                  disabled={cashInput < payment?.total_amount}
+                  disabled={
+                    cashInput < payment?.total_amount || loadingPurchase
+                  }
                   onClick={() => handlePlaceOrder(customer)}
                   size="lg"
                   className="w-full font-semibold"
                 >
-                  Place Order
+                  {loadingPurchase && (
+                    <span className="flex items-center gap-2">
+                      Purcashing...{<MoonLoader color="#FFFFFF" size={14} />}
+                    </span>
+                  )}
+                  {!loadingPurchase && "Place Order"}
                 </Button>
               </div>
             </div>

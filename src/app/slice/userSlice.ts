@@ -34,18 +34,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // setNavbar: (state, action) => {
-    //   return {
-    //     ...state,
-    //     sidebar: action.payload
-    //   }
-    // },
-    // setUser: (state, action) => {
-    //   return {
-    //     ...state,
-    //     user: action.payload
-    //   }
-    // },
+
   },
   extraReducers(builder) {
 
@@ -94,7 +83,6 @@ export const setNavbar = createAsyncThunk("user/getNavbar", async (ApiConfig: Ap
       method: ApiConfig.method,
       data: ApiConfig.data
     })
-    console.log(res)
     return res.data
   } catch (error: any) {
     console.log(error)

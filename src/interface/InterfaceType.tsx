@@ -166,6 +166,22 @@ export interface TableContextType {
   setTablesOptions: any;
 }
 
+//* REDUX INTERFACE
+export interface menuState {
+  data: object;
+  status: string;
+  loading: boolean;
+  loadingAddCart: boolean;
+  loadingPurchase: boolean;
+  error: string | null | any;
+}
+
+export interface ApiConfig {
+  url: string;
+  method: string;
+  data?: any;
+}
+
 //* page content interface
 export interface RouteData {
   path_key: string;
