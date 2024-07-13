@@ -118,10 +118,15 @@ const SignIn: React.FC = () => {
             className="hidden h-full w-full bg-no-repeat bg-cover md:flex items-center justify-center"
             style={{ backgroundImage: `url(${bgSignin})` }}
           >
-            <h1 className="text-white font-medium text-3xl text-center w-[34rem]">
-              Effortlessly manage your sales and inventory with our seamless
-              Point of Sale system.
-            </h1>
+            <div className="flex flex-col gap-4">
+              <h1 className="text-white font-bold text-3xl text-center w-[34rem]">
+                Everything you need, to make anything you want.
+              </h1>
+              <p className="w-[20rem] text-white/70 text-center text-xs mx-auto">
+                Effortlessly manage your sales and inventory with our seamless
+                Point of Sale system.
+              </p>
+            </div>
           </div>
           <form
             onSubmit={handleSubmit(onSubmit)}

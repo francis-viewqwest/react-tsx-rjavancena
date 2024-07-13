@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="px-10 m-auto absolute bottom-0 text-white w-full bg-bgrjavancena">
+      <footer className="px-4 md:px-10 m-auto absolute bottom-0 text-white w-full bg-bgrjavancena">
         <div className="footer items-center py-4 lg:flex lg:items-center lg:justify-between">
           <aside className="items-center grid-flow-col">
             <p className="text-xs font-bold">
