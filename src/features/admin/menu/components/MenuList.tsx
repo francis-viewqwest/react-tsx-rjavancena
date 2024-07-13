@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { MenuListProps } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { useToast } from "@/components/ui/use-toast";
+import _ from "lodash"
 
 const MenuList: React.FC<MenuListProps> = ({
   filteredData,
@@ -115,7 +116,7 @@ const MenuList: React.FC<MenuListProps> = ({
                         {item.category}
                       </p>
                       <h1 className="text-primary font-bold text-md">
-                        {item.name}
+                        {_.truncate(item.name, {length: 24, separator: ' ...'})}
                       </h1>
                       <p className="text-xs text-neutral-400 font-medium flex items-center gap-2">
                         <span>{item.stocks} Available</span>•

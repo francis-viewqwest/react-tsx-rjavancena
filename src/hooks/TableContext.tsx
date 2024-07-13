@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import _ from "lodash";
 import {
   Dialog,
   DialogContent,
@@ -93,7 +94,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   let jsx;
   let rowsSelection;
 
-  const { register, handleSubmit, setValue } = useForm<FormSubmit>();
+  const { register, handleSubmit, setValue, watch } = useForm<FormSubmit>();
   const imageInputRef = useRef<null>(null);
 
   console.log(imageInputRef.current);
@@ -107,6 +108,8 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   //* ADD USER MANAGEMENT
   const usersParentData = useAppSelector(usersData);
   const usersParentError = useAppSelector(usersError);
+
+  console.log(usersParentError?.message);
 
   const handleFormSubmit =
     (url: string, formType: string): SubmitHandler<FormSubmit> =>
@@ -324,7 +327,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       </div>
 
                       <DialogFooter>
-                        <Button className="bg-bgrjavancena" type="submit">Insert to table</Button>
+                        <Button className="bg-bgrjavancena" type="submit">
+                          Insert to table
+                        </Button>
                       </DialogFooter>
                     </form>
                   </ScrollArea>
@@ -368,105 +373,96 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       )}
                       className="grid py-4 gap-6 px-2 sm:px-5"
                     >
-                      <div className="flex flex-col gap-2">
-                        <Label className="text-sm font-semibold">Email</Label>
-                        <Input
-                          type="email"
-                          placeholder="Enter email"
-                          className="col-span-3"
-                          {...register("email")}
-                        />
-                        {usersParentError?.message?.email && (
-                          <small className="text-xs text-red-500">
-                            {usersParentError?.message?.email}
-                          </small>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label className="text-sm font-semibold">
-                          Password
-                        </Label>
-                        <Input
-                          type="password"
-                          placeholder="Enter password"
-                          className="col-span-3"
-                          {...register("password")}
-                        />
-                        {usersParentError?.message?.password && (
-                          <small className="text-xs text-red-500">
-                            {usersParentError?.message?.password}
-                          </small>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label className="text-sm font-semibold">
-                          Confirm Password
-                        </Label>
-                        <Input
-                          type="password"
-                          placeholder="Enter confirm password"
-                          className="col-span-3"
-                          {...register("password_confirmation")}
-                        />
-                        {usersParentError?.message?.password_confirmation && (
-                          <small className="text-xs text-red-500">
-                            {usersParentError?.message?.password_confirmation}
-                          </small>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label className="text-sm font-semibold">Role</Label>
-                        <Select
-                          onValueChange={(value) => setValue("role", value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select role" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="superadmin">
-                                Super Admin
-                              </SelectItem>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="cashier">Cashier</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        {usersParentError?.message?.role && (
-                          <small className="text-xs text-red-500">
-                            {usersParentError?.message?.role}
-                          </small>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Label className="text-sm font-semibold">Status</Label>
-                        <Select
-                          onValueChange={(value) => setValue("status", value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="ACTIVATE">Activate</SelectItem>
-                            </SelectGroup>
-                            <SelectGroup>
-                              <SelectItem value="PENDING">Pending</SelectItem>
-                            </SelectGroup>
-                            <SelectGroup>
-                              <SelectItem value="RESTRICTED">Restricted</SelectItem>
-                            </SelectGroup>
-                            <SelectGroup>
-                              <SelectItem value="BANNED">Banned</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                        {usersParentError?.message?.status && (
-                          <small className="text-xs text-red-500">
-                            {usersParentError?.message?.status}
-                          </small>
-                        )}
-                      </div>
+                      {btn.details.map((detail: any) => {
+                        return (
+                          <>
+                            {detail.type !== "select" && (
+                              <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-semibold">
+                                  {detail?.label}
+                                </Label>
+                                <Input
+                                  type={detail?.type}
+                                  placeholder={`Enter your ${detail?.label}`}
+                                  className="col-span-3"
+                                  {...register(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase()
+                                  )}
+                                />
+                                {usersParentError?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ] && (
+                                  <small className="text-xs text-red-500">
+                                    {
+                                      usersParentError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]
+                                    }
+                                  </small>
+                                )}
+                              </div>
+                            )}
+                            {detail?.type === "select" && (
+                              <div className="flex flex-col gap-2">
+                                <Label className="font-semibold text-xs">
+                                  {detail?.label}
+                                </Label>
+                                <Select
+                                  onValueChange={(value) =>
+                                    setValue(
+                                      detail.label
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase(),
+                                      value
+                                    )
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue
+                                      placeholder={`Select ${_.lowerCase(
+                                        detail?.label
+                                      )}`}
+                                    />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      {detail?.option?.map((opt: any) => (
+                                        <SelectItem
+                                          key={opt?.value}
+                                          value={opt?.value}
+                                        >
+                                          {opt?.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                                {usersParentError?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ] && (
+                                  <small className="text-xs text-red-500">
+                                    {
+                                      usersParentError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]
+                                    }
+                                  </small>
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      })}
                       <DialogFooter>
                         <Button className="bg-bgrjavancena" type="submit">
                           Create User
