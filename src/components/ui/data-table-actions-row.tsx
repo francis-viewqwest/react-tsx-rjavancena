@@ -229,12 +229,6 @@ export function RowInventoryActions<TData>({
                               className="col-span-4"
                             />
                             <small className="text-red-500 w-full col-span-3">
-                              {/* {inventoryChildError &&
-                                inventoryChildError[fieldName] && (
-                                  <small className="text-xs text-red-500">
-                                    {inventoryChildError[fieldName]}
-                                  </small>
-                                )} */}
                               {errorMessages &&
                                 errorMessages[
                                   _.replace(_.lowerCase(detail.label), " ", "_")
@@ -293,7 +287,11 @@ export function RowInventoryActions<TData>({
               })}
             </div>
             <DialogFooter>
-              <Button type="submit" onClick={() => handleSaveClick()}>
+              <Button
+                className="bg-bgrjavancena"
+                type="submit"
+                onClick={() => handleSaveClick()}
+              >
                 Save changes
               </Button>
               <DialogClose asChild>
@@ -549,7 +547,11 @@ export function RowUsersActions<TData>({
               })}
             </div>
             <DialogFooter>
-              <Button type="submit" onClick={() => handleSaveClick()}>
+              <Button
+                className="bg-bgrjavancena"
+                type="submit"
+                onClick={() => handleSaveClick()}
+              >
                 Save changes
               </Button>
               <DialogClose asChild>

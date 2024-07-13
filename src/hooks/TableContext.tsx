@@ -112,37 +112,21 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     (url: string, formType: string): SubmitHandler<FormSubmit> =>
     async (data) => {
       const euDevice = Cookies.get("eu");
-      const imageFile = imageInputRef;
-
-      console.log(imageFile);
-
-      const payload = {
-        inventory_id: id,
-        eu_device: euDevice,
-        item_code: data.item_code,
-        image: data.image[0],
-        refundable: data.refundable,
-        name: data.name,
-        retail_price: data.retail_price,
-        discounted_price: data.discounted_price,
-        stocks: data.stocks,
-        supplier_name: data.supplier_name,
-      };
-
-      const usersPayload = {
-        email: data.email,
-        password: data.password,
-        password_confirmation: data.password_confirmation,
-        role: data.role,
-        status: data.status,
-        eu_device: euDevice,
-      };
-
-      console.log(data.image[0]);
-      // console.log(data);
 
       switch (formType) {
         case "inventory":
+          const payload = {
+            inventory_id: id,
+            eu_device: euDevice,
+            item_code: data.item_code,
+            image: data.image[0] || null,
+            refundable: data.refundable,
+            name: data.name,
+            retail_price: data.retail_price,
+            discounted_price: data.discounted_price,
+            stocks: data.stocks,
+            supplier_name: data.supplier_name,
+          };
           dispatch(
             createInventoryChildData({
               url: url,
@@ -154,6 +138,15 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
           break;
 
         case "users":
+          const usersPayload = {
+            email: data.email,
+            password: data.password,
+            password_confirmation: data.password_confirmation,
+            role: data.role,
+            status: data.status,
+            eu_device: euDevice,
+          };
+
           dispatch(
             addUser({
               url: "accounts/admin/store",
@@ -179,7 +172,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
             inventoryChildData.data?.buttons.map((btn: any, index: any) => (
               <Dialog key={index}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="font-semibold">
+                  <Button size="sm" className="font-semibold bg-bgrjavancena">
                     {btn.button_name}
                   </Button>
                 </DialogTrigger>
@@ -331,7 +324,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       </div>
 
                       <DialogFooter>
-                        <Button type="submit">Insert to table</Button>
+                        <Button className="bg-bgrjavancena" type="submit">Insert to table</Button>
                       </DialogFooter>
                     </form>
                   </ScrollArea>
@@ -356,7 +349,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
             usersParentData.data?.buttons.map((btn: any, index: any) => (
               <Dialog key={index}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="font-semibold">
+                  <Button size="sm" className="font-semibold bg-bgrjavancena">
                     {btn.button_name}
                   </Button>
                 </DialogTrigger>
@@ -455,10 +448,16 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectItem value="active">Active</SelectItem>
-                              <SelectItem value="incative">
-                                In Active
-                              </SelectItem>
+                              <SelectItem value="ACTIVATE">Activate</SelectItem>
+                            </SelectGroup>
+                            <SelectGroup>
+                              <SelectItem value="PENDING">Pending</SelectItem>
+                            </SelectGroup>
+                            <SelectGroup>
+                              <SelectItem value="RESTRICTED">Restricted</SelectItem>
+                            </SelectGroup>
+                            <SelectGroup>
+                              <SelectItem value="BANNED">Banned</SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -469,7 +468,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         )}
                       </div>
                       <DialogFooter>
-                        <Button type="submit">Create User</Button>
+                        <Button className="bg-bgrjavancena" type="submit">
+                          Create User
+                        </Button>
                       </DialogFooter>
                     </form>
                   </ScrollArea>

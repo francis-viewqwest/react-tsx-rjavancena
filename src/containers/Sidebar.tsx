@@ -226,14 +226,14 @@ const Sidebar: React.FC = () => {
                       }),
                       `justify-between font-medium text-neutral-600  ${
                         location.pathname === `/app${menu.path}` &&
-                        "bg-primary text-white hover:bg-primary/90 hover:text-white"
+                        "bg-[#f66359] text-white hover:bg-bgrjavancena/90 hover:text-white"
                       } ${
                         _.includes(
                           location.pathname,
                           "/app/inventory/inventory-child"
                         ) &&
                         menu.path === "/inventory" &&
-                        "bg-primary text-white hover:bg-primary/90 hover:text-white"
+                        "bg-[#f66359] text-white hover:bg-bgrjavancena/90 hover:text-white"
                       }`
                     )}
                     to={`/app${menu.path}`}

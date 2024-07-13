@@ -92,7 +92,7 @@ const ProductList: React.FC = () => {
         </Link>
 
         <div>
-          <DataTable title="Product in " columns={columnsProduct} data={data} />
+          <DataTable title={`Product in ${inventoryChild.data.parameter}`} columns={columnsProduct} data={data} />
         </div>
       </TableProvider>
     </>

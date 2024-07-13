@@ -304,7 +304,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                       ))}
                     </div>
                     <DialogFooter>
-                      <Button type="submit" onClick={() => handleSaveClick()}>
+                      <Button className="bg-bgrjavancena" type="submit" onClick={() => handleSaveClick()}>
                         Save changes
                       </Button>
                       <DialogClose asChild>

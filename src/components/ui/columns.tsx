@@ -116,8 +116,40 @@ const useColumnsProduct = (
                 </>
               );
             }
-            if (columnHeader.includes("status")) {
+            if (columnHeader.includes("status_color")) {
+              console.log(row);
+
               return <Badge>{row.getValue(accessorKey)}</Badge>;
+            }
+            if (columnHeader.includes("status")) {
+              console.log(row.getValue(accessorKey));
+
+              const badgeColor = (row: string) => {
+                switch (row) {
+                  case "Activate":
+                    return "successStatus";
+                  case "Incative":
+                    return "dimmedStatus";
+                  case "Pending":
+                    return "warning";
+                  case "Banned":
+                    return "destructive";
+                  case "Restricted":
+                    return "destructive";
+
+                  default:
+                    break;
+                }
+                console.log(row);
+              };
+
+              const statusColor = row.getValue(accessorKey);
+
+              return (
+                <Badge variant={badgeColor(statusColor)}>
+                  {row.getValue(accessorKey)}
+                </Badge>
+              );
             }
             if (columnHeader.includes("user id")) {
               return <>{_.startCase(row.getValue(accessorKey))}</>;
