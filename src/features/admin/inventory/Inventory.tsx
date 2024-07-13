@@ -240,7 +240,7 @@ const Inventory: React.FC<RouteType> = (props) => {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Save changes</Button>
+                    <Button className="bg-bgrjavancena" type="submit">Save changes</Button>
                   </DialogFooter>
                 </form>
               </DialogContent>

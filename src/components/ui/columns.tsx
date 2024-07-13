@@ -104,7 +104,15 @@ const useColumnsProduct = (
 
               return (
                 <>
-                  <img className="w-full h-full" src={`http://127.0.0.1:8000/storage/app/${imageUrl}`} />
+                  {_.isEmpty(imageUrl) ? (
+                    <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />
+                  ) : (
+                    <img
+                      className="h-11 w-11"
+                      src={`http://127.0.0.1:8000/storage/inventory-children/${imageUrl}`}
+                      alt=""
+                    />
+                  )}
                 </>
               );
             }
