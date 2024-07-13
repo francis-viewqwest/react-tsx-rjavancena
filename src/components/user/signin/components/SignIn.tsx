@@ -52,10 +52,14 @@ const SignIn: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
+      
       const euDevice = Cookies.get("eu");
+      if (!euDevice) {
+        await fetchEudevice();
+      }
       const payload = {
         ...data,
-        eu_device: euDevice,
+        eu_device: Cookies.get("eu"),
       };
 
       await dispatch(
@@ -67,7 +71,6 @@ const SignIn: React.FC = () => {
       );
 
       const token = Cookies.get("token");
-
       if (token) {
         navigate("/app/menu");
       }
