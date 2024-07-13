@@ -9,14 +9,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = () => {
-  // const { authentication } = useAuth();
-
-  // const refresh = useRefreshToken();
-
-  // if (!authentication.accessToken) {
-  //   refresh();
-  //   return <Navigate to="/" />;
-  // }
+ 
 
   return (
     <div className="flex flex-1 overflow-hidden w-screen h-screen relative">

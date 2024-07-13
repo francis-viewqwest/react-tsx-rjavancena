@@ -8,7 +8,7 @@ const PublicLayout: React.FC = () => {
     <>
       <Navbar />
       <Outlet />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };

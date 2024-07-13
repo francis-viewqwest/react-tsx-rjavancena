@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useAuth } from "@/app/AuthProvider";
-import useAxiosClient from "@/axios-client";
-import { useState } from "react";
+import bgSignin from "@/assets/images/bgsignin.jpg";
+import { useEffect } from "react";
 import MoonLoader from "react-spinners/MoonLoader";
+import { setEudevice, signIn } from "@/app/slice/userSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface FormValues {
   email: String;
@@ -22,31 +24,55 @@ const SignIn: React.FC = () => {
     setError,
   } = useForm<FormValues>();
 
-  const { token, setToken } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const loadingSignIn = useAppSelector((state) => state.user.loadingSignIn);
+  const loadingEudevice = useAppSelector((state) => state.user.loadingEudevice);
+
+  const fetchEudevice = async () => {
+    try {
+      await dispatch(
+        setEudevice({
+          url: "eu-device",
+          method: "GET",
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const checkEu = Cookies.get("eu");
+    if (!checkEu) {
+      fetchEudevice();
+    }
+  }, []);
 
   const navigate = useNavigate();
 
-  const euDevice = Cookies.get("eu");
-  const axiosClient = useAxiosClient();
-
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setLoading(true);
     try {
-      const res = await axiosClient.post("/login", {
+      const euDevice = Cookies.get("eu");
+      const payload = {
         ...data,
         eu_device: euDevice,
-      });
+      };
 
-      Cookies.set("token", res.data.token);
-      setToken(token);
+      await dispatch(
+        signIn({
+          url: "/login",
+          method: "POST",
+          data: payload,
+        })
+      );
+
+      const token = Cookies.get("token");
 
       if (token) {
         navigate("/app/menu");
       }
     } catch (error: any) {
       let errorMessage = error.response.data.message;
-      setLoading(false);
 
       setError("email", {
         type: "custom",
@@ -61,83 +87,121 @@ const SignIn: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-screen p-4 md:flex md:flex-col items-center m-auto">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="m-auto md:w-96 lg:p-7 flex flex-col gap-3 lg:gap-8 rounded-md lg:border-[1px] lg:shadow-sm"
-        >
-          <div className="flex flex-col items-center m-auto gap-2">
-            <h1 className="text-xl font-bold">Welcome to RJ Avancena</h1>
+      {loadingEudevice && (
+        <div className="w-full h-screen flex p-4 md:flex md:flex-col items-center m-auto">
+          <div className="m-auto md:w-96 lg:p-7 flex flex-col gap-3 lg:gap-8">
+            <div className="flex flex-col items-center m-auto gap-2">
+              <Skeleton className="m-auto h-6 w-32 flex flex-col gap-3 lg:gap-8 rounded-md" />
+            </div>
+            <div className="flex flex-col gap-5">
+              <div className="grid w-full items-center gap-1.5">
+                <Skeleton className="m-auto h-10 w-96 md:w-full flex flex-col gap-3 lg:gap-8 rounded-md" />
+              </div>
+              <div className="grid w-full items-center gap-1.5">
+                <Skeleton className="m-auto h-10 w-full flex flex-col gap-3 lg:gap-8 rounded-md" />
+              </div>
+              <div className="flex flex-col gap-4 mt-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-x-1"></div>
+                <div></div>
+              </div>
+              <div className="flex flex-col w-full mt-5 gap-4">
+                <Skeleton className="m-auto h-10 md:h-6 w-full lg:p-7 flex flex-col gap-3 lg:gap-8" />
+                <div className="text-sm text-center m-auto"></div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-5">
-            <div className="grid w-full items-center gap-1.5">
-              <Input
-                className="h-12 bg-none"
-                type="email"
-                placeholder="Enter your email address"
-                {...register("email", {
-                  required: {
-                    value: true,
-                    message: "Email is required",
-                  },
-                })}
-              />
-              {errors.email && (
-                <small className="text-red-500 text-xs  max-w-96">
-                  {errors.email.message}
-                </small>
-              )}
+        </div>
+      )}
+      {!loadingEudevice && (
+        <div className="w-full h-screen flex md:grid md:grid-cols-2 p-4 md:p-0 items-center m-auto">
+          <div
+            className="hidden h-full w-full bg-no-repeat bg-cover md:flex items-center justify-center"
+            style={{ backgroundImage: `url(${bgSignin})` }}
+          >
+            <h1 className="text-white font-medium text-3xl text-center w-[34rem]">
+              Effortlessly manage your sales and inventory with our seamless
+              Point of Sale system.
+            </h1>
+          </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mx-auto  lg:p-7 w-96 flex flex-col gap-3 lg:gap-8 rounded-md lg:shadow-sm"
+          >
+            <div className="flex flex-col items-center m-auto gap-2">
+              <h1 className="text-xl font-black w-full">
+                Welcome to{" "}
+                <span className="text-bgrjavancena">RJ AVANCENA</span>
+              </h1>
             </div>
-            <div className="grid w-full items-center gap-1.5">
-              <Input
-                className="h-12 bg-none"
-                type="password"
-                placeholder="Enter your password"
-                {...register("password", {
-                  required: {
-                    value: true,
-                    message: "Password is required",
-                  },
-                })}
-              />
-              {errors.password && (
-                <small className="text-red-500 text-xs  max-w-96">
-                  {errors.password.message}
-                </small>
-              )}
-            </div>
-            <div className="flex flex-col gap-4 mt-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-x-1">
-                <Checkbox className="checkbox" />
-                <label className="text-sm">Remember me</label>
-              </div>
-              <div>
-                <label className="text-sm sm:text-md">
-                  <Link to="/forgot-password">Forgot Password?</Link>
-                </label>
-              </div>
-            </div>
-            <div className="flex flex-col w-full mt-5 gap-4">
-              <Button className="font-bold">
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    Signing in...
-                    <MoonLoader size={12} color="#ffffff" />
-                  </span>
-                ) : (
-                  "Sign In"
+            <div className="flex flex-col gap-5">
+              <div className="grid w-full items-center gap-1.5">
+                <Input
+                  className="h-12 bg-none"
+                  type="email"
+                  placeholder="Enter your email address"
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "Email is required",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <small className="text-red-500 text-xs  max-w-96">
+                    {errors.email.message}
+                  </small>
                 )}
-              </Button>
-              <div className="text-sm text-center m-auto">
-                Don’t have an account?{" "}
-                <span className="font-bold">
-                  <Link to="/signup">Sign Up</Link>
-                </span>
+              </div>
+              <div className="grid w-full items-center gap-1.5">
+                <Input
+                  className="h-12 bg-none"
+                  type="password"
+                  placeholder="Enter your password"
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "Password is required",
+                    },
+                  })}
+                />
+                {errors.password && (
+                  <small className="text-red-500 text-xs  max-w-96">
+                    {errors.password.message}
+                  </small>
+                )}
+              </div>
+              <div className="flex flex-col gap-4 mt-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-x-1">
+                  <Checkbox className="checkbox" />
+                  <label className="text-sm">Remember me</label>
+                </div>
+                <div>
+                  <label className="text-sm sm:text-md">
+                    <Link to="/forgot-password">Forgot Password?</Link>
+                  </label>
+                </div>
+              </div>
+              <div className="flex flex-col w-full mt-5 gap-4">
+                <Button className="font-bold bg-bgrjavancena">
+                  {loadingSignIn && (
+                    <span className="flex items-center gap-2">
+                      Signing in...
+                      <MoonLoader size={12} color="#ffffff" />
+                    </span>
+                  )}
+                  {!loadingSignIn && "Sign in"}
+                </Button>
+                <div className="text-sm text-center m-auto">
+                  Don’t have an account?{" "}
+                  <span className="font-bold">
+                    <Link to="/signup">Sign Up</Link>
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      )}
     </>
   );
 };

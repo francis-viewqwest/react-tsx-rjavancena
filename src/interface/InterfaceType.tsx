@@ -176,6 +176,17 @@ export interface menuState {
   error: string | null | any;
 }
 
+export interface UserState {
+  sidebar: any[];
+  data: object | any;
+  status: string;
+  loading: boolean;
+  loadingEudevice: boolean;
+  loadingSignIn: boolean;
+  user: object;
+  error: string | null | any;
+}
+
 export interface ApiConfig {
   url: string;
   method: string;

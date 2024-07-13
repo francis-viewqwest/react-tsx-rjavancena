@@ -1,23 +1,11 @@
 import useAxiosClient from "@/axios-client";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { UserState, ApiConfig } from "@/interface/InterfaceType";
+import Cookies from "js-cookie";
+import { useAuth } from "../AuthProvider";
 
 
 const axiosClient = useAxiosClient();
-
-interface UserState {
-  sidebar: any[];
-  data: object | any;
-  status: string;
-  loading: boolean;
-  user: object,
-  error: string | null | any;
-}
-
-interface ApiConfig {
-  url: string;
-  method: string;
-  data?: any;
-}
 
 
 const initialState: UserState = {
@@ -26,6 +14,8 @@ const initialState: UserState = {
   user: {},
   status: "",
   loading: false,
+  loadingEudevice: false,
+  loadingSignIn: false,
   error: false,
 }
 
@@ -58,6 +48,40 @@ const userSlice = createSlice({
       })
 
     builder
+      .addCase(setEudevice.pending, (state) => {
+        state.status = "setEudevice/loading";
+        state.loadingEudevice = true;
+        state.error = null
+      })
+      .addCase(setEudevice.fulfilled, (state, action) => {
+        state.status = "setEudevice/success";
+        state.loadingEudevice = false;
+        state.data = action.payload;
+      })
+      .addCase(setEudevice.rejected, (state, action) => {
+        state.status = "setEudevice/failed";
+        state.loadingEudevice = false;
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(signIn.pending, (state) => {
+        state.status = "signIn/loading";
+        state.loadingSignIn = true;
+        state.error = null
+      })
+      .addCase(signIn.fulfilled, (state, action) => {
+        state.status = "signIn/success";
+        state.loadingSignIn = false;
+        state.data = action.payload;
+      })
+      .addCase(signIn.rejected, (state, action) => {
+        state.status = "signIn/failed";
+        state.loadingSignIn = false;
+        state.error = action.payload;
+      })
+
+    builder
       .addCase(logout.pending, (state) => {
         state.status = "logout/loading";
         state.loading = true;
@@ -76,6 +100,22 @@ const userSlice = createSlice({
   },
 });
 
+export const setEudevice = createAsyncThunk("user/setEudevice", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+    })
+    console.log(res);
+
+    Cookies.set("eu", res.data.eu);
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
 export const setNavbar = createAsyncThunk("user/getNavbar", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
   try {
     const res = await axiosClient({
@@ -90,6 +130,22 @@ export const setNavbar = createAsyncThunk("user/getNavbar", async (ApiConfig: Ap
   }
 })
 
+export const signIn = createAsyncThunk("user/setSignin", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data
+    })
+    Cookies.set("token", res.data.token);
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
 export const logout = createAsyncThunk("user/getLogout", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
   try {
     const res = await axiosClient({
@@ -97,7 +153,6 @@ export const logout = createAsyncThunk("user/getLogout", async (ApiConfig: ApiCo
       method: ApiConfig.method,
       data: ApiConfig.data
     })
-    console.log(res)
     return res.data
   } catch (error: any) {
     console.log(error)

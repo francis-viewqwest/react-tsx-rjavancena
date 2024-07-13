@@ -16,7 +16,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      sans: "Inter, sans-serif",
+      geist: ["Geist", "sans-serif"],
     },
     extend: {
       colors: {
@@ -25,6 +25,7 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        bgrjavancena: "#ef3b2d",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
