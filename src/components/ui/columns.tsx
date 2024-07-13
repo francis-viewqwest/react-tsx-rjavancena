@@ -48,9 +48,7 @@ const useColumnsProduct = (
   const usersParent = useSelector(usersData);
   const dashboardTransaction = useSelector(dashboardData);
 
-  const baseColumns: ColumnDef<any>[] = [
-
-  ];
+  const baseColumns: ColumnDef<any>[] = [];
 
   // Memoize dynamic columns based on inventoryChild dependency
   const dynamicColumns = useMemo(() => {
@@ -101,8 +99,13 @@ const useColumnsProduct = (
               return <div className="text-right font-medium">{formatted}</div>;
             }
             if (columnHeader.includes("image")) {
+              const imageUrl = row.getValue(accessorKey);
+              console.log(imageUrl);
+
               return (
-                <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />
+                <>
+                  <img className="w-full h-full" src={`http://127.0.0.1:8000/storage/app/${imageUrl}`} />
+                </>
               );
             }
             if (columnHeader.includes("status")) {

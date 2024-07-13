@@ -2,7 +2,6 @@ import useAxiosClient from "@/axios-client";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { UserState, ApiConfig } from "@/interface/InterfaceType";
 import Cookies from "js-cookie";
-import { useAuth } from "../AuthProvider";
 
 
 const axiosClient = useAxiosClient();

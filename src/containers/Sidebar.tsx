@@ -1,9 +1,10 @@
 import React from "react";
-import logo from "../assets/logo.svg";
+import logo from "../assets/svg/rjlogo-text.svg";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import _ from "lodash";
 import {
   Drawer,
   DrawerContent,
@@ -27,7 +28,6 @@ const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
 
   const location = useLocation();
-
   const sideNavRoutes = useAppSelector((state) => state.user.sidebar.nav_links);
 
   return (
@@ -107,7 +107,6 @@ const Sidebar: React.FC = () => {
                         </Accordion>
                       ) : (
                         <Link
-                          reloadDocument
                           className={cn(
                             buttonVariants({
                               size: "sm",
@@ -148,11 +147,14 @@ const Sidebar: React.FC = () => {
       >
         <div className="flex items-center justify-between">
           <img
-            className={`${open ? "w-24" : "w-0 transition-all ease-in-out"}`}
+            className={`transition-all ease-in-out ${
+              open ? "w-28" : "w-0 ease-in-out"
+            }`}
             src={logo}
             alt="RJ Avancena Logo"
           />
-          <Button variant="ghost" onClick={() => setOpen(!open)}>
+
+          <Button size="sm" variant="ghost" onClick={() => setOpen(!open)}>
             <Icon icon="heroicons-outline:chevron-double-right" />
           </Button>
         </div>
@@ -222,8 +224,15 @@ const Sidebar: React.FC = () => {
                         size: "sm",
                         variant: "ghost",
                       }),
-                      `justify-between font-medium text-neutral-600 ${
-                        location.pathname === menu.path &&
+                      `justify-between font-medium text-neutral-600  ${
+                        location.pathname === `/app${menu.path}` &&
+                        "bg-primary text-white hover:bg-primary/90 hover:text-white"
+                      } ${
+                        _.includes(
+                          location.pathname,
+                          "/app/inventory/inventory-child"
+                        ) &&
+                        menu.path === "/inventory" &&
                         "bg-primary text-white hover:bg-primary/90 hover:text-white"
                       }`
                     )}

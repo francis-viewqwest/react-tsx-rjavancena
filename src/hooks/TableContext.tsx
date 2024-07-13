@@ -94,7 +94,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   let rowsSelection;
 
   const { register, handleSubmit, setValue } = useForm<FormSubmit>();
-  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const imageInputRef = useRef<null>(null);
+
+  console.log(imageInputRef.current);
 
   const { id } = useParams();
 
@@ -106,19 +108,19 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   const usersParentData = useAppSelector(usersData);
   const usersParentError = useAppSelector(usersError);
 
-  console.log(usersParentError?.message?.password);
-
   const handleFormSubmit =
     (url: string, formType: string): SubmitHandler<FormSubmit> =>
     async (data) => {
       const euDevice = Cookies.get("eu");
-      const imageFile = imageInputRef.current?.files?.[0] || null;
+      const imageFile = imageInputRef;
+
+      console.log(imageFile);
 
       const payload = {
         inventory_id: id,
         eu_device: euDevice,
         item_code: data.item_code,
-        image: imageFile,
+        image: data.image[0],
         refundable: data.refundable,
         name: data.name,
         retail_price: data.retail_price,
@@ -136,7 +138,8 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
         eu_device: euDevice,
       };
 
-      console.log(data);
+      console.log(data.image[0]);
+      // console.log(data);
 
       switch (formType) {
         case "inventory":
@@ -264,9 +267,13 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         </Label>
                         <Input
                           id="productImg"
+                          accept="image/png,image/jpeg"
                           type="file"
                           className="col-span-3"
-                          ref={imageInputRef}
+                          ref={(e) => {
+                            register(e);
+                            imageInputRef.current = e;
+                          }}
                           {...register("image")}
                         />
                         {inventoryChildError?.image && (

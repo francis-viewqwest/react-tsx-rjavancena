@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
+import { IconReload } from "@tabler/icons-react";
 import {
   IconCashBanknoteFilled,
   IconCreditCardFilled,
@@ -13,7 +14,6 @@ import { placeOrder, loading, menuError } from "@/app/slice/menuSlice";
 import Cookies from "js-cookie";
 import { PaymentProps, PaymentMethod } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import MoonLoader from "react-spinners/MoonLoader";
 
 const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
   const paymentMethod: PaymentMethod[] = [
@@ -169,7 +169,8 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
                 >
                   {loadingPurchase && (
                     <span className="flex items-center gap-2">
-                      Purcashing...{<MoonLoader color="#FFFFFF" size={14} />}
+                      Purcashing...{" "}
+                      <IconReload className="animate-spin" size={16} />
                     </span>
                   )}
                   {!loadingPurchase && "Place Order"}

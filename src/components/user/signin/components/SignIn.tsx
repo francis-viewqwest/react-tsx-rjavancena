@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import bgSignin from "@/assets/images/bgsignin.jpg";
 import { useEffect } from "react";
-import MoonLoader from "react-spinners/MoonLoader";
 import { setEudevice, signIn } from "@/app/slice/userSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IconReload } from "@tabler/icons-react";
 
 interface FormValues {
   email: String;
@@ -52,7 +52,6 @@ const SignIn: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
-      
       const euDevice = Cookies.get("eu");
       if (!euDevice) {
         await fetchEudevice();
@@ -194,7 +193,7 @@ const SignIn: React.FC = () => {
                   {loadingSignIn && (
                     <span className="flex items-center gap-2">
                       Signing in...
-                      <MoonLoader size={12} color="#ffffff" />
+                      <IconReload className="animate-spin" size={16} />
                     </span>
                   )}
                   {!loadingSignIn && "Sign in"}

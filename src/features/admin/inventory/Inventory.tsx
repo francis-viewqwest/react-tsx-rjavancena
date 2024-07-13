@@ -198,7 +198,7 @@ const Inventory: React.FC<RouteType> = (props) => {
           inventoryResData.data.buttons.map((invBtn: any, index: any) => (
             <Dialog key={index}>
               <DialogTrigger asChild>
-                <Button size="sm" className="w-32">
+                <Button size="sm" className="w-32 bg-bgrjavancena">
                   {invBtn.button_name}
                 </Button>
               </DialogTrigger>

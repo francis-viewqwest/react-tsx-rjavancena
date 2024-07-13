@@ -1,10 +1,9 @@
 import axios from "axios";
-// import { useAuth } from "./app/AuthProvider";
 import Cookies from "js-cookie";
 
 
 const useAxiosClient = () => {
-  // const { token } = useAuth();
+
 
   const axiosClient = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
