@@ -387,6 +387,8 @@ export function RowUsersActions<TData>({
   const handleSaveClick = () => {
     const formValues = getValues();
 
+    console.log(formValues);
+
     const euDevice = Cookies.get("eu");
 
     const payload = {
@@ -399,6 +401,8 @@ export function RowUsersActions<TData>({
       status: formValues.status,
       eu_device: euDevice,
     };
+
+    console.log(payload);
 
     dispatch(
       editUser({
@@ -541,7 +545,7 @@ export function RowUsersActions<TData>({
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectGroup>
-                                  {detail?.option?.map((opt) => (
+                                  {detail?.option?.map((opt: any) => (
                                     <SelectItem
                                       key={opt.value}
                                       value={opt.value}
@@ -719,14 +723,15 @@ export function RowTransactionActions<TData>({
     );
   };
 
-  const errorMessages = {
-    password: errorMessage?.message?.password,
-  };
-
   return (
     <>
       {row?.original?.actions?.map((btn, index) => (
-        <Button className="bg-bgrjavancena" size="xs" key={index} onClick={() => handleVoidClick(btn)}>
+        <Button
+          className="bg-bgrjavancena"
+          size="xs"
+          key={index}
+          onClick={() => handleVoidClick(btn)}
+        >
           {btn?.button_name}
         </Button>
       ))}

@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import _ from "lodash";
 import {
   Dialog,
   DialogContent,
@@ -58,8 +59,8 @@ const Inventory: React.FC<RouteType> = (props) => {
       const euDevice = Cookies.get("eu");
 
       const payload = {
-        name: data.productName,
-        category: data.productCategory,
+        name: data.product_name,
+        category: data.product_category,
         eu_device: euDevice,
       };
 
@@ -211,7 +212,27 @@ const Inventory: React.FC<RouteType> = (props) => {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex flex-col gap-5 py-4">
-                    <div className="flex flex-col gap-2">
+                    {invBtn?.details.map((item) => {
+                      return (
+                        <div className="flex flex-col gap-2">
+                          <Label className="text-left font-medium">
+                            {item.label}
+                          </Label>
+                          <Input
+                            id="name"
+                            placeholder={`Enter ${_.lowerCase(item.label)}`}
+                            {...register(
+                              item.label.replace(/\s+/g, "_").toLowerCase()
+                            )}
+                          />
+                          <Label className="text-red-500">
+                            {inventoryErrorMess?.name ||
+                              inventoryErrorMess?.message}
+                          </Label>
+                        </div>
+                      );
+                    })}
+                    {/* <div className="flex flex-col gap-2">
                       <Label className="text-left font-medium">
                         Product Name
                       </Label>
@@ -237,10 +258,12 @@ const Inventory: React.FC<RouteType> = (props) => {
                       <Label className="text-red-500">
                         {inventoryErrorMess?.category}
                       </Label>
-                    </div>
+                    </div> */}
                   </div>
                   <DialogFooter>
-                    <Button className="bg-bgrjavancena" type="submit">Save changes</Button>
+                    <Button className="bg-bgrjavancena" type="submit">
+                      Save changes
+                    </Button>
                   </DialogFooter>
                 </form>
               </DialogContent>

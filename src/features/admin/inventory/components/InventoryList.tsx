@@ -54,7 +54,6 @@ import Cookies from "js-cookie";
 import { useAppDispatch } from "@/app/hooks";
 import { InventoryListProps, ErrorMessages } from "@/interface/InterfaceType";
 
-
 const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
   const [modalData, setModalData] = useState<any>({});
   const [funcData, setFuncData] = useState<any>({});
@@ -136,6 +135,16 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
     product_category: updateErrorMessage?.category,
   };
 
+  const orderLevel = (stock: number) => {
+    if (stock > 100) {
+      return "green";
+    } else if (stock >= 50) {
+      return "yellow";
+    } else {
+      return "red";
+    }
+  };
+
   return (
     <>
       {inventoryLoading === "getInventoryData/loading" ? (
@@ -187,7 +196,10 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                       {item.category}
                     </Label>
                     <div className="flex items-center gap-1">
-                      <IconCircleFilled size="9" color="green" />
+                      <IconCircleFilled
+                        size="9"
+                        color={orderLevel(item.stocks)}
+                      />
                       <Label className="text-xs font-medium">
                         Product Stocked: {item.stocks}
                       </Label>
@@ -304,7 +316,11 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                       ))}
                     </div>
                     <DialogFooter>
-                      <Button className="bg-bgrjavancena" type="submit" onClick={() => handleSaveClick()}>
+                      <Button
+                        className="bg-bgrjavancena"
+                        type="submit"
+                        onClick={() => handleSaveClick()}
+                      >
                         Save changes
                       </Button>
                       <DialogClose asChild>

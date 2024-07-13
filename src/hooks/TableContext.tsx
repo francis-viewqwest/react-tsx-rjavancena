@@ -351,7 +351,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       jsx = (
         <>
           {Array.isArray(usersParentData.data?.buttons) &&
-            usersParentData.data?.buttons.map((btn: any, index: any) => (
+            usersParentData.data?.buttons?.map((btn: any, index: any) => (
               <Dialog key={index}>
                 <DialogTrigger asChild>
                   <Button size="sm" className="font-semibold bg-bgrjavancena">
@@ -373,7 +373,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       )}
                       className="grid py-4 gap-6 px-2 sm:px-5"
                     >
-                      {btn.details.map((detail: any) => {
+                      {btn?.details?.map((detail: any) => {
                         return (
                           <>
                             {detail.type !== "select" && (
@@ -432,7 +432,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectGroup>
-                                      {detail?.option?.map((opt: any) => (
+                                      {detail?.option?.map((opt) => (
                                         <SelectItem
                                           key={opt?.value}
                                           value={opt?.value}
