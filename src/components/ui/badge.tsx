@@ -13,8 +13,7 @@ const badgeVariants = cva(
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         successStatus: "border-transparent bg-green-500/20 text-green-500",
-        warning:
-          "border-transparent bg-yellow-500/20 text-yellow-500",
+        warning: "border-transparent bg-yellow-500/20 text-yellow-500",
         dimmedStatus: "border-transparent bg-gray-500/20 text-gray-500",
         progressStatus: "border-transparent bg-orange-500/20 text-orange-500",
         destructiveStatus:

@@ -128,14 +128,20 @@ const useColumnsProduct = (
                 switch (row) {
                   case "Activate":
                     return "successStatus";
+                  case "Done":
+                    return "successStatus";
+                  case "Paid":
+                    return "successStatus";
+                  case "Not Paid":
+                    return "destructiveStatus";
                   case "Incative":
                     return "dimmedStatus";
                   case "Pending":
                     return "warning";
                   case "Banned":
-                    return "destructive";
+                    return "destructiveStatus";
                   case "Restricted":
-                    return "destructive";
+                    return "destructiveStatus";
 
                   default:
                     break;
@@ -152,7 +158,7 @@ const useColumnsProduct = (
               );
             }
             if (columnHeader.includes("user id")) {
-              return <>{_.startCase(row.getValue(accessorKey))}</>;
+              return <>{row.getValue(accessorKey)}</>;
             }
             if (columnHeader.includes("total amount")) {
               const value = parseFloat(row.getValue(accessorKey));

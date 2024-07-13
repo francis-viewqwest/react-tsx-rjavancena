@@ -165,7 +165,7 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
                   }
                   onClick={() => handlePlaceOrder(customer)}
                   size="lg"
-                  className="w-full font-semibold"
+                  className="w-full font-semibold bg-bgrjavancena"
                 >
                   {loadingPurchase && (
                     <span className="flex items-center gap-2">

@@ -10,6 +10,7 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -485,67 +486,80 @@ export function RowUsersActions<TData>({
                 save to apply changes.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-3 ">
-              {modalData?.details?.map((detail: any) => {
-                return (
-                  <>
-                    <div className="grid grid-cols-auto items-center gap-2 w-full">
-                      {detail.type !== "select" && (
-                        <>
-                          <Label className="font-semibold text-xs">
-                            {detail?.label}
-                          </Label>
+            <ScrollArea className="h-72 w-full">
+              <div className="grid gap-3 ">
+                {modalData?.details?.map((detail: any) => {
+                  return (
+                    <>
+                      <div className="grid items-center gap-2 px-2 sm:px-5 w-full">
+                        {detail.type !== "select" && (
                           <>
-                            <Input
-                              type={detail.type}
-                              {...register(
-                                detail.label.replace(/\s+/g, "_").toLowerCase()
-                              )}
-                              className="col-span-4"
-                            />
-                            <small className="text-red-500 w-full col-span-3">
-                              {errorMessages &&
-                                errorMessages[
-                                  _.replace(_.lowerCase(detail.label), " ", "_")
-                                ]}
-                            </small>
+                            <Label className="font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+                            <>
+                              <Input
+                                type={detail.type}
+                                {...register(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase()
+                                )}
+                                className="col-span-4"
+                              />
+                              <small className="text-red-500 w-full col-span-3">
+                                {errorMessage?.message &&
+                                  errorMessage?.message[
+                                    _.replace(
+                                      _.lowerCase(detail.label),
+                                      " ",
+                                      "_"
+                                    )
+                                  ]}
+                              </small>
+                            </>
                           </>
-                        </>
-                      )}
-                      {detail.type === "select" && (
-                        <>
-                          <Label className="font-semibold text-xs">
-                            {detail?.label}
-                          </Label>
-                          <Select
-                            onValueChange={(value) =>
-                              setValue(
-                                detail.label.replace(/\s+/g, "_").toLowerCase(),
-                                value
-                              )
-                            }
-                            value={watch(detail.value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder={detail.value} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {detail?.option?.map((opt) => (
-                                  <SelectItem key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </>
-                      )}
-                    </div>
-                  </>
-                );
-              })}
-            </div>
+                        )}
+                        {detail.type === "select" && (
+                          <>
+                            <Label className="font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+                            <Select
+                              onValueChange={(value) =>
+                                setValue(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase(),
+                                  value
+                                )
+                              }
+                              value={watch(detail.value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={detail.value} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {detail?.option?.map((opt) => (
+                                    <SelectItem
+                                      key={opt.value}
+                                      value={opt.value}
+                                    >
+                                      {opt.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+            </ScrollArea>
             <DialogFooter>
               <Button
                 className="bg-bgrjavancena"
@@ -712,7 +726,7 @@ export function RowTransactionActions<TData>({
   return (
     <>
       {row?.original?.actions?.map((btn, index) => (
-        <Button size="sm" key={index} onClick={() => handleVoidClick(btn)}>
+        <Button className="bg-bgrjavancena" size="xs" key={index} onClick={() => handleVoidClick(btn)}>
           {btn?.button_name}
         </Button>
       ))}

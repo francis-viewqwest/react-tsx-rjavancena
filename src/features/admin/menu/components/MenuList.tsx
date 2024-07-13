@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import { MenuListProps } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { useToast } from "@/components/ui/use-toast";
-import _ from "lodash"
+import _ from "lodash";
 
 const MenuList: React.FC<MenuListProps> = ({
   filteredData,
@@ -47,13 +47,13 @@ const MenuList: React.FC<MenuListProps> = ({
   };
 
   const handleAddToCart = (itemId: string, quantity: number) => {
-    if (quantity <= 0) {
-      toast({
-        variant: "destructive",
-        title: "Please select quantity to add to the cart.",
-      });
-      return;
-    }
+    // if (quantity <= 0) {
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Please select quantity to add to the cart.",
+    //   });
+    //   return;
+    // }
     const payload = {
       ...(customer?.user_id_customer && {
         user_id_customer: customer?.user_id_customer,
@@ -62,7 +62,7 @@ const MenuList: React.FC<MenuListProps> = ({
         purchase_group_id: customer?.purchase_group_id,
       }),
       inventory_product_id: itemId,
-      quantity: quantity || 0,
+      quantity: quantity || 1,
       eu_device: Cookies.get("eu"),
     };
 
@@ -112,11 +112,23 @@ const MenuList: React.FC<MenuListProps> = ({
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3 p-2">
                     <div>
-                      <p className=" text-sm text-neutral-500 font-semibold">
-                        {item.category}
+                      <p
+                        title={item.category}
+                        className=" text-xs text-neutral-500 font-semibold"
+                      >
+                        {_.truncate(item.category, {
+                          length: 25,
+                          separator: " ...",
+                        })}
                       </p>
-                      <h1 className="text-primary font-bold text-md">
-                        {_.truncate(item.name, {length: 24, separator: ' ...'})}
+                      <h1
+                        title={item.name}
+                        className="text-primary font-bold text-md"
+                      >
+                        {_.truncate(item.name, {
+                          length: 20,
+                          separator: " ...",
+                        })}
                       </h1>
                       <p className="text-xs text-neutral-400 font-medium flex items-center gap-2">
                         <span>{item.stocks} Available</span>•
@@ -124,34 +136,33 @@ const MenuList: React.FC<MenuListProps> = ({
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center">
+                      <div className="flex items-center text-xs">
                         {item?.discounted_price > 0 && (
-                          <p className="text-primary font-bold text-lg mr-2">
+                          <p className="text-primary font-bold mr-1">
                             ₱{item.discounted_price}
                           </p>
                         )}
                         <p
-                          className={`font-bold ${
+                          className={`font-bold text-xs  ${
                             item.discounted_price
-                              ? "text-red-500 line-through text-sm font-medium"
-                              : "text-lg text-primary "
+                              ? "text-red-500 line-through font-medium"
+                              : "text-primary "
                           }`}
                         >
                           ₱{item.retail_price}
                         </p>
                       </div>
-                      <div className="flex items-center gap-3 justify-end">
+                      <div className="flex items-center gap-2 justify-end">
                         <Button
-                          variant="outline"
                           size="sm"
-                          className="border-black hover:bg-white/10"
+                          className="border-black bg-neutral-200 hover:bg-neutral-300"
                           onClick={() => handleDecrement(item.inventory_id)}
                           disabled={quantities[item.id] <= 0}
                         >
                           <MinusIcon color="black" />
                         </Button>
                         <span className="text-primary font-semibold">
-                          {quantities[item.inventory_id]}
+                          {quantities[item.inventory_id] || 1}
                         </span>
                         <Button
                           className="bg-primary hover:bg-primary/90"
@@ -169,7 +180,7 @@ const MenuList: React.FC<MenuListProps> = ({
                     <Button
                       variant="outline"
                       size="default"
-                      className="bg-primary text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
+                      className="bg-bgrjavancena text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
                       onClick={() =>
                         handleAddToCart(
                           item?.inventory_product_id,
