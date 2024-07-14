@@ -104,6 +104,7 @@ export function RowInventoryActions<TData>({
       inventory_id: funcData.inventory_id,
       item_code: formValues.item_code,
       name: formValues.product_name,
+      image: formValues.image[0],
       retail_price: formValues.retail_price,
       discounted_price: formValues.discounted_price,
       unit_supplier_price: formValues.unit_supplier_price,

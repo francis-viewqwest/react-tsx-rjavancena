@@ -26,6 +26,12 @@ const MenuList: React.FC<MenuListProps> = ({
   const dispatch = useAppDispatch();
   const { toast } = useToast();
 
+  const formatted = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  });
+
+
   const loadingMenu = useAppSelector((state) => state.menu.loadingAddCart);
 
   const customer = dataCustomer?.find(
@@ -158,7 +164,7 @@ const MenuList: React.FC<MenuListProps> = ({
                       <div className="flex items-center text-xs">
                         {item?.discounted_price > 0 && (
                           <p className="text-primary font-bold mr-1">
-                            ₱{item.discounted_price}
+                            {formatted.format(item.discounted_price)}
                           </p>
                         )}
                         <p
@@ -168,7 +174,7 @@ const MenuList: React.FC<MenuListProps> = ({
                               : "text-primary "
                           }`}
                         >
-                          ₱{item.retail_price}
+                          {formatted.format(item.retail_price)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 justify-end">

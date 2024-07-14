@@ -16,7 +16,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
+import { IconReload } from "@tabler/icons-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import {
@@ -102,12 +102,16 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   //* INVENTORY PRODUCT LIST
   const inventoryChildData = useAppSelector(inventoryData);
   const inventoryChildError = useAppSelector(inventoryError);
+  const loadingCreateChild = useAppSelector(
+    (state) => state.inventory.loadingCreateChild
+  );
 
   //* ADD USER MANAGEMENT
   const usersParentData = useAppSelector(usersData);
   const usersParentError = useAppSelector(usersError);
-
-  console.log(usersParentError?.message);
+  const loadingCreateUser = useAppSelector(
+    (state) => state.usersManagement.loadingCreateUser
+  );
 
   const handleFormSubmit =
     (url: string, formType: string): SubmitHandler<FormSubmit> =>
@@ -320,13 +324,25 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                           type="number"
                           placeholder="Enter discounted price"
                           className="col-span-3"
+                          value="0"
                           {...register("discounted_price")}
                         />
+                        {inventoryChildError?.discounted_price && (
+                          <small className="text-xs text-red-500">
+                            {inventoryChildError?.discounted_price}
+                          </small>
+                        )}
                       </div>
 
                       <DialogFooter>
                         <Button className="bg-bgrjavancena" type="submit">
-                          Insert to table
+                          {loadingCreateChild && (
+                            <span className="flex items-center gap-1">
+                              Inserting...
+                              <IconReload className="animate-spin" size={16} />
+                            </span>
+                          )}
+                          {!loadingCreateChild && "Insert to table"}
                         </Button>
                       </DialogFooter>
                     </form>
@@ -463,7 +479,13 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       })}
                       <DialogFooter>
                         <Button className="bg-bgrjavancena" type="submit">
-                          Create User
+                          {loadingCreateUser && (
+                            <span className="flex items-center gap-1">
+                              Creating...
+                              <IconReload className="animate-spin" size={16} />
+                            </span>
+                          )}
+                          {!loadingCreateUser && "Create User"}
                         </Button>
                       </DialogFooter>
                     </form>

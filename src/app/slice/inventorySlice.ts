@@ -1,31 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ApiConfig } from "@/interface/InterfaceType"
+import { ApiConfig, InventoryState } from "@/interface/InterfaceType"
 import useAxiosClient from "@/axios-client";
 
 const axiosClient = useAxiosClient();
-
-
-
-interface InventoryState {
-    data: object;
-    status: string;
-    error: string | null | any;
-    loadingTable: boolean;
-    loadingCreate: boolean;
-}
 
 const initialState: InventoryState = {
     data: {},
     status: "",
     error: false,
     loadingTable: false,
-    loadingCreate: false
-}
-
-interface ApiConfig {
-    url: string;
-    method: string;
-    data?: any;
+    loadingCreate: false,
+    loadingUpdate: false,
+    loadingCreateChild: false,
 }
 
 const inventorySlice = createSlice({
@@ -75,14 +61,17 @@ const inventorySlice = createSlice({
         builder
             .addCase(updateInventoryParent.pending, (state) => {
                 state.status = "updateInventoryParent/loading";
+                state.loadingUpdate = true;
                 state.error = null;
             })
             .addCase(updateInventoryParent.fulfilled, (state, action) => {
                 state.status = "updateInventoryParent/success";
+                state.loadingUpdate = false;
                 state.data = action.payload;
             })
             .addCase(updateInventoryParent.rejected, (state, action) => {
                 state.status = "updateInventoryParent/failed";
+                state.loadingUpdate = false;
                 state.error = action.payload;
             })
 
@@ -108,14 +97,17 @@ const inventorySlice = createSlice({
         builder
             .addCase(createInventoryChildData.pending, (state) => {
                 state.status = "createInventoryChild/loading";
+                state.loadingCreateChild = true;
                 state.error = null;
             })
             .addCase(createInventoryChildData.fulfilled, (state, action) => {
                 state.status = "createInventoryChild/success";
+                state.loadingCreateChild = false;
                 state.data = action.payload;
             })
             .addCase(createInventoryChildData.rejected, (state, action) => {
                 state.status = "createInventoryChild/failed";
+                state.loadingCreateChild = false;
                 state.error = action.payload;
             })
 
@@ -256,6 +248,7 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
 export const updateInventoryChild = createAsyncThunk("inventory/updateInventoryChildData", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
+            headers: { "Content-Type": "multipart/form-data", },
             method: apiconfig?.method,
             url: apiconfig?.url,
             data: apiconfig?.data

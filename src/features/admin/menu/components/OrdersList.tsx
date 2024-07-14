@@ -333,7 +333,15 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
             {customer?.items?.map((item: any, index: any) => (
               <Card key={index} className="p-2">
                 <div className="flex gap-2">
-                  <Skeleton className="max-w-full max-h-full p-8" />
+                  {item?.image ? (
+                    <img
+                      className="w-20 h-auto rounded-lg bg-contain bg-no-repeat"
+                      src={`http://127.0.0.1:8000/storage/inventory-children/${item.image}`}
+                      alt={item.image}
+                    />
+                  ) : (
+                    <Skeleton className="w-20 h-auto p-8" />
+                  )}
                   <CardContent className="w-full relative px-1">
                     <div>
                       <div className="flex w-full items-center justify-between">
@@ -353,7 +361,10 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                           }).format(item?.retail_price)}
                         </h1>
                       </div>
-                      <p title={item?.category} className="text-xs text-muted-foreground">
+                      <p
+                        title={item?.category}
+                        className="text-xs text-muted-foreground"
+                      >
                         {_.truncate(item?.category, {
                           length: 15,
                           separator: " ...",
@@ -369,7 +380,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                       <div className="flex items-center  ">
                         <Button
                           onClick={() => handleDecrementQty(item)}
-                          className="rounded-r-none border-neutral-300 border-2 bg-white hover:bg-neutral-200 hover:border-neutral-200"
+                          className="rounded-r-none bg-neutral-200 hover:bg-neutral-300"
                           size="btnPayment"
                         >
                           <MinusIcon color="black" />

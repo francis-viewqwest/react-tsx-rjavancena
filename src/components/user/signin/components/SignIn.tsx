@@ -49,6 +49,9 @@ const SignIn: React.FC = () => {
   }, []);
 
   const navigate = useNavigate();
+  const getUserInfo = useAppSelector((state) => state.user.userInfo);
+
+  console.log(getUserInfo.user_info);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
@@ -70,19 +73,26 @@ const SignIn: React.FC = () => {
       );
 
       const token = Cookies.get("token");
-      if (token) {
-        navigate("/app/menu");
+
+
+      // if (token && getUserInfo.user_info !== "New User") {
+      //   navigate("/app/menu");
+      // }
+
+      if (getUserInfo.user_info === "New User") {
+        navigate("/welcome");
       }
+
     } catch (error: any) {
-      let errorMessage = error.response.data.message;
+      let errorMessage = error?.response?.data?.message;
 
       setError("email", {
         type: "custom",
-        message: errorMessage.email,
+        message: errorMessage?.email,
       });
       setError("password", {
         type: "custom",
-        message: errorMessage.password,
+        message: errorMessage?.password,
       });
     }
   };

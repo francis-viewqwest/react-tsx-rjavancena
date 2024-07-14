@@ -1,28 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ApiConfig } from "@/interface/InterfaceType"
+import { ApiConfig, UsersManagementState } from "@/interface/InterfaceType"
 import useAxiosClient from "@/axios-client";
 
 const axiosClient = useAxiosClient();
-
-
-interface UsersManagementState {
-    data: object;
-    status: string;
-    loading: boolean;
-    error: string | null | any;
-}
 
 const initialState: UsersManagementState = {
     data: {},
     status: "",
     loading: true,
+    loadingCreateUser: false,
     error: false,
-}
-
-interface ApiConfig {
-    url: string;
-    method: string;
-    data?: any;
 }
 
 const usersManagementSlice = createSlice({
@@ -53,19 +40,22 @@ const usersManagementSlice = createSlice({
         builder
             .addCase(addUser.pending, (state) => {
                 state.status = "addUser/loading";
-                state.loading = true
-                state.error = null
+                state.loading = true;
+                state.loadingCreateUser = true;
+                state.error = null;
             })
             .addCase(addUser.fulfilled, (state, action) => {
                 state.status = "addUser/success";
-                state.loading = false
+                state.loading = false;
+                state.loadingCreateUser = false;
                 state.data = action.payload
                 state.error = null
             })
             .addCase(addUser.rejected, (state, action) => {
                 state.status = "addUser/failed";
-                state.loading = false
-                state.error = action.payload
+                state.loading = false;
+                state.loadingCreateUser = false;
+                state.error = action.payload;
             })
 
         builder

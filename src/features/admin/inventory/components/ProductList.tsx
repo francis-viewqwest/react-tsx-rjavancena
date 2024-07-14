@@ -4,7 +4,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { ProductType } from "@/interface/InterfaceType";
-import { useDispatch, useSelector } from "react-redux";
 import {
   getInventoryDataChild,
   inventoryData,
@@ -13,13 +12,13 @@ import {
 } from "@/app/slice/inventorySlice";
 import { TableProvider } from "@/hooks/TableContext";
 import { toast } from "@/components/ui/use-toast";
-import { useAppSelector } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const ProductList: React.FC = () => {
-  const dispatch = useDispatch();
-  const inventoryChild = useSelector(inventoryData);
-  const inventoryChildError = useSelector(inventoryError);
-  const inventoryLoading = useSelector(loadingStatus);
+  const dispatch = useAppDispatch();
+  const inventoryChild = useAppSelector(inventoryData);
+  const inventoryChildError = useAppSelector(inventoryError);
+  const inventoryLoading = useAppSelector(loadingStatus);
   const [data, setData] = useState<ProductType[]>([]);
   const { id } = useParams();
   const columnsProduct = useColumnsProduct("inventory");

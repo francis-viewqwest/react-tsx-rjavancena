@@ -176,6 +176,16 @@ export interface menuState {
   error: string | null | any;
 }
 
+export interface InventoryState {
+  data: object;
+  status: string;
+  error: string | null | any;
+  loadingTable: boolean;
+  loadingCreate: boolean;
+  loadingUpdate: boolean;
+  loadingCreateChild: boolean;
+}
+
 export interface UserState {
   sidebar: any[];
   data: object | any;
@@ -184,6 +194,17 @@ export interface UserState {
   loadingEudevice: boolean;
   loadingSignIn: boolean;
   user: object;
+  userInfo: object | any;
+  error: string | null | any;
+  getRegions: object | any;
+  getProvinces: object | any;
+}
+
+export interface UsersManagementState {
+  data: object;
+  status: string;
+  loading: boolean;
+  loadingCreateUser: boolean;
   error: string | null | any;
 }
 

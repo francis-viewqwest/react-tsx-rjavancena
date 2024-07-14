@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
-import { IconCircleFilled } from "@tabler/icons-react";
+import { IconCircleFilled, IconReload } from "@tabler/icons-react";
 import {
   DotsHorizontalIcon,
   Pencil1Icon,
@@ -51,7 +51,7 @@ import {
   loadingStatus,
 } from "@/app/slice/inventorySlice";
 import Cookies from "js-cookie";
-import { useAppDispatch } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { InventoryListProps, ErrorMessages } from "@/interface/InterfaceType";
 
 const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
@@ -63,6 +63,9 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const inventoryLoading = useSelector(loadingStatus);
   const imageInputRef = useRef<null>(null);
+  const loadingUpdate = useAppSelector(
+    (state) => state.inventory.loadingUpdate
+  );
 
   const { getValues, setValue, register } = useForm({});
 
@@ -359,7 +362,12 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                         type="submit"
                         onClick={() => handleSaveClick()}
                       >
-                        Save changes
+                        {loadingUpdate && (
+                          <span className="flex items-center gap-1">
+                            Saving changes... <IconReload className="animate-spin" size={16} />
+                          </span>
+                        )}
+                        {!loadingUpdate && "Save changes"}
                       </Button>
                       <DialogClose asChild>
                         <Button type="button" variant="secondary">
