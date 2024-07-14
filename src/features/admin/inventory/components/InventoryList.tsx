@@ -39,7 +39,7 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
 import _ from "lodash";
 import { useForm } from "react-hook-form";
@@ -62,6 +62,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const inventoryLoading = useSelector(loadingStatus);
+  const imageInputRef = useRef<null>(null);
 
   const { getValues, setValue, register } = useForm({});
 
@@ -101,6 +102,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
       inventory_id: funcData.inventory_id,
       name: formValues.product_name,
       category: formValues.product_category,
+      image: formValues.image[0],
       eu_device: euDevice,
     };
 
@@ -165,7 +167,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
               <div className="md:flex md:items-center">
                 {item?.image ? (
                   <img
-                    className="hidden lg:block lg:h-20 lg:w-20 lg:rounded-xl"
+                    className="hidden lg:block lg:h-20 lg:w-20 lg:rounded-xl bg-cover bg-no-repeat"
                     src={`http://127.0.0.1:8000/storage/inventory/${item.image}`}
                     alt={item.image}
                   />
@@ -304,23 +306,50 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                         when you're done.
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="grid grid-rows-auto gap-7 py-2">
+                    <div className="grid gap-7 py-2">
                       {modalData?.details?.map((detail: any) => (
-                        <div className="grid grid-cols-2 items-center gap-2 w-full">
-                          <Label className="font-medium">{detail.label}</Label>
-                          <Input
-                            type="text"
-                            {...register(
-                              _.replace(_.lowerCase(detail.label), " ", "_")
-                            )}
-                            className="col-span-3"
-                          />
-                          <Label className="text-red-500 w-full col-span-3">
-                            {errorMessages &&
-                              errorMessages[
-                                _.replace(_.lowerCase(detail.label), " ", "_")
-                              ]}
-                          </Label>
+                        <div className="grid items-center gap-2 w-full">
+                          {detail.type === "input" && (
+                            <>
+                              <Label className="font-medium">
+                                {detail.label}
+                              </Label>
+                              <Input
+                                type="text"
+                                {...register(
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                )}
+                                className="col-span-3"
+                              />
+                              <Label className="text-red-500 w-full col-span-3">
+                                {errorMessages &&
+                                  errorMessages[
+                                    _.replace(
+                                      _.lowerCase(detail.label),
+                                      " ",
+                                      "_"
+                                    )
+                                  ]}
+                              </Label>
+                            </>
+                          )}
+                          {detail.type === "file" && (
+                            <div className="flex flex-col gap-2 w-full">
+                              <Label className="text-sm font-medium w-full">
+                                {detail.label}
+                              </Label>
+                              <Input
+                                id="productImg"
+                                accept="image/png,image/jpeg"
+                                type="file"
+                                ref={(e) => {
+                                  register(e);
+                                  imageInputRef.current = e;
+                                }}
+                                {...register("image")}
+                              />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

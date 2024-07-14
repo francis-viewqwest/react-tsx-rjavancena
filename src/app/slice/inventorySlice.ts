@@ -240,6 +240,7 @@ export const updateInventoryParent = createAsyncThunk("inventory/updateInventory
     try {
         console.log("apiconfig: ", apiconfig)
         const res = await axiosClient({
+            headers: { "Content-Type": "multipart/form-data", },
             method: apiconfig.method,
             url: apiconfig.url,
             data: apiconfig.data

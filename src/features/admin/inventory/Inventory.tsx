@@ -184,7 +184,7 @@ const Inventory: React.FC<RouteType> = (props) => {
           />
           <div>
             <Select onValueChange={handleCategoryChange}>
-              <SelectTrigger  className="w-32">
+              <SelectTrigger className="w-32">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>

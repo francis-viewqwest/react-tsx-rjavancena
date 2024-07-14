@@ -342,7 +342,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                           className="text-xs font-bold text-primary"
                         >
                           {_.truncate(item?.name, {
-                            length: 32,
+                            length: 20,
                             separator: " ...",
                           })}
                         </h1>
@@ -353,8 +353,11 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                           }).format(item?.retail_price)}
                         </h1>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {item?.category}
+                      <p title={item?.category} className="text-xs text-muted-foreground">
+                        {_.truncate(item?.category, {
+                          length: 15,
+                          separator: " ...",
+                        })}
                       </p>
                     </div>
                     <span className="text-red-500 text-xs">
@@ -366,17 +369,17 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                       <div className="flex items-center  ">
                         <Button
                           onClick={() => handleDecrementQty(item)}
-                          className="rounded-r-none"
+                          className="rounded-r-none border-neutral-300 border-2 bg-white hover:bg-neutral-200 hover:border-neutral-200"
                           size="btnPayment"
                         >
-                          <MinusIcon />
+                          <MinusIcon color="black" />
                         </Button>
                         <div className="bg-white p-0.5 px-3 text-xs">
                           {getQuantity(item)}
                         </div>
                         <Button
                           onClick={() => handleIncrementQty(item)}
-                          className="rounded-l-none"
+                          className="rounded-l-none bg-bgrjavancena"
                           size="btnPayment"
                         >
                           <PlusIcon />

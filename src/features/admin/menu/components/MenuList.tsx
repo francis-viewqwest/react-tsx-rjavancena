@@ -108,7 +108,15 @@ const MenuList: React.FC<MenuListProps> = ({
               filteredData?.map((item, index) => (
                 <Card key={index} className=" max-w-72 p-1">
                   <CardHeader className="p-2">
-                    <Skeleton className="max-w-full max-h-full p-12 bg-neutral-300" />
+                    {item.image ? (
+                      <img
+                        className="max-w-full h-28 rounded-lg bg-cover bg-no-repeat"
+                        src={`http://127.0.0.1:8000/storage/inventory-children/${item.image}`}
+                        alt={item.image}
+                      />
+                    ) : (
+                      <Skeleton className="max-w-full h-28 bg-neutral-300" />
+                    )}
                   </CardHeader>
                   <CardContent className="flex flex-col gap-3 p-2">
                     <div>
@@ -123,7 +131,7 @@ const MenuList: React.FC<MenuListProps> = ({
                       </p>
                       <h1
                         title={item.name}
-                        className="text-primary font-bold text-md"
+                        className="text-primary font-bold text-sm"
                       >
                         {_.truncate(item.name, {
                           length: 20,
@@ -173,7 +181,6 @@ const MenuList: React.FC<MenuListProps> = ({
                               quantities[item?.inventory_id]
                             )
                           }
-                          // disabled={quantities[item.id] >= item.stocks}
                           disabled={item.stocks <= 0}
                         >
                           <PlusIcon />
