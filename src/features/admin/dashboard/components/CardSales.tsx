@@ -8,31 +8,11 @@ import { useSelector } from "react-redux";
 
 const CardSales: React.FC = () => {
   const data = useSelector(dashboardData);
-  console.log(data.sale);
+  const formatted = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  });
 
-  // const cardsContent: CardsContent[] = [
-  //   {
-  //     title: "Total Products",
-  //     icon: <IconPackage color="black" />,
-  //     data: data.stocks,
-  //     icon2: <IconTrendingUp size="14" color="green" />,
-  //     analytic: "In Stock",
-  //   },
-  //   {
-  //     title: "Monthly Sales",
-  //     icon: <IconCash color="black" />,
-  //     data: formatted.format(1299),
-  //     icon2: <IconCircleFilled size="9" color="green" />,
-  //     analytic: "+ 3.21 Than last month",
-  //   },
-  //   {
-  //     title: "Yearly Sales",
-  //     icon: <IconMoneybag color="black" />,
-  //     data: formatted.format(534000),
-  //     icon2: <IconTrendingUp size="14" color="green" />,
-  //     analytic: "+ 2.21 Than last year",
-  //   },
-  // ];
   return (
     <>
       <div className="flex flex-col gap-4 sm:grid-flow-row sm:grid sm:grid-cols-3">
@@ -45,9 +25,13 @@ const CardSales: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{item.current}</div>
+              <div className="text-2xl font-bold">
+                {item.title === "Total Products"
+                  ? item.current
+                  : formatted.format(item.current)}
+              </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Icon icon={item.icon} fontSize={14} />
+                <Icon icon={item.icon} color="green" fontSize={14} />
                 {item.analytic}
               </div>
             </CardContent>

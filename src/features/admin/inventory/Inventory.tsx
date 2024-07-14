@@ -177,7 +177,7 @@ const Inventory: React.FC<RouteType> = (props) => {
           />
           <div>
             <Select onValueChange={handleCategoryChange}>
-              <SelectTrigger className="w-36">
+              <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -196,7 +196,7 @@ const Inventory: React.FC<RouteType> = (props) => {
         </div>
 
         {Array.isArray(inventoryResData.data?.buttons) &&
-          inventoryResData.data.buttons.map((invBtn: any, index: any) => (
+          inventoryResData?.data?.buttons?.map((invBtn: any, index: any) => (
             <Dialog key={index}>
               <DialogTrigger asChild>
                 <Button size="sm" className="w-32 bg-bgrjavancena">
@@ -212,7 +212,7 @@ const Inventory: React.FC<RouteType> = (props) => {
                     </DialogDescription>
                   </DialogHeader>
                   <div className="flex flex-col gap-5 py-4">
-                    {invBtn?.details.map((item) => {
+                    {invBtn?.details?.map((item: any) => {
                       return (
                         <div className="flex flex-col gap-2">
                           <Label className="text-left font-medium">

@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import useColumnsProduct from "@/components/ui/columns";
 import { DataTable } from "@/components/ui/data-table";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ProductType } from "@/interface/InterfaceType";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getInventoryDataChild,
-  createInventoryChildData,
   inventoryData,
   loadingStatus,
   inventoryError,
 } from "@/app/slice/inventorySlice";
 import { TableProvider } from "@/hooks/TableContext";
 import { toast } from "@/components/ui/use-toast";
+import { useAppSelector } from "@/app/hooks";
 
 const ProductList: React.FC = () => {
   const dispatch = useDispatch();
@@ -23,6 +23,9 @@ const ProductList: React.FC = () => {
   const [data, setData] = useState<ProductType[]>([]);
   const { id } = useParams();
   const columnsProduct = useColumnsProduct("inventory");
+
+  const loadingTable = useAppSelector((state) => state.inventory.loadingTable);
+  let { state } = useLocation();
 
   useEffect(() => {
     dispatch(getInventoryDataChild({ url: id }));
@@ -82,6 +85,7 @@ const ProductList: React.FC = () => {
 
   return (
     <>
+      {loadingTable && <></>}
       <TableProvider page="Inventory" inventoryId={id}>
         <Link
           to="/app/inventory"
@@ -92,7 +96,11 @@ const ProductList: React.FC = () => {
         </Link>
 
         <div>
-          <DataTable title={`Product in ${inventoryChild?.data?.parameter}`} columns={columnsProduct} data={data} />
+          <DataTable
+            title={`Product in ${state?.name}`}
+            columns={columnsProduct}
+            data={data}
+          />
         </div>
       </TableProvider>
     </>

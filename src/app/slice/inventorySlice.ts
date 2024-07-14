@@ -10,12 +10,14 @@ interface InventoryState {
     data: object;
     status: string;
     error: string | null | any;
+    loadingTable: boolean;
 }
 
 const initialState: InventoryState = {
     data: {},
     status: "",
     error: false,
+    loadingTable: false,
 }
 
 interface ApiConfig {
@@ -53,14 +55,17 @@ const inventorySlice = createSlice({
         builder
             .addCase(getInventoryDataChild.pending, (state) => {
                 state.status = "getInventoryDataChild/loading";
-                state.error = null
+                state.loadingTable = true;
+                state.error = null;
             })
             .addCase(getInventoryDataChild.fulfilled, (state, action) => {
                 state.status = "getInventoryDataChild/success";
-                state.data = action.payload
+                state.loadingTable = false;
+                state.data = action.payload;
             })
             .addCase(getInventoryDataChild.rejected, (state, action) => {
                 state.status = "getInventoryDataChild/failed";
+                state.loadingTable = false;
                 state.error = action.payload
             })
 

@@ -131,8 +131,19 @@ const MenuList: React.FC<MenuListProps> = ({
                         })}
                       </h1>
                       <p className="text-xs text-neutral-400 font-medium flex items-center gap-2">
-                        <span>{item.stocks} Available</span>•
-                        <span>{item.sold} Sold</span>
+                        <span>
+                          {item.stocks > 0 ? (
+                            `${item.stocks} Available`
+                          ) : (
+                            <>
+                              <span className="text-red-500">
+                                {item.stocks}
+                              </span>{" "}
+                              Not Available
+                            </>
+                          )}
+                        </span>
+                        •<span>{item.sold} Sold</span>
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
@@ -154,42 +165,22 @@ const MenuList: React.FC<MenuListProps> = ({
                       </div>
                       <div className="flex items-center gap-2 justify-end">
                         <Button
-                          size="sm"
-                          className="border-black bg-neutral-200 hover:bg-neutral-300"
-                          onClick={() => handleDecrement(item.inventory_id)}
-                          disabled={quantities[item.id] <= 0}
-                        >
-                          <MinusIcon color="black" />
-                        </Button>
-                        <span className="text-primary font-semibold">
-                          {quantities[item.inventory_id] || 1}
-                        </span>
-                        <Button
-                          className="bg-primary hover:bg-primary/90"
-                          size="sm"
+                          className="bg-bgrjavancena hover:bg-primary/90 text-xs font-medium"
+                          size="xs"
                           onClick={() =>
-                            handleIncrement(item.inventory_id, item.stocks)
+                            handleAddToCart(
+                              item?.inventory_product_id,
+                              quantities[item?.inventory_id]
+                            )
                           }
-                          disabled={quantities[item.id] >= item.stocks}
+                          // disabled={quantities[item.id] >= item.stocks}
+                          disabled={item.stocks <= 0}
                         >
-                          <PlusIcon color="white" />
+                          <PlusIcon />
+                          Add
                         </Button>
                       </div>
                     </div>
-
-                    <Button
-                      variant="outline"
-                      size="default"
-                      className="bg-bgrjavancena text-white hover:bg-primary/90 hover:text-white font-semibold my-1"
-                      onClick={() =>
-                        handleAddToCart(
-                          item?.inventory_product_id,
-                          quantities[item?.inventory_id]
-                        )
-                      }
-                    >
-                      {loadingMenu ? "Adding to cart..." : "Add to cart"}
-                    </Button>
                   </CardContent>
                 </Card>
               ))

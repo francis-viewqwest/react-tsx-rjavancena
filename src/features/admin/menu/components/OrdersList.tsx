@@ -367,17 +367,17 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                         <Button
                           onClick={() => handleDecrementQty(item)}
                           className="rounded-r-none"
-                          size="sm"
+                          size="btnPayment"
                         >
                           <MinusIcon />
                         </Button>
-                        <div className="bg-white p-0.5 px-3">
+                        <div className="bg-white p-0.5 px-3 text-xs">
                           {getQuantity(item)}
                         </div>
                         <Button
                           onClick={() => handleIncrementQty(item)}
                           className="rounded-l-none"
-                          size="sm"
+                          size="btnPayment"
                         >
                           <PlusIcon />
                         </Button>

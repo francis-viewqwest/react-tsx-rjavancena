@@ -199,94 +199,100 @@ export function RowInventoryActions<TData>({
       <DialogPortal>
         {showEditDialog && (
           <DialogContent className="sm:max-w-[34rem]">
-            <DialogHeader>
+            <DialogHeader className="sm:px-5">
               <DialogTitle>Edit product details</DialogTitle>
               <DialogDescription>
                 Make changes to your product details here. Click save when
                 you're done.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-3 ">
-              {modalData?.details?.map((detail: any) => {
-                const fieldName = detail.label
-                  .replace(/\s+/g, "_")
-                  .toLowerCase();
-                console.log(fieldName);
 
-                return (
-                  <>
-                    <div className="grid grid-cols-auto items-center gap-2 w-full">
-                      {detail.type === "input" && (
-                        <>
-                          <Label className="font-semibold text-xs">
-                            {detail?.label}
-                          </Label>
+            <ScrollArea className="h-72 w-full">
+              <div className="grid gap-3">
+                {modalData?.details?.map((detail: any) => {
+                  return (
+                    <>
+                      <div className="grid items-center gap-2 px-2 sm:px-5 w-full">
+                        {detail.type === "input" && (
                           <>
+                            <Label className="font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+                            <>
+                              <Input
+                                type="text"
+                                {...register(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase()
+                                )}
+                                className="col-span-4"
+                              />
+                              <small className="text-red-500 w-full col-span-3">
+                                {errorMessages &&
+                                  errorMessages[
+                                    _.replace(
+                                      _.lowerCase(detail.label),
+                                      " ",
+                                      "_"
+                                    )
+                                  ]}
+                              </small>
+                            </>
+                          </>
+                        )}
+                        {detail.type === "file" && (
+                          <>
+                            <Label className="text-xs font-semibold">
+                              {detail.label}
+                            </Label>
                             <Input
-                              type="text"
+                              id="productImg"
+                              type="file"
+                              className="col-span-4"
+                              ref={imageInputRef}
                               {...register(
                                 detail.label.replace(/\s+/g, "_").toLowerCase()
                               )}
-                              className="col-span-4"
                             />
-                            <small className="text-red-500 w-full col-span-3">
-                              {errorMessages &&
-                                errorMessages[
-                                  _.replace(_.lowerCase(detail.label), " ", "_")
-                                ]}
-                            </small>
                           </>
-                        </>
-                      )}
-                      {detail.type === "file" && (
-                        <>
-                          <Label className="text-xs font-semibold">
-                            {detail.label}
-                          </Label>
-                          <Input
-                            id="productImg"
-                            type="file"
-                            className="col-span-4"
-                            ref={imageInputRef}
-                            {...register(
-                              detail.label.replace(/\s+/g, "_").toLowerCase()
-                            )}
-                          />
-                        </>
-                      )}
-                      {detail.type === "select" && (
-                        <>
-                          <Label className="font-semibold text-xs">
-                            {detail?.label}
-                          </Label>
-                          <Select
-                            onValueChange={(value) =>
-                              setValue(
-                                detail.label.replace(/\s+/g, "_").toLowerCase(),
-                                value
-                              )
-                            }
-                            value={watch(
-                              detail.label.replace(/\s+/g, "_").toLowerCase()
-                            )}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select option" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectItem value="yes">Yes</SelectItem>
-                                <SelectItem value="no">No</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </>
-                      )}
-                    </div>
-                  </>
-                );
-              })}
-            </div>
+                        )}
+                        {detail.type === "select" && (
+                          <>
+                            <Label className="font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+                            <Select
+                              onValueChange={(value) =>
+                                setValue(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase(),
+                                  value
+                                )
+                              }
+                              value={watch(
+                                detail.label.replace(/\s+/g, "_").toLowerCase()
+                              )}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select option" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectItem value="yes">Yes</SelectItem>
+                                  <SelectItem value="no">No</SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+            </ScrollArea>
             <DialogFooter>
               <Button
                 className="bg-bgrjavancena"

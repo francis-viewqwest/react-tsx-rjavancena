@@ -61,7 +61,7 @@ const TodaysSale: React.FC = () => {
               </PieChart>
             </ResponsiveContainer>
             <h1 className="font-bold text-2xl text-center">
-              {todaysSaleData?.today_sale?.current}
+              {formatted.format(todaysSaleData?.today_sale?.current)}
             </h1>
             <p className="text-xs text-muted-foreground text-center">
               Total Earnings

@@ -158,6 +158,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
             className="md:flex md:items-center md:justify-between px-4"
           >
             <Link
+              state={{ name: "Product Name" }}
               className="w-full md:flex md:items-center md:justify-between px-4"
               to={`/app/inventory/inventory-child/${item.view[0].url}`}
             >
