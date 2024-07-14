@@ -16,10 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import useAxiosClient from "@/axios-client";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getRegions, getProvinces } from "@/app/slice/userSlice";
-import axios from "axios";
 
 const Welcome: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -100,7 +98,7 @@ const Welcome: React.FC = () => {
         })
       );
     }
-  }, [region, getValues, dispatch]);
+  }, [region]);
 
   console.log(formValues);
 
@@ -167,125 +165,145 @@ const Welcome: React.FC = () => {
             </AnimatePresence>
           </div>
         )}
-        <div
-          className={`mx-auto px-4 lg:px-10 py-40  ${formSetIn && "hidden"}`}
-        >
-          <div className="flex flex-col gap-3 pb-10">
-            <h1 className="text-2xl font-bold">Lets get you started!</h1>
-            <p className="text-sm text-neutral-500 w-[56rem]">
-              Welcome to RJ AVANCENA, where we aim to provide you with a
-              seamless and personalized experience. Below is your profile
-              information. Feel free to review and update any details as
-              necessary.
-            </p>
-          </div>
-          <div className="bg-white rounded-lg w-full h-full border-2 py-5 border-neutral-300">
-            <h1 className="font-medium px-6 mb-4 flex items-center gap-3">Complete your profile {progress === 100 && <IconCircleCheckFilled color="green" />}</h1>
-            <Progress className="rounded-none h-[3px]" value={progress} />
-            <div className="px-6">
-              {/* Profile Information */}
-              <div className="pt-10">
-                <h1 className="text-sm font-bold">Profile Information</h1>
-                <div className="pt-6 gap-6 lg:grid lg:grid-cols-2">
-                  <div className="grid gap-5 lg:grid-cols-2">
-                    {inputFields
-                      .filter((field) => field.section === "profile")
-                      .map((field, index) => (
-                        <div
-                          key={index}
-                          className="grid w-full max-w-sm items-center gap-1.5"
-                        >
-                          <Label
-                            className="text-neutral-600"
-                            htmlFor={field.label}
-                          >
-                            {field.label}
-                          </Label>
-                          <Input
-                            id={field.label}
-                            type={field.type}
-                            {...register(
-                              field.label.replace(/\s+/g, "_").toLowerCase()
-                            )}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
+        {!formSetIn && (
+          <AnimatePresence>
+            <motion.div
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: 0.3,
+                ease: "easeInOut",
+                duration: 1.2,
+              }}
+              className={`mx-auto px-4 lg:px-10 py-40  `}
+            >
+              <div className="flex flex-col gap-3 pb-10">
+                <h1 className="text-2xl font-bold">Lets get you started!</h1>
+                <p className="text-sm text-neutral-500 w-[56rem]">
+                  Welcome to RJ AVANCENA, where we aim to provide you with a
+                  seamless and personalized experience. Below is your profile
+                  information. Feel free to review and update any details as
+                  necessary.
+                </p>
               </div>
-
-              {/* Address Information */}
-              <div className="pt-10">
-                <h1 className="text-sm font-bold">Address Information</h1>
-                <div className="pt-6 gap-6 lg:grid lg:grid-cols-2">
-                  <div className="grid gap-5 lg:grid-cols-2">
-                    {inputFields
-                      .filter((field) => field?.section === "address")
-                      .map((field, index) => (
-                        <div
-                          key={index}
-                          className="grid w-full max-w-sm items-center gap-1.5"
-                        >
-                          <Label
-                            className="text-neutral-600"
-                            htmlFor={field.label}
-                          >
-                            {field.label}
-                          </Label>
-                          {field.type === "select" &&
-                          field.label === "Region" ? (
-                            <Select
-                              onValueChange={(value) =>
-                                setValue(
-                                  field.label
-                                    .replace(/\s+/g, "_")
-                                    .toLowerCase(),
-                                  value
-                                )
-                              }
-                              value={watch(
-                                field.label.replace(/\s+/g, "_").toLowerCase()
-                              )}
+              <div className="bg-white rounded-lg w-full h-full border-2 py-5 border-neutral-300">
+                <h1 className="font-medium px-6 mb-4 flex items-center gap-3">
+                  Complete your profile{" "}
+                  {progress === 100 && <IconCircleCheckFilled color="green" />}
+                </h1>
+                <Progress className="rounded-none h-[3px]" value={progress} />
+                <div className="px-6">
+                  {/* Profile Information */}
+                  <div className="pt-10">
+                    <h1 className="text-sm font-bold">Profile Information</h1>
+                    <div className="pt-6 gap-6 lg:grid lg:grid-cols-2">
+                      <div className="grid gap-5 lg:grid-cols-2">
+                        {inputFields
+                          .filter((field) => field.section === "profile")
+                          .map((field, index) => (
+                            <div
+                              key={index}
+                              className="grid w-full max-w-sm items-center gap-1.5"
                             >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a region" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Region</SelectLabel>
-                                  {Array.isArray(regionsData) &&
-                                    regionsData.map((region: any) => (
-                                      <SelectItem
-                                        key={region.code}
-                                        value={region.code}
-                                      >
-                                        {region.regionName}
-                                      </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <Input
-                              id={field.label}
-                              type={field.type}
-                              {...register(
-                                field.label.replace(/\s+/g, "_").toLowerCase()
+                              <Label
+                                className="text-neutral-600"
+                                htmlFor={field.label}
+                              >
+                                {field.label}
+                              </Label>
+                              <Input
+                                id={field.label}
+                                type={field.type}
+                                {...register(
+                                  field.label.replace(/\s+/g, "_").toLowerCase()
+                                )}
+                              />
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address Information */}
+                  <div className="pt-10">
+                    <h1 className="text-sm font-bold">Address Information</h1>
+                    <div className="pt-6 gap-6 lg:grid lg:grid-cols-2">
+                      <div className="grid gap-5 lg:grid-cols-2">
+                        {inputFields
+                          .filter((field) => field?.section === "address")
+                          .map((field, index) => (
+                            <div
+                              key={index}
+                              className="grid w-full max-w-sm items-center gap-1.5"
+                            >
+                              <Label
+                                className="text-neutral-600"
+                                htmlFor={field.label}
+                              >
+                                {field.label}
+                              </Label>
+                              {field.type === "select" &&
+                              field.label === "Region" ? (
+                                <Select
+                                  onValueChange={(value) =>
+                                    setValue(
+                                      field.label
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase(),
+                                      value
+                                    )
+                                  }
+                                  value={watch(
+                                    field.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase()
+                                  )}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select a region" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectLabel>Region</SelectLabel>
+                                      {Array.isArray(regionsData) &&
+                                        regionsData.map((region: any) => (
+                                          <SelectItem
+                                            key={region.code}
+                                            value={region.code}
+                                          >
+                                            {region.regionName}
+                                          </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <Input
+                                  id={field.label}
+                                  type={field.type}
+                                  {...register(
+                                    field.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase()
+                                  )}
+                                />
                               )}
-                            />
-                          )}
-                        </div>
-                      ))}
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-10">
+                    <Button disabled={progress !== 100} className="bg-bgrjavancena">
+                      Submit
+                    </Button>
                   </div>
                 </div>
               </div>
-
-              <div className="pt-10">
-                <Button className="bg-bgrjavancena">Submit</Button>
-              </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </AnimatePresence>
+        )}
       </div>
     </>
   );
