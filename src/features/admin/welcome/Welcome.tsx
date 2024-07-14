@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { IconCircleCheckFilled } from "@tabler/icons-react";
 import _ from "lodash";
 import {
   Select,
@@ -26,6 +27,7 @@ const Welcome: React.FC = () => {
   const [formSetIn, setFormSetIn] = useState(true);
   const dispatch = useAppDispatch();
   const regionsData = useAppSelector((state) => state.user.getRegions);
+  const [progress, setProgress] = useState(0);
 
   const {
     register,
@@ -84,7 +86,7 @@ const Welcome: React.FC = () => {
     );
   }, []);
 
-  const formValues = getValues();
+  const formValues = watch();
   const region = _.toString(formValues.region);
 
   useEffect(() => {
@@ -99,6 +101,19 @@ const Welcome: React.FC = () => {
       );
     }
   }, [region, getValues, dispatch]);
+
+  console.log(formValues);
+
+  useEffect(() => {
+    const completedFields = Object.values(formValues).filter(
+      (value) => value
+    ).length;
+    console.log(completedFields);
+
+    const totalFields = inputFields.length;
+
+    setProgress((completedFields / totalFields) * 100);
+  }, [formValues]);
 
   return (
     <>
@@ -165,8 +180,8 @@ const Welcome: React.FC = () => {
             </p>
           </div>
           <div className="bg-white rounded-lg w-full h-full border-2 py-5 border-neutral-300">
-            <h1 className="font-medium px-6 mb-4">Complete your profile</h1>
-            <Progress className="rounded-none h-[3px]" value={33} />
+            <h1 className="font-medium px-6 mb-4 flex items-center gap-3">Complete your profile {progress === 100 && <IconCircleCheckFilled color="green" />}</h1>
+            <Progress className="rounded-none h-[3px]" value={progress} />
             <div className="px-6">
               {/* Profile Information */}
               <div className="pt-10">
@@ -186,7 +201,13 @@ const Welcome: React.FC = () => {
                           >
                             {field.label}
                           </Label>
-                          <Input id={field.label} type={field.type} />
+                          <Input
+                            id={field.label}
+                            type={field.type}
+                            {...register(
+                              field.label.replace(/\s+/g, "_").toLowerCase()
+                            )}
+                          />
                         </div>
                       ))}
                   </div>
@@ -245,7 +266,13 @@ const Welcome: React.FC = () => {
                               </SelectContent>
                             </Select>
                           ) : (
-                            <Input id={field.label} type={field.type} />
+                            <Input
+                              id={field.label}
+                              type={field.type}
+                              {...register(
+                                field.label.replace(/\s+/g, "_").toLowerCase()
+                              )}
+                            />
                           )}
                         </div>
                       ))}
