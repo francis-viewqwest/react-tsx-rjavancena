@@ -128,8 +128,8 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
                         className="peer sr-only"
                       />
                       <Label
-                        htmlFor={item?.label}
-                        className="flex cursor-pointer flex-col text-xs items-center font-semibold justify-between rounded-md border-2 border-neutral-300 bg-popover p-3 hover:bg-primary hover:text-white peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white [&:has([data-state=checked])]:text-white"
+                        htmlFor={item?.label === "Cash"}
+                        className={`flex cursor-pointer flex-col text-xs items-center font-semibold justify-between rounded-md border-2 border-neutral-300 bg-popover p-3 hover:bg-primary hover:text-white peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-white [&:has([data-state=checked])]:text-white ${item?.label === "Debit" && "bg-neutral-200 text-neutral-500"} ${item?.label === "E-Wallet" && "bg-neutral-200 text-neutral-500"}`}
                       >
                         {item?.icon}
                         {item?.label}

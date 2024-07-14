@@ -158,12 +158,20 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
             className="md:flex md:items-center md:justify-between px-4"
           >
             <Link
-              state={{ name: "Product Name" }}
+              state={{ name: item.view[0].name }}
               className="w-full md:flex md:items-center md:justify-between px-4"
               to={`/app/inventory/inventory-child/${item.view[0].url}`}
             >
               <div className="md:flex md:items-center">
-                <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" />
+                {item?.image ? (
+                  <img
+                    className="hidden lg:block lg:h-20 lg:w-20 lg:rounded-xl"
+                    src={`http://127.0.0.1:8000/storage/inventory/${item.image}`}
+                    alt={item.image}
+                  />
+                ) : (
+                  <Skeleton className="hidden bg-neutral-200 lg:block lg:h-20 lg:w-28 lg:rounded-xl" />
+                )}
                 <CardHeader className="w-full justify-start left-0 lg:flex lg:flex-col">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-md">{item.name}</CardTitle>

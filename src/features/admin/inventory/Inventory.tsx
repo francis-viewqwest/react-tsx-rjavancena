@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { IconReload } from "@tabler/icons-react";
 import {
   Select,
   SelectContent,
@@ -47,6 +48,10 @@ const Inventory: React.FC<RouteType> = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCategory, setFilteredCategory] = useState<any>("");
   const [filteredData, setFilteredData] = useState<any[]>([]);
+  const imageInputRef = useRef<null>(null);
+  const loadingCreate = useAppSelector(
+    (state) => state.inventory.loadingCreate
+  );
 
   const { toast } = useToast();
   const dispatch = useAppDispatch();
@@ -57,10 +62,12 @@ const Inventory: React.FC<RouteType> = (props) => {
     (invBtn: any): SubmitHandler<ParentInventory> =>
     async (data: any) => {
       const euDevice = Cookies.get("eu");
+      console.log(data);
 
       const payload = {
         name: data.product_name,
         category: data.product_category,
+        image: data.image[0],
         eu_device: euDevice,
       };
 
@@ -177,7 +184,7 @@ const Inventory: React.FC<RouteType> = (props) => {
           />
           <div>
             <Select onValueChange={handleCategoryChange}>
-              <SelectTrigger>
+              <SelectTrigger  className="w-32">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
@@ -214,55 +221,56 @@ const Inventory: React.FC<RouteType> = (props) => {
                   <div className="flex flex-col gap-5 py-4">
                     {invBtn?.details?.map((item: any) => {
                       return (
-                        <div className="flex flex-col gap-2">
-                          <Label className="text-left font-medium">
-                            {item.label}
-                          </Label>
-                          <Input
-                            id="name"
-                            placeholder={`Enter ${_.lowerCase(item.label)}`}
-                            {...register(
-                              item.label.replace(/\s+/g, "_").toLowerCase()
-                            )}
-                          />
-                          <Label className="text-red-500">
-                            {inventoryErrorMess?.name ||
-                              inventoryErrorMess?.message}
-                          </Label>
-                        </div>
+                        <>
+                          {item.type === "input" && (
+                            <div className="flex flex-col gap-2">
+                              <Label className="text-left font-medium">
+                                {item.label}
+                              </Label>
+                              <Input
+                                id="name"
+                                placeholder={`Enter ${_.lowerCase(item.label)}`}
+                                {...register(
+                                  item.label.replace(/\s+/g, "_").toLowerCase()
+                                )}
+                              />
+                              <Label className="text-red-500">
+                                {inventoryErrorMess?.name ||
+                                  inventoryErrorMess?.message}
+                              </Label>
+                            </div>
+                          )}
+                          {item.type === "file" && (
+                            <div className="flex flex-col gap-2">
+                              <Label className="text-sm font-medium">
+                                {item.label}
+                              </Label>
+                              <Input
+                                id="productImg"
+                                accept="image/png,image/jpeg"
+                                type="file"
+                                className="col-span-3"
+                                ref={(e) => {
+                                  register(e);
+                                  imageInputRef.current = e;
+                                }}
+                                {...register("image")}
+                              />
+                            </div>
+                          )}
+                        </>
                       );
                     })}
-                    {/* <div className="flex flex-col gap-2">
-                      <Label className="text-left font-medium">
-                        Product Name
-                      </Label>
-                      <Input
-                        id="name"
-                        placeholder="Enter product name"
-                        {...register("productName", {})}
-                      />
-                      <Label className="text-red-500">
-                        {inventoryErrorMess?.name ||
-                          inventoryErrorMess?.message}
-                      </Label>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="name" className="text-left font-medium">
-                        Product Category
-                      </Label>
-                      <Input
-                        id="name"
-                        placeholder="Enter product category"
-                        {...register("productCategory", {})}
-                      />
-                      <Label className="text-red-500">
-                        {inventoryErrorMess?.category}
-                      </Label>
-                    </div> */}
                   </div>
                   <DialogFooter>
                     <Button className="bg-bgrjavancena" type="submit">
-                      Save changes
+                      {loadingCreate && (
+                        <span className="flex items-center gap-1">
+                          Adding...
+                          <IconReload className="animate-spin" size={16} />
+                        </span>
+                      )}
+                      {!loadingCreate && "Add product"}
                     </Button>
                   </DialogFooter>
                 </form>

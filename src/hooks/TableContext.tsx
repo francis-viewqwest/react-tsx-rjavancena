@@ -97,8 +97,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   const { register, handleSubmit, setValue, watch } = useForm<FormSubmit>();
   const imageInputRef = useRef<null>(null);
 
-  console.log(imageInputRef.current);
-
   const { id } = useParams();
 
   //* INVENTORY PRODUCT LIST

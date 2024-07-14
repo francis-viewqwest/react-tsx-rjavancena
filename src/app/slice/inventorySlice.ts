@@ -11,6 +11,7 @@ interface InventoryState {
     status: string;
     error: string | null | any;
     loadingTable: boolean;
+    loadingCreate: boolean;
 }
 
 const initialState: InventoryState = {
@@ -18,6 +19,7 @@ const initialState: InventoryState = {
     status: "",
     error: false,
     loadingTable: false,
+    loadingCreate: false
 }
 
 interface ApiConfig {
@@ -88,14 +90,17 @@ const inventorySlice = createSlice({
         builder
             .addCase(createInventoryData.pending, (state) => {
                 state.status = "createInventoryParent/loading";
+                state.loadingCreate = true;
                 state.error = null;
             })
             .addCase(createInventoryData.fulfilled, (state, action) => {
                 state.status = "createInventoryParent/success";
+                state.loadingCreate = false;
                 state.data = action.payload;
             })
             .addCase(createInventoryData.rejected, (state, action) => {
                 state.status = "createInventoryParent/failed";
+                state.loadingCreate = false;
                 state.error = action.payload;
             })
 
@@ -199,6 +204,7 @@ export const createInventoryData = createAsyncThunk("inventory/createInventoryDa
     try {
 
         const res = await axiosClient({
+            headers: { "Content-Type": "multipart/form-data", },
             url: apiconfig.url,
             method: apiconfig.method,
             data: apiconfig.data
