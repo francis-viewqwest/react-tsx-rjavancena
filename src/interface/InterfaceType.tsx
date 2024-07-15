@@ -193,6 +193,7 @@ export interface UserState {
   loading: boolean;
   loadingEudevice: boolean;
   loadingSignIn: boolean;
+  errorNavbar: any;
   user: object;
   userInfo: object | any;
   error: string | null | any;
@@ -200,6 +201,7 @@ export interface UserState {
   getProvinces: object | any;
   getMunicipality: object | any;
   getBarangay: object | any;
+  completeProfile: object | any;
 }
 
 export interface UsersManagementState {

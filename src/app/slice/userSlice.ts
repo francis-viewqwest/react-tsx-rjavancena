@@ -18,10 +18,12 @@ const initialState: UserState = {
   loadingEudevice: false,
   loadingSignIn: false,
   error: false,
+  errorNavbar: false,
   getRegions: {},
   getProvinces: {},
   getMunicipality: {},
   getBarangay: {},
+  completeProfile: {},
 }
 
 
@@ -37,7 +39,7 @@ const userSlice = createSlice({
       .addCase(setNavbar.pending, (state) => {
         state.status = "setNavbar/loading";
         state.loading = true;
-        state.error = null
+
       })
       .addCase(setNavbar.fulfilled, (state, action) => {
         state.status = "setNavbar/success";
@@ -48,7 +50,7 @@ const userSlice = createSlice({
       .addCase(setNavbar.rejected, (state, action) => {
         state.status = "setNavbar/failed";
         state.loading = false;
-        state.error = action.payload;
+        state.errorNavbar = action.payload;
 
       })
 
@@ -144,6 +146,20 @@ const userSlice = createSlice({
       })
 
     builder
+      .addCase(completeProfile.pending, (state) => {
+        state.status = "completeProfile/loading";
+        state.error = null
+      })
+      .addCase(completeProfile.fulfilled, (state, action) => {
+        state.status = "completeProfile/success";
+        state.completeProfile = action.payload;
+      })
+      .addCase(completeProfile.rejected, (state, action) => {
+        state.status = "completeProfile/failed";
+        state.error = action.payload;
+      })
+
+    builder
       .addCase(userInfo.pending, (state) => {
         state.status = "userInfo/loading";
         state.loadingSignIn = true;
@@ -218,9 +234,9 @@ export const signIn = createAsyncThunk("user/setSignin", async (ApiConfig: ApiCo
       data: ApiConfig.data
     })
 
-    if (res.data.user_info !== "New User") {
-      Cookies.set("token", res.data.token);
-    }
+    // if (res.data.user_info !== "New User") {
+    // }
+    Cookies.set("token", res.data.token);
 
     return res.data
   } catch (error: any) {
@@ -278,6 +294,21 @@ export const getBarangay = createAsyncThunk("user/getBarangay", async (ApiConfig
   try {
 
     const res = await axios.get(ApiConfig.url)
+
+    console.log(res)
+
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const completeProfile = createAsyncThunk("user/completeProfile", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  console.log(ApiConfig.url)
+  try {
+
+    const res = await axiosClient({ url: ApiConfig.url, method: ApiConfig.method, data: ApiConfig.data })
 
     console.log(res)
 

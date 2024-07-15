@@ -22,7 +22,9 @@ import {
   getProvinces,
   getMunicipality,
   getBarangay,
+  completeProfile,
 } from "@/app/slice/userSlice";
+import Cookies from "js-cookie";
 
 const Welcome: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -143,6 +145,33 @@ const Welcome: React.FC = () => {
 
     setProgress((completedFields / totalFields) * 100);
   }, [formValues]);
+
+  const handleCompleteProfile = () => {
+    const formData = getValues();
+
+    const payload = {
+      image: "",
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      contact_number: formData.contactNumber,
+      email: formData.email,
+      address_1: formData.address1,
+      address_2: formData.address2,
+      region_code: formData.region,
+      province_code: formData.province,
+      city_or_municipality_code: formData.city_municipalities,
+      barangay: formData.barangay,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      completeProfile({
+        url: "user-info/store",
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
 
   return (
     <>
@@ -442,6 +471,7 @@ const Welcome: React.FC = () => {
 
                   <div className="pt-10">
                     <Button
+                      onClick={handleCompleteProfile}
                       disabled={progress !== 100}
                       className="bg-bgrjavancena"
                     >

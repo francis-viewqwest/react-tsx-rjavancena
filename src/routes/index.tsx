@@ -75,10 +75,9 @@ const Routes: React.FC = () => {
 
   const router = createBrowserRouter([
     ...publicRoutes,
-    ...(!token ? noAuthUserRoutes : []),
+    ...(!token  ? noAuthUserRoutes : []),
     ...authAdmin,
     ...registerAuthUser,
-    // ...authUserRoutes,
   ]);
 
   return <RouterProvider router={router} />;
