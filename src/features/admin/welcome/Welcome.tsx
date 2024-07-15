@@ -17,7 +17,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { getRegions, getProvinces } from "@/app/slice/userSlice";
+import {
+  getRegions,
+  getProvinces,
+  getMunicipality,
+  getBarangay,
+} from "@/app/slice/userSlice";
 
 const Welcome: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -25,6 +30,15 @@ const Welcome: React.FC = () => {
   const [formSetIn, setFormSetIn] = useState(true);
   const dispatch = useAppDispatch();
   const regionsData = useAppSelector((state) => state.user.getRegions);
+  const provincesData = useAppSelector((state) => state.user.getProvinces);
+  const municipalityData = useAppSelector(
+    (state) => state.user.getMunicipality
+  );
+  const brgyData = useAppSelector((state) => state.user.getBarangay);
+
+  console.log(municipalityData);
+  console.log(brgyData);
+
   const [progress, setProgress] = useState(0);
 
   const {
@@ -85,11 +99,9 @@ const Welcome: React.FC = () => {
   }, []);
 
   const formValues = watch();
-  const region = _.toString(formValues.region);
+  const { region, province, city_municipalities } = formValues;
 
   useEffect(() => {
-    console.log(region);
-
     if (region) {
       dispatch(
         getProvinces({
@@ -100,7 +112,27 @@ const Welcome: React.FC = () => {
     }
   }, [region]);
 
-  console.log(formValues);
+  useEffect(() => {
+    if (province) {
+      dispatch(
+        getMunicipality({
+          url: `https://psgc.gitlab.io/api/provinces/${province}/cities-municipalities/`,
+          method: "GET",
+        })
+      );
+    }
+  }, [province]);
+
+  useEffect(() => {
+    if (city_municipalities) {
+      dispatch(
+        getBarangay({
+          url: `https://psgc.gitlab.io/api/cities-municipalities/${city_municipalities}/barangays/`,
+          method: "GET",
+        })
+      );
+    }
+  }, [city_municipalities]);
 
   useEffect(() => {
     const completedFields = Object.values(formValues).filter(
@@ -153,7 +185,7 @@ const Welcome: React.FC = () => {
                     }}
                     exit={{
                       opacity: 0,
-                      x: -100, // Move to the left
+                      x: -100,
                       transition: { duration: 1 },
                     }}
                     className="text-neutral-400 sm:text-lg"
@@ -243,41 +275,156 @@ const Welcome: React.FC = () => {
                                 {field.label}
                               </Label>
                               {field.type === "select" &&
-                              field.label === "Region" ? (
-                                <Select
-                                  onValueChange={(value) =>
-                                    setValue(
+                                field.label === "Region" && (
+                                  <Select
+                                    onValueChange={(value) =>
+                                      setValue(
+                                        field.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      )
+                                    }
+                                    value={watch(
                                       field.label
                                         .replace(/\s+/g, "_")
-                                        .toLowerCase(),
-                                      value
-                                    )
-                                  }
-                                  value={watch(
-                                    field.label
-                                      .replace(/\s+/g, "_")
-                                      .toLowerCase()
-                                  )}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select a region" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectLabel>Region</SelectLabel>
-                                      {Array.isArray(regionsData) &&
-                                        regionsData.map((region: any) => (
-                                          <SelectItem
-                                            key={region.code}
-                                            value={region.code}
-                                          >
-                                            {region.regionName}
-                                          </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                              ) : (
+                                        .toLowerCase()
+                                    )}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a region" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Region</SelectLabel>
+                                        {Array.isArray(regionsData) &&
+                                          regionsData.map((region: any) => (
+                                            <SelectItem
+                                              key={region.code}
+                                              value={region.code}
+                                            >
+                                              {region.regionName}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                )}
+
+                              {field.type === "select" &&
+                                field.label === "Province" && (
+                                  <Select
+                                    onValueChange={(value) =>
+                                      setValue(
+                                        field.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      )
+                                    }
+                                    value={watch(
+                                      field.label
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase()
+                                    )}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a province" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Region</SelectLabel>
+                                        {Array.isArray(provincesData) &&
+                                          provincesData.map((prov: any) => (
+                                            <SelectItem
+                                              key={prov.code}
+                                              value={prov.code}
+                                            >
+                                              {prov.name}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                )}
+
+                              {field.type === "select" &&
+                                field.label === "City/Municipalities" && (
+                                  <Select
+                                    onValueChange={(value) =>
+                                      setValue(
+                                        field.label
+                                          .replace(/\//g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      )
+                                    }
+                                    value={watch(
+                                      field.label
+                                        .replace(/\//g, "_")
+                                        .toLowerCase()
+                                    )}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a City/Municipalities" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>
+                                          City/Municipalities
+                                        </SelectLabel>
+                                        {Array.isArray(municipalityData) &&
+                                          municipalityData.map((prov: any) => (
+                                            <SelectItem
+                                              key={prov.code}
+                                              value={prov.code}
+                                            >
+                                              {prov.name}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                )}
+
+                              {field.type === "select" &&
+                                field.label === "Barangay" && (
+                                  <Select
+                                    onValueChange={(value) =>
+                                      setValue(
+                                        field.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      )
+                                    }
+                                    value={watch(
+                                      field.label
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase()
+                                    )}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select a barangay" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Barangay</SelectLabel>
+                                        {Array.isArray(brgyData) &&
+                                          brgyData.map((prov: any) => (
+                                            <SelectItem
+                                              key={prov.name}
+                                              value={prov.name}
+                                            >
+                                              {prov.name}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                )}
+
+                              {field.type !== "select" && (
                                 <Input
                                   id={field.label}
                                   type={field.type}
@@ -295,7 +442,10 @@ const Welcome: React.FC = () => {
                   </div>
 
                   <div className="pt-10">
-                    <Button disabled={progress !== 100} className="bg-bgrjavancena">
+                    <Button
+                      disabled={progress !== 100}
+                      className="bg-bgrjavancena"
+                    >
                       Submit
                     </Button>
                   </div>

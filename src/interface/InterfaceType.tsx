@@ -198,6 +198,8 @@ export interface UserState {
   error: string | null | any;
   getRegions: object | any;
   getProvinces: object | any;
+  getMunicipality: object | any;
+  getBarangay: object | any;
 }
 
 export interface UsersManagementState {

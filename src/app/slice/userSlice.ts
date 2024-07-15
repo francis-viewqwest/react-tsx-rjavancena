@@ -19,7 +19,9 @@ const initialState: UserState = {
   loadingSignIn: false,
   error: false,
   getRegions: {},
-  getProvinces: {}
+  getProvinces: {},
+  getMunicipality: {},
+  getBarangay: {},
 }
 
 
@@ -110,6 +112,34 @@ const userSlice = createSlice({
       })
       .addCase(getProvinces.rejected, (state, action) => {
         state.status = "getProvinces/failed";
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(getMunicipality.pending, (state) => {
+        state.status = "getMunicipality/loading";
+        state.error = null
+      })
+      .addCase(getMunicipality.fulfilled, (state, action) => {
+        state.status = "getMunicipality/success";
+        state.getMunicipality = action.payload;
+      })
+      .addCase(getMunicipality.rejected, (state, action) => {
+        state.status = "getMunicipality/failed";
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(getBarangay.pending, (state) => {
+        state.status = "getBarangay/loading";
+        state.error = null
+      })
+      .addCase(getBarangay.fulfilled, (state, action) => {
+        state.status = "getBarangay/success";
+        state.getBarangay = action.payload;
+      })
+      .addCase(getBarangay.rejected, (state, action) => {
+        state.status = "getBarangay/failed";
         state.error = action.payload;
       })
 
@@ -212,12 +242,38 @@ export const getProvinces = createAsyncThunk("user/getProvinces", async (ApiConf
   console.log(ApiConfig.url)
   try {
 
-    const res = await axios.get(ApiConfig.url, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "*",
-      }
-    })
+    const res = await axios.get(ApiConfig.url)
+
+    console.log(res)
+
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+
+export const getMunicipality = createAsyncThunk("user/getMunicipality", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  console.log(ApiConfig.url)
+  try {
+
+    const res = await axios.get(ApiConfig.url)
+
+    console.log(res)
+
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const getBarangay = createAsyncThunk("user/getBarangay", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  console.log(ApiConfig.url)
+  try {
+
+    const res = await axios.get(ApiConfig.url)
 
     console.log(res)
 
