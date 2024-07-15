@@ -1,14 +1,16 @@
 import React from "react";
 import Navbar from "../../components/user/navbar/components/Navbar";
 import Footer from "../../components/user/footer/Components/Footer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 const PublicLayout: React.FC = () => {
+  const location = useLocation();
+
   return (
     <>
       <Navbar />
       <Outlet />
-      {/* <Footer /> */}
+      {location.pathname !== "/welcome" && <Footer />}
     </>
   );
 };
