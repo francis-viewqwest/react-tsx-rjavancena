@@ -138,7 +138,6 @@ const Welcome: React.FC = () => {
     const completedFields = Object.values(formValues).filter(
       (value) => value
     ).length;
-    console.log(completedFields);
 
     const totalFields = inputFields.length;
 

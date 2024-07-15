@@ -217,7 +217,11 @@ export const signIn = createAsyncThunk("user/setSignin", async (ApiConfig: ApiCo
       method: ApiConfig.method,
       data: ApiConfig.data
     })
-    Cookies.set("token", res.data.token);
+
+    if (res.data.user_info !== "New User") {
+      Cookies.set("token", res.data.token);
+    }
+
     return res.data
   } catch (error: any) {
     console.log(error)

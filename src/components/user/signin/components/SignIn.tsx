@@ -71,18 +71,6 @@ const SignIn: React.FC = () => {
           data: payload,
         })
       );
-
-      const token = Cookies.get("token");
-
-
-      // if (token && getUserInfo.user_info !== "New User") {
-      //   navigate("/app/menu");
-      // }
-
-      if (getUserInfo.user_info === "New User") {
-        navigate("/welcome");
-      }
-
     } catch (error: any) {
       let errorMessage = error?.response?.data?.message;
 
@@ -96,6 +84,16 @@ const SignIn: React.FC = () => {
       });
     }
   };
+
+  const newUser = getUserInfo?.user_info;
+
+  useEffect(() => {
+    if (newUser === "New User") {
+      navigate("/welcome");
+    } else if (Cookies.get("token") && newUser !== "New User") {
+      navigate("/app/menu");
+    }
+  }, [getUserInfo, navigate]);
 
   return (
     <>
