@@ -190,6 +190,8 @@ export interface UserState {
   sidebar: any[];
   data: object | any;
   status: string;
+  profileStatus: string;
+  profileData: object | any;
   loading: boolean;
   loadingEudevice: boolean;
   loadingSignIn: boolean;

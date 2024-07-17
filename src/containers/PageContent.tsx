@@ -25,6 +25,7 @@ const PageContent: React.FC = () => {
   const routes = useAppSelector((state) => state.user.data.nav_links);
   const pageLoading = useAppSelector((state) => state.user.loading);
   const errorNavbar = useAppSelector((state) => state.user.errorNavbar);
+  
 
   console.log(errorNavbar);
 

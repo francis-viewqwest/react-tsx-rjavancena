@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { IconCircleCheckFilled } from "@tabler/icons-react";
 import phFlag from "@/assets/images/phflag.svg";
 import _ from "lodash";
@@ -24,6 +24,9 @@ import {
   getMunicipality,
   getBarangay,
   completeProfile,
+  selectCompleteProfileStatus,
+  resetCompleteProfileStatus,
+  mockCompleteProfileSuccess,
 } from "@/app/slice/userSlice";
 import Cookies from "js-cookie";
 import React from "react";
@@ -31,6 +34,8 @@ import logo from "@/assets/svg/rjlogo.svg";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import useAxiosClient from "@/axios-client";
 
 const Welcome: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -46,23 +51,19 @@ const Welcome: React.FC = () => {
   const errorCompleteProfile = useAppSelector(
     (state) => state.user.errorCompleteProfile
   );
+  const completeProfileData = useAppSelector(
+    (state) => state.user.completeProfile
+  );
 
-  console.log(regionsData);
-  console.log(municipalityData);
-  console.log(brgyData);
-  console.log(errorCompleteProfile);
+  const completeProfileStatus = useAppSelector(selectCompleteProfileStatus);
+
+  console.log(completeProfileStatus);
 
   const [progress, setProgress] = useState(0);
+  const navigate = useNavigate();
+  const { register, setValue, getValues, watch } = useForm();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    getValues,
-    watch,
-    setError,
-  } = useForm();
+  const axiosClient = useAxiosClient();
 
   const inputFields = [
     { label: "Profile", type: "file", section: "profile" },
@@ -114,8 +115,6 @@ const Welcome: React.FC = () => {
   const formValues = watch();
   const { region, province, city_municipalities } = formValues;
 
-  console.log(formValues);
-
   useEffect(() => {
     if (region) {
       dispatch(
@@ -161,7 +160,7 @@ const Welcome: React.FC = () => {
 
   const [getLocationCode, setGetLocationCode] = useState({});
 
-  const onChangeSelect = (type, values) => {
+  const onChangeSelect = (type: any, values: any) => {
     console.log(values.code);
     setGetLocationCode((prevState) => ({
       ...prevState,
@@ -187,7 +186,7 @@ const Welcome: React.FC = () => {
     },
   ];
 
-  const handleCompleteProfile = () => {
+  const handleCompleteProfile = async () => {
     const formData = getValues();
 
     const payload = {
@@ -209,17 +208,30 @@ const Welcome: React.FC = () => {
       eu_device: Cookies.get("eu"),
     };
 
-    console.log(formData);
-    console.log(payload);
+    const res = await axiosClient.post("user-info/store", payload);
 
-    dispatch(
-      completeProfile({
-        url: "user-info/store",
-        method: "POST",
-        data: payload,
-      })
-    );
+    if (res.status === 200) {
+      navigate("/app/menu");
+    }
+
+    // await dispatch(
+    //   completeProfile({
+    //     url: "user-info/store",
+    //     method: "POST",
+    //     data: payload,
+    //   })
+    // );
+
+    // await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+    // dispatch(mockCompleteProfileSuccess());
   };
+
+  // useEffect(() => {
+  //   if (completeProfileStatus === "completeProfile/success") {
+  //     navigate("/app/menu");
+  //     // dispatch(resetCompleteProfileStatus());
+  //   }
+  // }, [completeProfileStatus, navigate, dispatch]);
 
   return (
     <>
@@ -473,7 +485,8 @@ const Welcome: React.FC = () => {
                                         <Select
                                           onValueChange={(value) => {
                                             const selected = regionsData.find(
-                                              (region) => region.code === value
+                                              (region: any) =>
+                                                region.code === value
                                             );
                                             setValue(
                                               field.label
@@ -522,7 +535,7 @@ const Welcome: React.FC = () => {
                                         <Select
                                           onValueChange={(value) => {
                                             const selected = provincesData.find(
-                                              (province) =>
+                                              (province: any) =>
                                                 province.code === value
                                             );
                                             setValue(
@@ -575,7 +588,7 @@ const Welcome: React.FC = () => {
                                           onValueChange={(value) => {
                                             const selected =
                                               municipalityData.find(
-                                                (municipal) =>
+                                                (municipal: any) =>
                                                   municipal.code === value
                                               );
                                             setValue(
@@ -629,7 +642,7 @@ const Welcome: React.FC = () => {
                                         <Select
                                           onValueChange={(value) => {
                                             const selected = brgyData.find(
-                                              (brgy) => brgy.code === value
+                                              (brgy: any) => brgy.code === value
                                             );
                                             setValue(
                                               field.label

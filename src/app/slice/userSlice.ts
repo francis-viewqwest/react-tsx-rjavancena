@@ -14,6 +14,8 @@ const initialState: UserState = {
   user: {},
   userInfo: {},
   status: "",
+  profileStatus: "idle",
+  profileData: "",
   loading: false,
   loadingEudevice: false,
   loadingSignIn: false,
@@ -32,7 +34,12 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-
+    resetCompleteProfileStatus(state) {
+      state.profileStatus = 'idle';
+    },
+    mockCompleteProfileSuccess(state) {
+      state.profileStatus = 'completeProfile/success';
+    },
   },
   extraReducers(builder) {
 
@@ -148,16 +155,16 @@ const userSlice = createSlice({
 
     builder
       .addCase(completeProfile.pending, (state) => {
-        state.status = "completeProfile/loading";
+        state.profileStatus = "completeProfile/loading";
         state.errorCompleteProfile = null
       })
       .addCase(completeProfile.fulfilled, (state, action) => {
-        state.status = "completeProfile/success";
+        state.profileStatus = "completeProfile/success";
         state.errorCompleteProfile = null
         state.completeProfile = action.payload;
       })
       .addCase(completeProfile.rejected, (state, action) => {
-        state.status = "completeProfile/failed";
+        state.profileStatus = "completeProfile/failed";
         state.errorCompleteProfile = action.payload;
       })
 
@@ -307,12 +314,10 @@ export const getBarangay = createAsyncThunk("user/getBarangay", async (ApiConfig
 })
 
 export const completeProfile = createAsyncThunk("user/completeProfile", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
-  console.log(ApiConfig.url)
+
   try {
 
     const res = await axiosClient({ headers: { "Content-Type": "multipart/form-data", }, url: ApiConfig.url, method: ApiConfig.method, data: ApiConfig.data })
-
-    console.log(res)
 
     return res.data
   } catch (error: any) {
@@ -352,7 +357,8 @@ export const logout = createAsyncThunk("user/getLogout", async (ApiConfig: ApiCo
 
 
 export const navbarData = (state: any) => state.user.data;
-
+export const selectCompleteProfileStatus = (state: any) => state.user.profileStatus;
 export const loading = (state: any) => state.user.loading;
+export const { resetCompleteProfileStatus, mockCompleteProfileSuccess } = userSlice.actions;
 
 export default userSlice.reducer

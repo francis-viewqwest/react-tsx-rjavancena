@@ -10,6 +10,7 @@ import { setEudevice, signIn } from "@/app/slice/userSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IconReload } from "@tabler/icons-react";
+import useAxiosClient from "@/axios-client";
 
 interface FormValues {
   email: String;
@@ -27,6 +28,9 @@ const SignIn: React.FC = () => {
   const dispatch = useAppDispatch();
   const loadingSignIn = useAppSelector((state) => state.user.loadingSignIn);
   const loadingEudevice = useAppSelector((state) => state.user.loadingEudevice);
+  const profileStatus = useAppSelector((state) => state.user.profileStatus);
+
+  const axiosClient = useAxiosClient();
 
   const fetchEudevice = async () => {
     try {
@@ -64,13 +68,28 @@ const SignIn: React.FC = () => {
         eu_device: Cookies.get("eu"),
       };
 
-      await dispatch(
-        signIn({
-          url: "/login",
-          method: "POST",
-          data: payload,
-        })
-      );
+      const res = await axiosClient.post("/login", payload);
+      Cookies.set("token", res.data.token);
+
+      console.log(res);
+
+      const newUSer = res.data.user_info;
+
+      console.log(newUSer);
+
+      if (newUSer === "New User") {
+        navigate("/welcome");
+      } else if (Cookies.get("token") && newUSer === "Existing User") {
+        navigate("/app/menu");
+      }
+
+      // await dispatch(
+      //   signIn({
+      //     url: "/login",
+      //     method: "POST",
+      //     data: payload,
+      //   })
+      // );
     } catch (error: any) {
       let errorMessage = error?.response?.data?.message;
 
@@ -85,15 +104,20 @@ const SignIn: React.FC = () => {
     }
   };
 
-  const newUser = getUserInfo?.user_info;
+  // const newUser = getUserInfo?.user_info;
 
-  useEffect(() => {
-    if (newUser === "New User") {
-      navigate("/welcome");
-    } else if (Cookies.get("token") && newUser !== "New User") {
-      navigate("/app/menu");
-    }
-  }, [getUserInfo, navigate]);
+  // console.log(profileStatus);
+
+  // useEffect(() => {
+  //   if (newUser === "New User") {
+  //     navigate("/welcome");
+  //   } else if (
+  //     (Cookies.get("token") && newUser == "Existing User") ||
+  //     profileStatus === "completeProfile/success"
+  //   ) {
+  //     navigate("/app/menu");
+  //   }
+  // }, [getUserInfo, profileStatus, navigate]);
 
   return (
     <>
