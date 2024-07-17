@@ -8,7 +8,7 @@ const PublicLayout: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <Outlet />
       {location.pathname !== "/welcome" && <Footer />}
     </>

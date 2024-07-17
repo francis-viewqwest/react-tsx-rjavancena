@@ -24,6 +24,7 @@ const initialState: UserState = {
   getMunicipality: {},
   getBarangay: {},
   completeProfile: {},
+  errorCompleteProfile: false,
 }
 
 
@@ -148,15 +149,16 @@ const userSlice = createSlice({
     builder
       .addCase(completeProfile.pending, (state) => {
         state.status = "completeProfile/loading";
-        state.error = null
+        state.errorCompleteProfile = null
       })
       .addCase(completeProfile.fulfilled, (state, action) => {
         state.status = "completeProfile/success";
+        state.errorCompleteProfile = null
         state.completeProfile = action.payload;
       })
       .addCase(completeProfile.rejected, (state, action) => {
         state.status = "completeProfile/failed";
-        state.error = action.payload;
+        state.errorCompleteProfile = action.payload;
       })
 
     builder
@@ -308,7 +310,7 @@ export const completeProfile = createAsyncThunk("user/completeProfile", async (A
   console.log(ApiConfig.url)
   try {
 
-    const res = await axiosClient({ url: ApiConfig.url, method: ApiConfig.method, data: ApiConfig.data })
+    const res = await axiosClient({ headers: { "Content-Type": "multipart/form-data", }, url: ApiConfig.url, method: ApiConfig.method, data: ApiConfig.data })
 
     console.log(res)
 

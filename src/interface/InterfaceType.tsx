@@ -194,6 +194,7 @@ export interface UserState {
   loadingEudevice: boolean;
   loadingSignIn: boolean;
   errorNavbar: any;
+  errorCompleteProfile: any;
   user: object;
   userInfo: object | any;
   error: string | null | any;
