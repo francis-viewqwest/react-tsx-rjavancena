@@ -1,26 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ApiConfig } from "@/interface/InterfaceType"
+import { ApiConfig, DashboardState } from "@/interface/InterfaceType"
 import useAxiosClient from "@/axios-client";
 
 const axiosClient = useAxiosClient();
 
-interface InventoryState {
-    data: object;
-    status: string;
-    error: string | null | any;
-}
 
-const initialState: InventoryState = {
+
+const initialState: DashboardState = {
     data: {},
     status: "",
     error: false,
+    voidMessage: ""
 }
 
-interface ApiConfig {
-    url: string;
-    method: string;
-    data?: any;
-}
 
 const dashboardSlice = createSlice({
     name: "dashboard",
@@ -55,6 +47,7 @@ const dashboardSlice = createSlice({
             })
             .addCase(voidPaid.fulfilled, (state, action) => {
                 state.status = "voidPaid/success";
+                state.voidMessage = action.payload;
                 state.data = action.payload
             })
             .addCase(voidPaid.rejected, (state, action) => {

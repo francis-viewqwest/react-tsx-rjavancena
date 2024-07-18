@@ -23,10 +23,6 @@ import {
   getProvinces,
   getMunicipality,
   getBarangay,
-  completeProfile,
-  selectCompleteProfileStatus,
-  resetCompleteProfileStatus,
-  mockCompleteProfileSuccess,
 } from "@/app/slice/userSlice";
 import Cookies from "js-cookie";
 import React from "react";
@@ -36,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import useAxiosClient from "@/axios-client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Welcome: React.FC = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -51,13 +48,6 @@ const Welcome: React.FC = () => {
   const errorCompleteProfile = useAppSelector(
     (state) => state.user.errorCompleteProfile
   );
-  const completeProfileData = useAppSelector(
-    (state) => state.user.completeProfile
-  );
-
-  const completeProfileStatus = useAppSelector(selectCompleteProfileStatus);
-
-  console.log(completeProfileStatus);
 
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
@@ -115,6 +105,8 @@ const Welcome: React.FC = () => {
   const formValues = watch();
   const { region, province, city_municipalities } = formValues;
 
+  const { toast } = useToast();
+
   useEffect(() => {
     if (region) {
       dispatch(
@@ -166,10 +158,7 @@ const Welcome: React.FC = () => {
       ...prevState,
       [`${type.replace(/\//g, "_").toLowerCase()}Name`]: values.name,
     }));
-    console.log(getLocationCode);
   };
-
-  console.log(getLocationCode);
 
   const sideNavRoutes = [
     {
@@ -187,51 +176,43 @@ const Welcome: React.FC = () => {
   ];
 
   const handleCompleteProfile = async () => {
-    const formData = getValues();
+    try {
+      const formData = getValues();
 
-    const payload = {
-      image: formData.profile[1],
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      contact_number: formData.contact_number,
-      contact_email: formData.contact_email,
-      address_1: formData.address_1,
-      address_2: formData.address_2,
-      region_name: getLocationCode.regionName,
-      region_code: formData.region,
-      province_name: getLocationCode.provinceName,
-      province_code: formData.province,
-      city_or_municipality_name: getLocationCode.city_municipalitiesName,
-      city_or_municipality_code: formData.city_municipalities,
-      barangay_name: getLocationCode.barangayName,
-      barangay_code: formData.barangay,
-      eu_device: Cookies.get("eu"),
-    };
+      const payload = {
+        image: formData.profile[1],
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        contact_number: formData.contact_number,
+        contact_email: formData.contact_email,
+        address_1: formData.address_1,
+        address_2: formData.address_2,
+        region_name: getLocationCode.regionName,
+        region_code: formData.region,
+        province_name: getLocationCode.provinceName,
+        province_code: formData.province,
+        city_or_municipality_name: getLocationCode.city_municipalitiesName,
+        city_or_municipality_code: formData.city_municipalities,
+        barangay_name: getLocationCode.barangayName,
+        barangay_code: formData.barangay,
+        eu_device: Cookies.get("eu"),
+      };
 
-    const res = await axiosClient.post("user-info/store", payload);
+      const res = await axiosClient.post("user-info/store", payload);
 
-    if (res.status === 200) {
-      navigate("/app/menu");
+      if (res.status === 200) {
+        navigate("/app/menu");
+      }
+    } catch (error: any) {
+      if (error.response.data.message === "Token not provided") {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: error.response.data.message,
+        });
+      }
     }
-
-    // await dispatch(
-    //   completeProfile({
-    //     url: "user-info/store",
-    //     method: "POST",
-    //     data: payload,
-    //   })
-    // );
-
-    // await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
-    // dispatch(mockCompleteProfileSuccess());
   };
-
-  // useEffect(() => {
-  //   if (completeProfileStatus === "completeProfile/success") {
-  //     navigate("/app/menu");
-  //     // dispatch(resetCompleteProfileStatus());
-  //   }
-  // }, [completeProfileStatus, navigate, dispatch]);
 
   return (
     <>
@@ -718,7 +699,7 @@ const Welcome: React.FC = () => {
                       <div className="pt-10">
                         <Button
                           onClick={handleCompleteProfile}
-                          // disabled={progress !== 100}
+                          disabled={progress !== 100}
                           className="bg-bgrjavancena"
                         >
                           Submit

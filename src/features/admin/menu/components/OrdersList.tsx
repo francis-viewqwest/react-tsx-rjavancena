@@ -48,6 +48,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
 
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [payloadData, setPayloadData] = useState<any>({});
+  const [hideMessage, setHideMessage] = useState<boolean>(false);
   const [btnOperator, setBtnOperator] = useState<string>("");
   const [customerName, setCustomerName] = useState(
     customer?.customer_name || customer?.customer_id
@@ -149,6 +150,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
 
   const handleDecrementQty = (item: any) => {
     setBtnOperator("minus");
+    setHideMessage(true);
     setItemQuantities((prevQuantities: any) => {
       const currentQuantity =
         (prevQuantities[item.inventory_product_id]?.quantity ?? item.count) - 1;
@@ -188,7 +190,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
     return itemQuantities[item.inventory_product_id]?.quantity || item?.count;
   };
 
-  const handleSaveName = (purchaseGroupId: string, userId: string) => {
+  const handleSaveName = async (purchaseGroupId: string, userId: string) => {
     setIsEdit(false);
 
     const payload = {
@@ -197,7 +199,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
       customer_name: customerName,
       eu_device: Cookies.get("eu"),
     };
-    dispatch(
+    await dispatch(
       editCustomerName({
         url: "purchase/update-name",
         method: "POST",
@@ -206,6 +208,7 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
     );
   };
 
+  
   const handleEditName = (e: any) => {
     setCustomerName(e.target.value);
   };
@@ -371,11 +374,15 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
                         })}
                       </p>
                     </div>
-                    <span className="text-red-500 text-xs">
+                    <small
+                      className={`text-red-500 text-xs ${
+                        hideMessage && "hidden"
+                      }`}
+                    >
                       {errorMessage?.parameter === item?.item_code && (
                         <>{errorMessage?.item}</>
                       )}
-                    </span>
+                    </small>
                     <div className="flex w-full h-full items-center justify-between">
                       <div className="flex items-center  ">
                         <Button

@@ -10,8 +10,9 @@ import {
 } from "@/app/slice/dashboardSlice";
 import { useSelector } from "react-redux";
 import useColumnsProduct from "@/components/ui/columns";
-import { useAppDispatch } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { RouteType } from "@/interface/InterfaceType";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard: React.FC<RouteType> = (props) => {
   const status = useSelector(dashboardStatus);
@@ -20,6 +21,8 @@ const Dashboard: React.FC<RouteType> = (props) => {
   const [transactionData, setTransactionData] = useState([]);
   const columnsProduct = useColumnsProduct("transaction");
   const dispatch = useAppDispatch();
+  const voidMessage = useAppSelector((state) => state.dashboard.voidMessage);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (status === "getDashboardData/success") {
@@ -28,6 +31,16 @@ const Dashboard: React.FC<RouteType> = (props) => {
     }
     if (status === "voidPaid/success") {
       dispatch(getDashboardData({ url: props.path_key, method: "GET" }));
+      toast({
+        variant: "success",
+        title: voidMessage?.message,
+      });
+    }
+    if (status === "voidPaid/failed") {
+      toast({
+        variant: "destructive",
+        title: voidMessage?.message,
+      });
     }
   }, [status, dashData]);
 

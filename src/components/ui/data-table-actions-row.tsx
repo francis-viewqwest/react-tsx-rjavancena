@@ -34,7 +34,7 @@ import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
 
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Cookies from "js-cookie";
@@ -51,6 +51,7 @@ import {
   deleteUser,
 } from "@/app/slice/usersManagementSlice";
 import { voidPaid } from "@/app/slice/dashboardSlice";
+import { useAppDispatch } from "@/app/hooks";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -92,6 +93,15 @@ export function RowInventoryActions<TData>({
     setShowEditDialog(false);
   };
 
+  useEffect(() => {
+    modalData?.details?.forEach((detail) => {
+      if (detail.type === "file") {
+        console.log(detail.type);
+        setValue(detail.label.replace(/\s+/g, "_").toLowerCase(), detail.value);
+      }
+    });
+  }, [modalData, setValue]);
+
   const handleSaveClick = () => {
     const formValues = getValues();
 
@@ -100,17 +110,17 @@ export function RowInventoryActions<TData>({
     console.log(formValues);
 
     const payload = {
-      inventory_product_id: funcData.inventory_product_id,
-      inventory_id: funcData.inventory_id,
-      item_code: formValues.item_code,
-      name: formValues.product_name,
-      image: formValues.image[0],
-      retail_price: formValues.retail_price,
-      discounted_price: formValues.discounted_price,
-      unit_supplier_price: formValues.unit_supplier_price,
-      refundable: formValues.refundable,
-      supplier_name: formValues.supplier_name,
-      stocks: formValues.stocks,
+      inventory_product_id: funcData?.inventory_product_id,
+      inventory_id: funcData?.inventory_id,
+      item_code: formValues?.item_code,
+      name: formValues?.product_name,
+      image: formValues?.image?.[0] ?? null,
+      retail_price: formValues?.retail_price,
+      discounted_price: formValues?.discounted_price,
+      unit_supplier_price: formValues?.unit_supplier_price,
+      refundable: formValues?.refundable,
+      supplier_name: formValues?.supplier_name,
+      stocks: formValues?.stocks,
       eu_device: euDevice,
     };
 
@@ -364,12 +374,27 @@ export function RowUsersActions<TData>({
   const [funcData, setFuncData] = useState({});
   const dispatch = useDispatch();
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showEditInfoDialog, setShowEditInfoDialog] = useState(false);
   console.log(showEditDialog);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const inventoryChildError = useSelector(inventoryError);
 
   const handleEdit = (values: any) => {
+    console.log(values);
+    setFuncData(values);
+
+    values.details.forEach((val) => {
+      const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+      setValue(fieldName, val.value);
+    });
+
+    setModalData(values);
+    setShowEditDialog(true);
+    setShowRemoveDialog(false);
+  };
+
+  const handleEditInfo = (values: any) => {
     console.log(values);
     setFuncData(values);
 
@@ -454,7 +479,34 @@ export function RowUsersActions<TData>({
           <DropdownMenuSeparator />
           {row?.original?.actions?.map((act) => (
             <>
-              {act.button_name == "Edit" ? (
+              {act.button_name === "Edit account" && (
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="flex items-center w-full justify-between"
+                    onClick={() => handleEdit(act)}
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              )}
+
+              {act.button_name === "Edit user information" && (
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="flex items-center w-full justify-between"
+                    onClick={() => handleEditInfo(act)}
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              )}
+              {/* {act.button_name == "Edit account" ? (
                 <>
                   <DropdownMenuItem>
                     <DialogTrigger
@@ -482,13 +534,113 @@ export function RowUsersActions<TData>({
                     </DialogTrigger>
                   </DropdownMenuItem>
                 </>
-              )}
+              )} */}
             </>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogPortal>
         {showEditDialog && (
+          <DialogContent className="sm:max-w-[34rem]">
+            <DialogHeader>
+              <DialogTitle>Edit account details</DialogTitle>
+              <DialogDescription>
+                Edit user account details below. Update information and click
+                save to apply changes.
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-72 w-full">
+              <div className="grid gap-3 ">
+                {modalData?.details?.map((detail: any) => {
+                  return (
+                    <>
+                      <div className="grid items-center gap-2 px-2 sm:px-5 w-full">
+                        {detail.type !== "select" && (
+                          <>
+                            <Label className="font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+                            <>
+                              <Input
+                                type={detail.type}
+                                {...register(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase()
+                                )}
+                                className="col-span-4"
+                              />
+                              <small className="text-red-500 w-full col-span-3">
+                                {errorMessage?.message &&
+                                  errorMessage?.message[
+                                    _.replace(
+                                      _.lowerCase(detail.label),
+                                      " ",
+                                      "_"
+                                    )
+                                  ]}
+                              </small>
+                            </>
+                          </>
+                        )}
+                        {detail.type === "select" && (
+                          <>
+                            <Label className="font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+                            <Select
+                              onValueChange={(value) =>
+                                setValue(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase(),
+                                  value
+                                )
+                              }
+                              value={watch(detail.value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={detail.value} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  {detail?.option?.map((opt: any) => (
+                                    <SelectItem
+                                      key={opt.value}
+                                      value={opt.value}
+                                    >
+                                      {opt.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+            <DialogFooter>
+              <Button
+                className="bg-bgrjavancena"
+                type="submit"
+                onClick={() => handleSaveClick()}
+              >
+                Save changes
+              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        )}
+
+        {showEditInfoDialog && (
           <DialogContent className="sm:max-w-[34rem]">
             <DialogHeader>
               <DialogTitle>Edit account details</DialogTitle>
@@ -639,80 +791,56 @@ export function RowTransactionActions<TData>({
 
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
-  const dispatch = useDispatch();
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  console.log(showEditDialog);
-  const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const dispatch = useAppDispatch();
+  const [showVoidDialog, setShowVoidDialog] = useState(false);
+  console.log(showVoidDialog);
+  const [showRemoveDialog, setShowRemoveDialog] = useState(true);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const inventoryChildError = useSelector(inventoryError);
 
-  const handleEdit = (values: any) => {
-    console.log(values);
-    setFuncData(values);
+  // const handleEdit = (values: any) => {
+  //   console.log(values);
+  //   setFuncData(values);
 
-    values.details.forEach((val) => {
-      const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
-      setValue(fieldName, val.value);
-    });
+  //   values.details.forEach((val) => {
+  //     const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+  //     setValue(fieldName, val.value);
+  //   });
 
-    setModalData(values);
-    setShowEditDialog(true);
-    setShowRemoveDialog(false);
-  };
+  //   setModalData(values);
+  //   setShowEditDialog(true);
+  //   setShowRemoveDialog(false);
+  // };
+
+  console.log(showRemoveDialog);
+  console.log(row.original.actions);
 
   const handleRemove = (values: any) => {
     console.log(values);
     setFuncData(values);
     setModalData(values);
-    setShowRemoveDialog(true);
-    setShowEditDialog(false);
+
+    setShowVoidDialog(true);
   };
 
-  const handleSaveClick = () => {
-    const formValues = getValues();
+  const handleActionFunc = (values: any) => {
+    console.log(values);
 
-    const euDevice = Cookies.get("eu");
+    const buttonName = values.button_name;
+    console.log(buttonName);
 
-    const payload = {
-      user_id: funcData.user_id,
-      phone_number: formValues.phone_number,
-      email: formValues.email,
-      password: formValues.password,
-      password_confirmation: formValues.password_confirmation,
-      role: formValues.role,
-      status: formValues.status,
-      eu_device: euDevice,
-    };
+    switch (buttonName) {
+      case "Void":
+        setShowVoidDialog(true);
+        setFuncData(values);
+        break;
 
-    dispatch(
-      editUser({
-        url: funcData.url,
-        method: "POST",
-        data: payload,
-      })
-    );
+      default:
+        break;
+    }
   };
 
-  const handleDeleteClick = () => {
-    const euDevice = Cookies.get("eu");
-
-    const payload = {
-      user_id: funcData.user_id,
-      eu_device: euDevice,
-    };
-
-    dispatch(
-      deleteUser({
-        url: funcData.url,
-        method: funcData.method,
-        data: payload,
-      })
-    );
-  };
-
-  const handleVoidClick = (values) => {
-    console.log(values.payload_value);
-
+  const handleVoidClick = (values: any) => {
     const payload = {
       payment_id: values.payment_id,
       user_id: values.user_id,
@@ -732,16 +860,60 @@ export function RowTransactionActions<TData>({
 
   return (
     <>
-      {row?.original?.actions?.map((btn, index) => (
-        <Button
-          className="bg-bgrjavancena"
-          size="xs"
-          key={index}
-          onClick={() => handleVoidClick(btn)}
-        >
-          {btn?.button_name}
-        </Button>
-      ))}
+      {row?.original?.actions && (
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="ghost">
+                <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full">
+              <DropdownMenuLabel>Action</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {row?.original?.actions?.map((act, index) => (
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="flex items-center w-full justify-between"
+                    onClick={() => handleActionFunc(act)}
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogPortal>
+            {showVoidDialog && (
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Void Transaction(s) </DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to void the transaction(s)?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="destructive"
+                    type="submit"
+                    onClick={() => handleVoidClick(funcData)}
+                  >
+                    Delete
+                  </Button>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+          </DialogPortal>
+        </Dialog>
+      )}
     </>
   );
 }

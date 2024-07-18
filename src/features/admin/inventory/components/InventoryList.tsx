@@ -39,7 +39,7 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
 import _ from "lodash";
 import { useForm } from "react-hook-form";
@@ -61,10 +61,15 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
   const dispatch = useAppDispatch();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+  const [errorMessages, setErrorMessages] = useState({});
   const inventoryLoading = useSelector(loadingStatus);
   const imageInputRef = useRef<null>(null);
   const loadingUpdate = useAppSelector(
     (state) => state.inventory.loadingUpdate
+  );
+
+  const updateParentErrorMessage = useAppSelector(
+    (state) => state.inventory.updateParentErrorMessage
   );
 
   const { getValues, setValue, register } = useForm({});
@@ -76,6 +81,8 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
       password_confirmation: "",
     },
   });
+
+  
 
   const handleEdit = (values: any) => {
     setFuncData(values);
@@ -135,9 +142,18 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
     );
   };
 
-  const errorMessages: ErrorMessages = {
-    product_name: updateErrorMessage?.name,
-    product_category: updateErrorMessage?.category,
+  useEffect(() => {
+    setErrorMessages({
+      product_name: updateParentErrorMessage?.name,
+      product_category: updateParentErrorMessage?.category,
+    });
+  }, [updateParentErrorMessage]);
+
+  const clearErrorMessages = () => {
+    setErrorMessages({
+      product_name: "",
+      product_category: "",
+    });
   };
 
   const orderLevel = (stock: number) => {
@@ -301,7 +317,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
               </DropdownMenu>
               <DialogPortal>
                 {showEditDialog && (
-                  <DialogContent className="sm:max-w-[425px]">
+                  <DialogContent  className="sm:max-w-[425px]">
                     <DialogHeader>
                       <DialogTitle>Edit product details</DialogTitle>
                       <DialogDescription>
@@ -364,12 +380,13 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                       >
                         {loadingUpdate && (
                           <span className="flex items-center gap-1">
-                            Saving changes... <IconReload className="animate-spin" size={16} />
+                            Saving changes...{" "}
+                            <IconReload className="animate-spin" size={16} />
                           </span>
                         )}
                         {!loadingUpdate && "Save changes"}
                       </Button>
-                      <DialogClose asChild>
+                      <DialogClose onClick={clearErrorMessages} asChild>
                         <Button type="button" variant="secondary">
                           Close
                         </Button>

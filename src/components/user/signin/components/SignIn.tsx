@@ -5,8 +5,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import bgSignin from "@/assets/images/bgsignin.jpg";
-import { useEffect } from "react";
-import { setEudevice, signIn } from "@/app/slice/userSlice";
+import { useEffect, useState } from "react";
+import { setEudevice } from "@/app/slice/userSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IconReload } from "@tabler/icons-react";
@@ -26,9 +26,10 @@ const SignIn: React.FC = () => {
   } = useForm<FormValues>();
 
   const dispatch = useAppDispatch();
-  const loadingSignIn = useAppSelector((state) => state.user.loadingSignIn);
   const loadingEudevice = useAppSelector((state) => state.user.loadingEudevice);
-  const profileStatus = useAppSelector((state) => state.user.profileStatus);
+  const [loading, setLoading] = useState(false);
+
+  console.log(errors);
 
   const axiosClient = useAxiosClient();
 
@@ -53,12 +54,10 @@ const SignIn: React.FC = () => {
   }, []);
 
   const navigate = useNavigate();
-  const getUserInfo = useAppSelector((state) => state.user.userInfo);
-
-  console.log(getUserInfo.user_info);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try {
+      setLoading(true);
       const euDevice = Cookies.get("eu");
       if (!euDevice) {
         await fetchEudevice();
@@ -71,27 +70,23 @@ const SignIn: React.FC = () => {
       const res = await axiosClient.post("/login", payload);
       Cookies.set("token", res.data.token);
 
-      console.log(res);
-
       const newUSer = res.data.user_info;
-
-      console.log(newUSer);
 
       if (newUSer === "New User") {
         navigate("/welcome");
       } else if (Cookies.get("token") && newUSer === "Existing User") {
         navigate("/app/menu");
       }
-
-      // await dispatch(
-      //   signIn({
-      //     url: "/login",
-      //     method: "POST",
-      //     data: payload,
-      //   })
-      // );
     } catch (error: any) {
+      setLoading(false);
       let errorMessage = error?.response?.data?.message;
+
+      console.log(error.response.data.message);
+
+      setError("errorMessage", {
+        type: "custom",
+        message: error.response.data.message,
+      });
 
       setError("email", {
         type: "custom",
@@ -103,21 +98,6 @@ const SignIn: React.FC = () => {
       });
     }
   };
-
-  // const newUser = getUserInfo?.user_info;
-
-  // console.log(profileStatus);
-
-  // useEffect(() => {
-  //   if (newUser === "New User") {
-  //     navigate("/welcome");
-  //   } else if (
-  //     (Cookies.get("token") && newUser == "Existing User") ||
-  //     profileStatus === "completeProfile/success"
-  //   ) {
-  //     navigate("/app/menu");
-  //   }
-  // }, [getUserInfo, profileStatus, navigate]);
 
   return (
     <>
@@ -208,6 +188,11 @@ const SignIn: React.FC = () => {
                     {errors.password.message}
                   </small>
                 )}
+                {errors.errorMessage && (
+                  <small className="text-red-500 text-xs  max-w-96">
+                    {errors.errorMessage.message}
+                  </small>
+                )}
               </div>
               <div className="flex flex-col gap-4 mt-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-x-1">
@@ -222,20 +207,14 @@ const SignIn: React.FC = () => {
               </div>
               <div className="flex flex-col w-full mt-5 gap-4">
                 <Button className="font-bold bg-bgrjavancena">
-                  {loadingSignIn && (
+                  {loading && (
                     <span className="flex items-center gap-2">
                       Signing in...
                       <IconReload className="animate-spin" size={16} />
                     </span>
                   )}
-                  {!loadingSignIn && "Sign in"}
+                  {!loading && "Sign in"}
                 </Button>
-                <div className="text-sm text-center m-auto">
-                  Don’t have an account?{" "}
-                  <span className="font-bold">
-                    <Link to="/signup">Sign Up</Link>
-                  </span>
-                </div>
               </div>
             </div>
           </form>

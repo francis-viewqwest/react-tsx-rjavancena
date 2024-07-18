@@ -14,7 +14,7 @@ import {
 import { DashboardInterface } from "@/interface/InterfaceType";
 
 const SalesOverview: React.FC<DashboardInterface> = ({ data }) => {
-  const [selectedChart, setSelectedChart] = useState("year");
+  const [selectedChart, setSelectedChart] = useState("week");
   const chartKeys = Object.keys(data?.chart || {});
 
   const handleChartChange = (value: any) => {

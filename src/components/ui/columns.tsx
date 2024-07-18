@@ -50,7 +50,6 @@ const useColumnsProduct = (
 
   const baseColumns: ColumnDef<any>[] = [];
 
-  // Memoize dynamic columns based on inventoryChild dependency
   const dynamicColumns = useMemo(() => {
     const getColumns = () => {
       switch (dataSource) {

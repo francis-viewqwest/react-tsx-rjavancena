@@ -32,6 +32,9 @@ const Menu: React.FC = () => {
   const [tabCategory, setTabCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<any>([]);
+  const updateCustomer = useAppSelector((state) => state.menu.updateCustomer);
+  const removeCustomer = useAppSelector((state) => state.menu.removeCustomer);
+  const removeProduct = useAppSelector((state) => state.menu.removeProduct);
 
   useEffect(() => {
     if (menuStatus === "menuData/success") {
@@ -119,6 +122,10 @@ const Menu: React.FC = () => {
     }
 
     if (menuStatus === "editCustomerName/success") {
+      toast({
+        variant: "success",
+        title: updateCustomer?.message,
+      });
       dispatch(
         getMenuData({
           url: "inventory/product/index",
@@ -147,6 +154,10 @@ const Menu: React.FC = () => {
           method: "GET",
         })
       );
+      toast({
+        variant: "success",
+        title: removeCustomer?.message,
+      });
     }
 
     if (menuStatus === "deleteProduct/success") {
@@ -162,6 +173,10 @@ const Menu: React.FC = () => {
           method: "GET",
         })
       );
+      toast({
+        variant: "success",
+        title: removeProduct?.message,
+      });
     }
 
     if (menuStatus === "placeOrder/success") {
@@ -178,6 +193,7 @@ const Menu: React.FC = () => {
         })
       );
       toast({
+        variant: "success",
         title: menuRes?.message,
       });
     }

@@ -11,6 +11,9 @@ const initialState: menuState = {
     loading: false,
     loadingAddCart: false,
     loadingPurchase: false,
+    updateCustomer: {},
+    removeCustomer: {},
+    removeProduct: {},
     error: false,
 }
 
@@ -108,10 +111,11 @@ const menuSlice = createSlice({
             .addCase(editCustomerName.fulfilled, (state, action) => {
                 state.status = "editCustomerName/success"
                 state.data = action.payload
+                state.updateCustomer = action.payload;
             })
             .addCase(editCustomerName.rejected, (state, action) => {
-                state.status = "editCustomerName/failed",
-                    state.error = action.payload
+                state.status = "editCustomerName/failed";
+                state.error = action.payload;
             })
 
         builder
@@ -120,26 +124,28 @@ const menuSlice = createSlice({
                 state.error = null
             })
             .addCase(removeCustomerName.fulfilled, (state, action) => {
-                state.status = "removeCustomerName/success"
-                state.data = action.payload
+                state.status = "removeCustomerName/success";
+                state.removeCustomer = action.payload;
+                state.data = action.payload;
             })
             .addCase(removeCustomerName.rejected, (state, action) => {
-                state.status = "removeCustomerName/failed",
-                    state.error = action.payload
+                state.status = "removeCustomerName/failed";
+                state.error = action.payload;
             })
 
         builder
             .addCase(deleteProduct.pending, (state) => {
-                state.status = "deleteProduct/loading"
-                state.error = null
+                state.status = "deleteProduct/loading";
+                state.error = null;
             })
             .addCase(deleteProduct.fulfilled, (state, action) => {
-                state.status = "deleteProduct/success"
-                state.data = action.payload
+                state.status = "deleteProduct/success";
+                state.removeProduct = action.payload;
+                state.data = action.payload;
             })
             .addCase(deleteProduct.rejected, (state, action) => {
-                state.status = "deleteProduct/failed",
-                    state.error = action.payload
+                state.status = "deleteProduct/failed";
+                state.error = action.payload;
             })
 
         builder
@@ -243,6 +249,7 @@ export const editCustomerName = createAsyncThunk("menu/editCustomerName", async 
             data: ApiConfig.data
         })
         console.log(res)
+
         return res.data
     } catch (error: any) {
         console.log(error)

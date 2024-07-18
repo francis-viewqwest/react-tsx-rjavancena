@@ -22,6 +22,9 @@ const ProductList: React.FC = () => {
   const [data, setData] = useState<ProductType[]>([]);
   const { id } = useParams();
   const columnsProduct = useColumnsProduct("inventory");
+  const updateChildMessage = useAppSelector(
+    (state) => state.inventory.updateChildMessage
+  );
 
   const loadingTable = useAppSelector((state) => state.inventory.loadingTable);
   let { state } = useLocation();
@@ -32,7 +35,6 @@ const ProductList: React.FC = () => {
 
   useEffect(() => {
     if (inventoryLoading === "getInventoryDataChild/success") {
-      toast({ title: inventoryChild?.message || inventoryChild });
       setData(inventoryChild?.data?.inventory_product);
     }
 
@@ -41,18 +43,10 @@ const ProductList: React.FC = () => {
       dispatch(getInventoryDataChild({ url: id }));
     }
 
-    if (inventoryLoading === "createInventoryChild/failed") {
-      toast({
-        variant: "destructive",
-        title:
-          (inventoryChildError?.message && inventoryChildError) ||
-          "Uh oh! Something went wrong.",
-      });
-    }
-
     if (inventoryLoading === "updateInventoryChild/success") {
       toast({
-        title: inventoryChildError?.message || inventoryChildError,
+        variant: "success",
+        title: updateChildMessage?.message,
       });
       dispatch(getInventoryDataChild({ url: id }));
     }

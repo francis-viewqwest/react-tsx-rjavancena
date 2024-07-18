@@ -126,33 +126,10 @@ const Inventory: React.FC<RouteType> = (props) => {
       });
     }
 
-    // console.log(inventoryErrorMess.message);
-
-    if (inventoryLoading === "createInventoryParent/failed") {
-      toast({
-        variant: "destructive",
-        title:
-          (inventoryErrorMess?.message && inventoryErrorMess) ||
-          "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-    }
-
     //* UPDATE INVENTORY DATA
     if (inventoryLoading === "updateInventoryParent/success") {
       toast({ title: inventoryResData.message });
       dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
-    }
-
-    if (inventoryLoading === "updateInventoryParent/failed") {
-      toast({
-        variant: "destructive",
-        title:
-          (inventoryErrorMess?.message && inventoryErrorMess) ||
-          "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
-      });
     }
 
     //* DELETE INVENTORY DATA

@@ -8,6 +8,8 @@ const initialState: InventoryState = {
     data: {},
     status: "",
     error: false,
+    updateParentErrorMessage: false,
+    updateChildMessage: false,
     loadingTable: false,
     loadingCreate: false,
     loadingUpdate: false,
@@ -72,7 +74,7 @@ const inventorySlice = createSlice({
             .addCase(updateInventoryParent.rejected, (state, action) => {
                 state.status = "updateInventoryParent/failed";
                 state.loadingUpdate = false;
-                state.error = action.payload;
+                state.updateParentErrorMessage = action.payload;
             })
 
         //* CREATE INVENTORY 
@@ -120,6 +122,7 @@ const inventorySlice = createSlice({
             .addCase(updateInventoryChild.fulfilled, (state, action) => {
                 state.status = "updateInventoryChild/success";
                 state.data = action.payload;
+                state.updateChildMessage = action.payload;
             })
             .addCase(updateInventoryChild.rejected, (state, action) => {
                 state.status = "updateInventoryChild/failed";

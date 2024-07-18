@@ -169,6 +169,9 @@ export interface TableContextType {
 //* REDUX INTERFACE
 export interface menuState {
   data: object;
+  updateCustomer: object;
+  removeCustomer: object;
+  removeProduct: object;
   status: string;
   loading: boolean;
   loadingAddCart: boolean;
@@ -176,10 +179,19 @@ export interface menuState {
   error: string | null | any;
 }
 
+export interface DashboardState {
+  data: object;
+  status: string;
+  error: string | null | any;
+  voidMessage: string;
+}
+
 export interface InventoryState {
   data: object;
   status: string;
   error: string | null | any;
+  updateParentErrorMessage: string | null | any;
+  updateChildMessage: string | null | any;
   loadingTable: boolean;
   loadingCreate: boolean;
   loadingUpdate: boolean;
