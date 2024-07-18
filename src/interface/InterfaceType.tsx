@@ -225,6 +225,7 @@ export interface UsersManagementState {
   loading: boolean;
   loadingCreateUser: boolean;
   error: string | null | any;
+  editUserError: string | null | any;
 }
 
 export interface ApiConfig {

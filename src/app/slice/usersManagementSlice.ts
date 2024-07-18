@@ -10,6 +10,7 @@ const initialState: UsersManagementState = {
     loading: true,
     loadingCreateUser: false,
     error: false,
+    editUserError: {}
 }
 
 const usersManagementSlice = createSlice({
@@ -73,6 +74,7 @@ const usersManagementSlice = createSlice({
                 state.status = "editUser/failed";
                 state.loading = false
                 state.error = action.payload
+                state.editUserError = action.payload;
             })
 
         builder

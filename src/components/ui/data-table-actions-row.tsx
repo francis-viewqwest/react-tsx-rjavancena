@@ -51,7 +51,9 @@ import {
   deleteUser,
 } from "@/app/slice/usersManagementSlice";
 import { voidPaid } from "@/app/slice/dashboardSlice";
-import { useAppDispatch } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import useAxiosClient from "@/axios-client";
+import axios from "axios";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -370,15 +372,30 @@ export function RowUsersActions<TData>({
 
   console.log(errorMessage?.message);
 
+  const axiosClient = useAxiosClient();
+
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
   const dispatch = useDispatch();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showEditInfoDialog, setShowEditInfoDialog] = useState(false);
-  console.log(showEditDialog);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const inventoryChildError = useSelector(inventoryError);
+  const [locationsData, setLocationsData] = useState({
+    regions: [],
+    provinces: [],
+    cities: [],
+    barangays: [],
+  });
+  const [getLocationCode, setGetLocationCode] = useState({});
+
+  const editUserError = useAppSelector(
+    (state) => state.usersManagement.editUserError
+  );
+
+  console.log(editUserError);
+
+  console.log(locationsData);
 
   const handleEdit = (values: any) => {
     console.log(values);
@@ -394,6 +411,14 @@ export function RowUsersActions<TData>({
     setShowRemoveDialog(false);
   };
 
+  const onChangeSelect = (type: any, values: any) => {
+    console.log(values.code);
+    setGetLocationCode((prevState) => ({
+      ...prevState,
+      [`${type.replace(/\//g, "_").toLowerCase()}Name`]: values.name,
+    }));
+  };
+
   const handleEditInfo = (values: any) => {
     console.log(values);
     setFuncData(values);
@@ -404,9 +429,69 @@ export function RowUsersActions<TData>({
     });
 
     setModalData(values);
-    setShowEditDialog(true);
+    setShowEditDialog(false);
+    setShowEditInfoDialog(true);
     setShowRemoveDialog(false);
+
+    axios
+      .get("https://psgc.gitlab.io/api/regions/")
+      .then((res) =>
+        setLocationsData((prevState) => ({ ...prevState, regions: res.data }))
+      );
   };
+
+  const formValues = watch();
+  console.log(formValues);
+
+  const {
+    region_name,
+    province_name,
+    city_or_municipality_name,
+    barangay_name,
+  } = formValues;
+
+  useEffect(() => {
+    if (region_name) {
+      axios
+        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`)
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            provinces: res.data,
+          }))
+        );
+    }
+  }, [region_name]);
+
+  useEffect(() => {
+    if (province_name) {
+      axios
+        .get(
+          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`
+        )
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            cities: res.data,
+          }))
+        );
+    }
+  }, [province_name]);
+
+  useEffect(() => {
+    if (city_or_municipality_name) {
+      axios
+        .get(
+          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`
+        )
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            barangays: res.data,
+          }))
+        );
+    }
+  }, [city_or_municipality_name]);
 
   const handleRemove = (values: any) => {
     console.log(values);
@@ -506,35 +591,6 @@ export function RowUsersActions<TData>({
                   </DialogTrigger>
                 </DropdownMenuItem>
               )}
-              {/* {act.button_name == "Edit account" ? (
-                <>
-                  <DropdownMenuItem>
-                    <DialogTrigger
-                      className="flex items-center w-full justify-between"
-                      onClick={() => handleEdit(act)}
-                    >
-                      {act.button_name}
-                      <DropdownMenuShortcut>
-                        <Icon fontSize={16} icon={act.icon} />
-                      </DropdownMenuShortcut>
-                    </DialogTrigger>
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem>
-                    <DialogTrigger
-                      className="flex items-center w-full justify-between"
-                      onClick={() => handleRemove(act)}
-                    >
-                      {act.button_name}
-                      <DropdownMenuShortcut>
-                        <Icon fontSize={16} icon={act.icon} />
-                      </DropdownMenuShortcut>
-                    </DialogTrigger>
-                  </DropdownMenuItem>
-                </>
-              )} */}
             </>
           ))}
         </DropdownMenuContent>
@@ -643,20 +699,20 @@ export function RowUsersActions<TData>({
         {showEditInfoDialog && (
           <DialogContent className="sm:max-w-[34rem]">
             <DialogHeader>
-              <DialogTitle>Edit account details</DialogTitle>
+              <DialogTitle>Edit user information</DialogTitle>
               <DialogDescription>
                 Edit user account details below. Update information and click
                 save to apply changes.
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="h-72 w-full">
-              <div className="grid gap-3 ">
+              <div>
                 {modalData?.details?.map((detail: any) => {
                   return (
                     <>
-                      <div className="grid items-center gap-2 px-2 sm:px-5 w-full">
-                        {detail.type !== "select" && (
-                          <>
+                      <div className="grid grid-cols gap-10 px-2 sm:px-5  w-full">
+                        {detail.type === "file" && (
+                          <div className="grid gap-2 py-3">
                             <Label className="font-semibold text-xs">
                               {detail?.label}
                             </Label>
@@ -668,9 +724,9 @@ export function RowUsersActions<TData>({
                                     .replace(/\s+/g, "_")
                                     .toLowerCase()
                                 )}
-                                className="col-span-4"
+                                className="w-full"
                               />
-                              <small className="text-red-500 w-full col-span-3">
+                              <small className="text-red-500 w-full">
                                 {errorMessage?.message &&
                                   errorMessage?.message[
                                     _.replace(
@@ -681,42 +737,234 @@ export function RowUsersActions<TData>({
                                   ]}
                               </small>
                             </>
-                          </>
+                          </div>
                         )}
-                        {detail.type === "select" && (
-                          <>
-                            <Label className="font-semibold text-xs">
+                        {detail.type === "input" && (
+                          <div className="grid gap-2 py-3">
+                            <Label className="w-full font-semibold text-xs">
                               {detail?.label}
                             </Label>
-                            <Select
-                              onValueChange={(value) =>
-                                setValue(
-                                  detail.label
-                                    .replace(/\s+/g, "_")
-                                    .toLowerCase(),
-                                  value
-                                )
-                              }
-                              value={watch(detail.value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={detail.value} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  {detail?.option?.map((opt: any) => (
-                                    <SelectItem
-                                      key={opt.value}
-                                      value={opt.value}
-                                    >
-                                      {opt.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </>
+
+                            <Input
+                              type={detail.type}
+                              {...register(
+                                detail.label.replace(/\s+/g, "_").toLowerCase()
+                              )}
+                              className="w-full"
+                            />
+                            <small className="text-red-500 w-full">
+                              {errorMessage?.message &&
+                                errorMessage?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ]}
+                            </small>
+                          </div>
                         )}
+
+                        {detail.type === "select" &&
+                          detail.label === "Region Name" && (
+                            <div className="flex flex-col gap-2 py-3">
+                              <Label
+                                className="font-semibold text-xs"
+                                htmlFor={detail.label}
+                              >
+                                {detail.label}
+                              </Label>
+                              <Select
+                                onValueChange={(value) => {
+                                  const selected = locationsData.regions.find(
+                                    (region: any) => region.code === value
+                                  );
+                                  setValue(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase(),
+                                    value
+                                  );
+                                  onChangeSelect(detail.label, selected);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a region" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>Region</SelectLabel>
+                                    {Array.isArray(locationsData.regions) &&
+                                      locationsData.regions.map(
+                                        (region: any) => (
+                                          <SelectItem
+                                            key={region.code}
+                                            value={region.code}
+                                          >
+                                            {region.regionName}
+                                          </SelectItem>
+                                        )
+                                      )}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                              <small className="text-red-500 ">
+                                {editUserError?.message &&
+                                  editUserError?.message["region_name"]}
+                              </small>
+                            </div>
+                          )}
+
+                        {detail.type === "select" &&
+                          detail.label === "Province Name" && (
+                            <div className="flex flex-col gap-2 py-3">
+                              <Label
+                                className="font-semibold text-xs"
+                                htmlFor={detail.label}
+                              >
+                                {detail.label}
+                              </Label>
+                              <Select
+                                onValueChange={(value) => {
+                                  const selected =
+                                    locationsData?.provinces.find(
+                                      (province: any) => province.code === value
+                                    );
+                                  setValue(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase(),
+                                    value
+                                  );
+                                  onChangeSelect(detail.label, selected);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a province" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>Province</SelectLabel>
+                                    {Array.isArray(locationsData.provinces) &&
+                                      locationsData.provinces.map(
+                                        (prov: any) => (
+                                          <SelectItem
+                                            key={prov.code}
+                                            value={prov.code}
+                                          >
+                                            {prov.name}
+                                          </SelectItem>
+                                        )
+                                      )}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                              <small className="text-red-500">
+                                {editUserError?.message &&
+                                  editUserError?.message["province_name"]}
+                              </small>
+                            </div>
+                          )}
+
+                        {detail.type === "select" &&
+                          detail.label === "City Or Municipality Name" && (
+                            <div className="flex flex-col gap-2 py-3">
+                              <Label
+                                className="font-semibold text-xs"
+                                htmlFor={detail.label}
+                              >
+                                {detail.label}
+                              </Label>
+                              <Select
+                                onValueChange={(value) => {
+                                  const selected = locationsData.cities.find(
+                                    (municipal: any) => municipal.code === value
+                                  );
+                                  setValue(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase(),
+                                    value
+                                  );
+                                  onChangeSelect(detail.label, selected);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a City/Municipalities" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>
+                                      City/Municipalities
+                                    </SelectLabel>
+                                    {Array.isArray(locationsData.cities) &&
+                                      locationsData.cities.map((mun: any) => (
+                                        <SelectItem
+                                          key={mun.code}
+                                          value={mun.code}
+                                        >
+                                          {mun.name}
+                                        </SelectItem>
+                                      ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                              <small className="text-red-500">
+                                {editUserError?.message &&
+                                  editUserError?.message[
+                                    "city_or_municipality_name"
+                                  ]}
+                              </small>
+                            </div>
+                          )}
+
+                        {detail.type === "select" &&
+                          detail.label === "Barangay Name" && (
+                            <div className="flex flex-col gap-2 py-3">
+                              <Label
+                                className="font-semibold text-xs"
+                                htmlFor={detail.label}
+                              >
+                                {detail.label}
+                              </Label>
+                              <Select
+                                onValueChange={(value) => {
+                                  const selected = locationsData.barangays.find(
+                                    (brgy: any) => brgy.code === value
+                                  );
+                                  setValue(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase(),
+                                    value
+                                  );
+                                  onChangeSelect(detail.label, selected);
+                                }}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a barangay" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>
+                                      City/Municipalities
+                                    </SelectLabel>
+                                    {Array.isArray(locationsData.barangays) &&
+                                      locationsData.barangays.map(
+                                        (mun: any) => (
+                                          <SelectItem
+                                            key={mun.code}
+                                            value={mun.code}
+                                          >
+                                            {mun.name}
+                                          </SelectItem>
+                                        )
+                                      )}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                              <small className="text-red-500">
+                                {editUserError?.message &&
+                                  editUserError?.message["barangay_name"]}
+                              </small>
+                            </div>
+                          )}
                       </div>
                     </>
                   );
