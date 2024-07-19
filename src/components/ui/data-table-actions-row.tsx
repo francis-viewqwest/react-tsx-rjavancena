@@ -400,10 +400,8 @@ export function RowUsersActions<TData>({
     (state) => state.usersManagement.loadingEditUserInfo
   );
   const [getLocationCode, setGetLocationCode] = useState({});
-  const [getLocationName, setGetLocationName] = useState({});
 
   console.log(getLocationCode);
-  console.log(getLocationName);
 
   const editUserError = useAppSelector(
     (state) => state.usersManagement.editUserError

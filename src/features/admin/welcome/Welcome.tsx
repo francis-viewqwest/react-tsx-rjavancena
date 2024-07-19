@@ -179,8 +179,10 @@ const Welcome: React.FC = () => {
     try {
       const formData = getValues();
 
+      console.log(formData);
+
       const payload = {
-        image: formData.profile[1],
+        image: formValues?.profile?.[0] ?? null,
         first_name: formData.first_name,
         last_name: formData.last_name,
         contact_number: formData.contact_number,
@@ -198,7 +200,11 @@ const Welcome: React.FC = () => {
         eu_device: Cookies.get("eu"),
       };
 
-      const res = await axiosClient.post("user-info/store", payload);
+      const res = await axiosClient.post("user-info/store", payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (res.status === 200) {
         navigate("/app/menu");
@@ -699,7 +705,7 @@ const Welcome: React.FC = () => {
                       <div className="pt-10">
                         <Button
                           onClick={handleCompleteProfile}
-                          disabled={progress !== 100}
+                          // disabled={progress !== 100}
                           className="bg-bgrjavancena"
                         >
                           Submit
