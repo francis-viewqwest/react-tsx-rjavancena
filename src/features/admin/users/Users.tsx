@@ -8,6 +8,8 @@ import {
 } from "@/app/slice/usersManagementSlice";
 import { RouteType } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { useToast } from "@/components/ui/use-toast";
+import _ from "lodash";
 
 const Users: React.FC<RouteType> = (props) => {
   const columnsProduct = useColumnsProduct("users");
@@ -16,6 +18,13 @@ const Users: React.FC<RouteType> = (props) => {
   const [data, setData] = useState([]);
   const usersLoading = useAppSelector(loadingStatus);
   const usersParentData = useAppSelector(usersData);
+  const editUserError = useAppSelector(
+    (state) => state.usersManagement.editUserError
+  );
+  const { toast } = useToast();
+  const editUserInfoError = useAppSelector(
+    (state) => state.usersManagement.editUserInfoError
+  );
 
   useEffect(() => {
     if (usersLoading === "getUsersData/success") {
@@ -28,6 +37,28 @@ const Users: React.FC<RouteType> = (props) => {
 
     if (usersLoading === "editUser/success") {
       dispatch(getUsersData({ url: props.path_key, method: "GET" }));
+    }
+
+    if (usersLoading === "editUser/failed") {
+      if (typeof editUserError?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: editUserError?.message,
+        });
+      }
+    }
+
+    if (usersLoading === "editUserInfo/success") {
+      dispatch(getUsersData({ url: props.path_key, method: "GET" }));
+    }
+
+    if (usersLoading === "editUserInfo/failed") {
+      if (typeof editUserInfoError?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: editUserInfoError?.message,
+        });
+      }
     }
 
     if (usersLoading === "deleteUser/success") {

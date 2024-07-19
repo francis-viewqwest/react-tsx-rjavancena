@@ -9,6 +9,8 @@ const initialState: UsersManagementState = {
     status: "",
     loading: true,
     loadingCreateUser: false,
+    loadingEditUser: false,
+    loadingEditUserInfo: false,
     error: false,
     editUserError: {},
     editUserInfoError: {}
@@ -64,16 +66,19 @@ const usersManagementSlice = createSlice({
             .addCase(editUser.pending, (state) => {
                 state.status = "editUser/loading";
                 state.loading = true;
+                state.loadingEditUser = true;
                 state.error = null
             })
             .addCase(editUser.fulfilled, (state, action) => {
                 state.status = "editUser/success";
                 state.loading = false;
+                state.loadingEditUser = false;
                 state.error = action.payload;
             })
             .addCase(editUser.rejected, (state, action) => {
                 state.status = "editUser/failed";
-                state.loading = false
+                state.loading = false;
+                state.loadingEditUser = false;
                 state.error = action.payload
                 state.editUserError = action.payload;
             })
@@ -81,16 +86,19 @@ const usersManagementSlice = createSlice({
             .addCase(editUserInfo.pending, (state) => {
                 state.status = "editUserInfo/loading";
                 state.loading = true;
+                state.loadingEditUserInfo = true;
                 state.error = null
             })
             .addCase(editUserInfo.fulfilled, (state, action) => {
                 state.status = "editUserInfo/success";
                 state.loading = false;
+                state.loadingEditUserInfo = false;
                 state.error = action.payload;
             })
             .addCase(editUserInfo.rejected, (state, action) => {
                 state.status = "editUserInfo/failed";
                 state.loading = false
+                state.loadingEditUserInfo = false;
                 state.error = action.payload
                 state.editUserInfoError = action.payload;
             })

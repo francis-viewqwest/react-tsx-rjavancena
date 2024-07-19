@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import phFlag from "@/assets/images/phflag.svg";
 import {
   Select,
   SelectContent,
@@ -10,6 +11,7 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
+import { IconReload } from "@tabler/icons-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
@@ -370,6 +372,9 @@ export function RowUsersActions<TData>({
     useForm({});
 
   const errorMessage = useSelector(usersError);
+  const editUserInfoError = useAppSelector(
+    (state) => state.usersManagement.editUserInfoError
+  );
 
   console.log(errorMessage?.message);
 
@@ -388,9 +393,17 @@ export function RowUsersActions<TData>({
     cities: [],
     barangays: [],
   });
+  const loadingEditUser = useAppSelector(
+    (state) => state.usersManagement.loadingEditUser
+  );
+  const loadingEditUserInfo = useAppSelector(
+    (state) => state.usersManagement.loadingEditUserInfo
+  );
   const [getLocationCode, setGetLocationCode] = useState({});
+  const [getLocationName, setGetLocationName] = useState({});
 
   console.log(getLocationCode);
+  console.log(getLocationName);
 
   const editUserError = useAppSelector(
     (state) => state.usersManagement.editUserError
@@ -446,12 +459,7 @@ export function RowUsersActions<TData>({
   const formValues = watch();
   console.log(formValues);
 
-  const {
-    region_name,
-    province_name,
-    city_or_municipality_name,
-    barangay_name,
-  } = formValues;
+  const { region_name, province_name, city_or_municipality_name } = formValues;
 
   useEffect(() => {
     if (region_name) {
@@ -502,6 +510,7 @@ export function RowUsersActions<TData>({
     setModalData(values);
     setShowRemoveDialog(true);
     setShowEditDialog(false);
+    setShowEditInfoDialog(false);
   };
 
   const handleSaveClick = () => {
@@ -530,10 +539,24 @@ export function RowUsersActions<TData>({
     );
   };
 
-  const handleSaveUserInfo = () => {
+  const handleSaveUserInfo = (values) => {
     const formValues = getValues();
 
-    console.log(formValues);
+    const regionName =
+      values.details.find((detail: any) => detail.label === "Region Name")
+        ?.value_name || getLocationCode.region_name;
+    const barangayName =
+      values.details.find((detail: any) => detail.label === "Barangay Name")
+        ?.value_name || getLocationCode.barangay_name;
+    const citiesName =
+      values.details.find(
+        (detail: any) => detail.label === "City Or Municipality Name"
+      )?.value_name || getLocationCode.city_or_municipality_name;
+    const provinceName =
+      values.details.find((detail: any) => detail.label === "Province Name")
+        ?.value_name || getLocationCode.province_name;
+
+    console.log(regionName);
 
     const payload = {
       user_id: funcData.user_id,
@@ -549,10 +572,10 @@ export function RowUsersActions<TData>({
       province_code: formValues.province_name,
       city_or_municipality_code: formValues.city_or_municipality_name,
       barangay_code: formValues.barangay_name,
-      barangay_name: getLocationCode.barangay_name,
-      city_or_municipality_name: getLocationCode.city_or_municipality_name,
-      province_name: getLocationCode.province_name,
-      region_name: getLocationCode.region_name,
+      barangay_name: barangayName,
+      city_or_municipality_name: citiesName,
+      province_name: provinceName,
+      region_name: regionName,
       eu_device: Cookies.get("eu"),
     };
 
@@ -584,10 +607,6 @@ export function RowUsersActions<TData>({
     );
   };
 
-  const errorMessages = {
-    password: errorMessage?.message?.password,
-  };
-
   return (
     <Dialog>
       <DropdownMenu>
@@ -607,7 +626,7 @@ export function RowUsersActions<TData>({
                     className="flex items-center w-full justify-between"
                     onClick={() => handleEdit(act)}
                   >
-                    {act.button_name}
+                    Account
                     <DropdownMenuShortcut>
                       <Icon fontSize={16} icon={act.icon} />
                     </DropdownMenuShortcut>
@@ -620,6 +639,20 @@ export function RowUsersActions<TData>({
                   <DialogTrigger
                     className="flex items-center w-full justify-between"
                     onClick={() => handleEditInfo(act)}
+                  >
+                    Info
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              )}
+
+              {act.button_name === "Delete" && (
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="flex items-center w-full justify-between"
+                    onClick={() => handleRemove(act)}
                   >
                     {act.button_name}
                     <DropdownMenuShortcut>
@@ -722,7 +755,13 @@ export function RowUsersActions<TData>({
                 type="submit"
                 onClick={() => handleSaveClick()}
               >
-                Save changes
+                {loadingEditUser && (
+                  <span className="flex items-center gap-1">
+                    Saving...
+                    <IconReload className="animate-spin" size={16} />
+                  </span>
+                )}
+                {!loadingEditUser && "  Save changes"}
               </Button>
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
@@ -799,18 +838,29 @@ export function RowUsersActions<TData>({
                         )}
 
                         {detail.type === "number" && (
-                          <div className="grid gap-2 py-3">
+                          <div className="grid gap-2 py-3 relative">
                             <Label className="w-full font-semibold text-xs">
                               {detail?.label}
                             </Label>
-
-                            <Input
-                              maxLength={10}
-                              {...register(
-                                detail.label.replace(/\s+/g, "_").toLowerCase()
-                              )}
-                              className="w-full"
-                            />
+                            <div className="flex items-center relative z-10">
+                              <img
+                                className="w-5 absolute right-4"
+                                src={phFlag}
+                                alt=""
+                              />
+                              <span className="absolute right-10 text-xs">
+                                +63
+                              </span>
+                              <Input
+                                maxLength={10}
+                                {...register(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase()
+                                )}
+                                className="w-full"
+                              />
+                            </div>
                             <small className="text-red-500 w-full">
                               {errorMessage?.message &&
                                 errorMessage?.message[
@@ -864,9 +914,19 @@ export function RowUsersActions<TData>({
                                   );
                                   onChangeSelect(detail.label, selected);
                                 }}
+                                // defaultValue={setValue(
+                                //   detail.label
+                                //     .replace(/\s+/g, "_")
+                                //     .toLowerCase(),
+                                //   detail.value_name
+                                // )}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a region" />
+                                  <SelectValue
+                                    placeholder={
+                                      detail.value_name || "Select a region"
+                                    }
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
@@ -886,8 +946,8 @@ export function RowUsersActions<TData>({
                                 </SelectContent>
                               </Select>
                               <small className="text-red-500 ">
-                                {editUserError?.message &&
-                                  editUserError?.message["region_name"]}
+                                {editUserInfoError?.message &&
+                                  editUserInfoError?.message["region_name"]}
                               </small>
                             </div>
                           )}
@@ -917,7 +977,11 @@ export function RowUsersActions<TData>({
                                 }}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a province" />
+                                  <SelectValue
+                                    placeholder={
+                                      detail.value_name || "Select a province"
+                                    }
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
@@ -937,8 +1001,8 @@ export function RowUsersActions<TData>({
                                 </SelectContent>
                               </Select>
                               <small className="text-red-500">
-                                {editUserError?.message &&
-                                  editUserError?.message["province_name"]}
+                                {editUserInfoError?.message &&
+                                  editUserInfoError?.message["province_name"]}
                               </small>
                             </div>
                           )}
@@ -967,7 +1031,12 @@ export function RowUsersActions<TData>({
                                 }}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a City/Municipalities" />
+                                  <SelectValue
+                                    placeholder={
+                                      detail.value_name ||
+                                      "Select a City/Municipalities"
+                                    }
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
@@ -987,8 +1056,8 @@ export function RowUsersActions<TData>({
                                 </SelectContent>
                               </Select>
                               <small className="text-red-500">
-                                {editUserError?.message &&
-                                  editUserError?.message[
+                                {editUserInfoError?.message &&
+                                  editUserInfoError?.message[
                                     "city_or_municipality_name"
                                   ]}
                               </small>
@@ -1019,7 +1088,11 @@ export function RowUsersActions<TData>({
                                 }}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a barangay" />
+                                  <SelectValue
+                                    placeholder={
+                                      detail.value_name || "Select a barangay"
+                                    }
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
@@ -1041,8 +1114,8 @@ export function RowUsersActions<TData>({
                                 </SelectContent>
                               </Select>
                               <small className="text-red-500">
-                                {editUserError?.message &&
-                                  editUserError?.message["barangay_name"]}
+                                {editUserInfoError?.message &&
+                                  editUserInfoError?.message["barangay_name"]}
                               </small>
                             </div>
                           )}
@@ -1056,9 +1129,15 @@ export function RowUsersActions<TData>({
               <Button
                 className="bg-bgrjavancena"
                 type="submit"
-                onClick={() => handleSaveUserInfo()}
+                onClick={() => handleSaveUserInfo(modalData)}
               >
-                Save changes
+                {loadingEditUserInfo && (
+                  <span className="flex items-center gap-1">
+                    Saving...
+                    <IconReload className="animate-spin" size={16} />
+                  </span>
+                )}
+                {!loadingEditUserInfo && "  Save changes"}
               </Button>
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
