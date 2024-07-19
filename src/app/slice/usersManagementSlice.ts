@@ -10,7 +10,8 @@ const initialState: UsersManagementState = {
     loading: true,
     loadingCreateUser: false,
     error: false,
-    editUserError: {}
+    editUserError: {},
+    editUserInfoError: {}
 }
 
 const usersManagementSlice = createSlice({
@@ -75,6 +76,23 @@ const usersManagementSlice = createSlice({
                 state.loading = false
                 state.error = action.payload
                 state.editUserError = action.payload;
+            })
+        builder
+            .addCase(editUserInfo.pending, (state) => {
+                state.status = "editUserInfo/loading";
+                state.loading = true;
+                state.error = null
+            })
+            .addCase(editUserInfo.fulfilled, (state, action) => {
+                state.status = "editUserInfo/success";
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(editUserInfo.rejected, (state, action) => {
+                state.status = "editUserInfo/failed";
+                state.loading = false
+                state.error = action.payload
+                state.editUserInfoError = action.payload;
             })
 
         builder
@@ -143,6 +161,23 @@ export const editUser = createAsyncThunk("usersManagement/editUser", async (apic
         return rejectWithValue(error.response.data)
     }
 })
+
+export const editUserInfo = createAsyncThunk("usersManagement/editUserInfo", async (apiconfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: apiconfig.url,
+            method: apiconfig.method,
+            data: apiconfig.data
+        })
+
+        return res.data
+
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
 
 export const deleteUser = createAsyncThunk("usersManagement/deleteUser", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {

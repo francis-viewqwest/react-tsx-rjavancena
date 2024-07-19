@@ -49,6 +49,7 @@ import {
   editUser,
   usersError,
   deleteUser,
+  editUserInfo,
 } from "@/app/slice/usersManagementSlice";
 import { voidPaid } from "@/app/slice/dashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
@@ -389,6 +390,8 @@ export function RowUsersActions<TData>({
   });
   const [getLocationCode, setGetLocationCode] = useState({});
 
+  console.log(getLocationCode);
+
   const editUserError = useAppSelector(
     (state) => state.usersManagement.editUserError
   );
@@ -415,7 +418,7 @@ export function RowUsersActions<TData>({
     console.log(values.code);
     setGetLocationCode((prevState) => ({
       ...prevState,
-      [`${type.replace(/\//g, "_").toLowerCase()}Name`]: values.name,
+      [`${type.replace(/\s+/g, "_").toLowerCase()}`]: values.name,
     }));
   };
 
@@ -423,7 +426,7 @@ export function RowUsersActions<TData>({
     console.log(values);
     setFuncData(values);
 
-    values.details.forEach((val) => {
+    values.details.forEach((val: any) => {
       const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
       setValue(fieldName, val.value);
     });
@@ -506,23 +509,57 @@ export function RowUsersActions<TData>({
 
     console.log(formValues);
 
-    const euDevice = Cookies.get("eu");
-
     const payload = {
       user_id: funcData.user_id,
-      phone_number: formValues.phone_number,
       email: formValues.email,
       password: formValues.password,
       password_confirmation: formValues.password_confirmation,
       role: formValues.role,
       status: formValues.status,
-      eu_device: euDevice,
+      eu_device: Cookies.get("eu"),
     };
 
     console.log(payload);
 
     dispatch(
       editUser({
+        url: funcData.url,
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleSaveUserInfo = () => {
+    const formValues = getValues();
+
+    console.log(formValues);
+
+    const payload = {
+      user_id: funcData.user_id,
+      first_name: formValues.first_name,
+      middle_name: formValues.middle_name,
+      last_name: formValues.last_name,
+      contact_number: formValues.contact_number,
+      contact_email: formValues.contact_email,
+      address_1: formValues.address_1,
+      address_2: formValues.address_2,
+      phone_number: formValues.phone_number,
+      region_code: formValues.region_name,
+      province_code: formValues.province_name,
+      city_or_municipality_code: formValues.city_or_municipality_name,
+      barangay_code: formValues.barangay_name,
+      barangay_name: getLocationCode.barangay_name,
+      city_or_municipality_name: getLocationCode.city_or_municipality_name,
+      province_name: getLocationCode.province_name,
+      region_name: getLocationCode.region_name,
+      eu_device: Cookies.get("eu"),
+    };
+
+    console.log(payload);
+
+    dispatch(
+      editUserInfo({
         url: funcData.url,
         method: "POST",
         data: payload,
@@ -761,6 +798,50 @@ export function RowUsersActions<TData>({
                           </div>
                         )}
 
+                        {detail.type === "number" && (
+                          <div className="grid gap-2 py-3">
+                            <Label className="w-full font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+
+                            <Input
+                              maxLength={10}
+                              {...register(
+                                detail.label.replace(/\s+/g, "_").toLowerCase()
+                              )}
+                              className="w-full"
+                            />
+                            <small className="text-red-500 w-full">
+                              {errorMessage?.message &&
+                                errorMessage?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ]}
+                            </small>
+                          </div>
+                        )}
+
+                        {detail.type === "email" && (
+                          <div className="grid gap-2 py-3">
+                            <Label className="w-full font-semibold text-xs">
+                              {detail?.label}
+                            </Label>
+
+                            <Input
+                              type={detail.type}
+                              {...register(
+                                detail.label.replace(/\s+/g, "_").toLowerCase()
+                              )}
+                              className="w-full"
+                            />
+                            <small className="text-red-500 w-full">
+                              {errorMessage?.message &&
+                                errorMessage?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ]}
+                            </small>
+                          </div>
+                        )}
+
                         {detail.type === "select" &&
                           detail.label === "Region Name" && (
                             <div className="flex flex-col gap-2 py-3">
@@ -975,7 +1056,7 @@ export function RowUsersActions<TData>({
               <Button
                 className="bg-bgrjavancena"
                 type="submit"
-                onClick={() => handleSaveClick()}
+                onClick={() => handleSaveUserInfo()}
               >
                 Save changes
               </Button>
