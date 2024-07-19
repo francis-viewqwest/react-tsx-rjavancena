@@ -99,7 +99,6 @@ const useColumnsProduct = (
             }
             if (columnHeader.includes("image")) {
               const imageUrl = row.getValue(accessorKey);
-              console.log(imageUrl);
 
               return (
                 <>
@@ -108,7 +107,7 @@ const useColumnsProduct = (
                   ) : (
                     <img
                       className="h-11 w-11 bg-cover bg-no-repeat"
-                      src={`${imageUrl}`}
+                      src={imageUrl}
                       alt=""
                     />
                   )}

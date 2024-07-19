@@ -542,6 +542,8 @@ export function RowUsersActions<TData>({
   const handleSaveUserInfo = (values) => {
     const formValues = getValues();
 
+    console.log(formValues);
+
     const regionName =
       values.details.find((detail: any) => detail.label === "Region Name")
         ?.value_name || getLocationCode.region_name;
@@ -560,6 +562,7 @@ export function RowUsersActions<TData>({
 
     const payload = {
       user_id: funcData.user_id,
+      image: formValues?.image?.[0] ?? null,
       first_name: formValues.first_name,
       middle_name: formValues.middle_name,
       last_name: formValues.last_name,

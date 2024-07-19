@@ -173,6 +173,7 @@ export const editUser = createAsyncThunk("usersManagement/editUser", async (apic
 export const editUserInfo = createAsyncThunk("usersManagement/editUserInfo", async (apiconfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
+            headers: { "Content-Type": "multipart/form-data", },
             url: apiconfig.url,
             method: apiconfig.method,
             data: apiconfig.data
