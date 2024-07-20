@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectTitle } from "../common/appSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,6 +6,30 @@ import { IconBell, IconMessage, IconLogout } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import phFlag from "@/assets/images/phflag.svg";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+
+export function SeparatorDemo() {
+  return (
+    <div>
+      <div className="space-y-1">
+        <h4 className="text-sm font-medium leading-none">Radix Primitives</h4>
+        <p className="text-sm text-muted-foreground">
+          An open-source UI component library.
+        </p>
+      </div>
+      <Separator className="my-4" />
+      <div className="flex h-5 items-center space-x-4 text-sm">
+        <div>Blog</div>
+        <Separator orientation="vertical" />
+        <div>Docs</div>
+        <Separator orientation="vertical" />
+        <div>Source</div>
+      </div>
+    </div>
+  );
+}
+
+import { Icon } from "@iconify/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,19 +49,38 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { IconReload } from "@tabler/icons-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { DialogClose, DialogPortal } from "@radix-ui/react-dialog";
-import _ from "lodash";
+import _, { method } from "lodash";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import Cookies from "js-cookie";
 import useAxiosClient from "@/axios-client";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  resendCodeEmail,
+  settingsProfile,
+  updateEmailProfile,
+  updatePasswordProfile,
+  updateSettingsProfile,
+  uploadImage,
+} from "@/app/slice/userSlice";
 
 const Header: React.FC = () => {
   const pageTitle = useSelector(selectTitle);
@@ -52,6 +95,98 @@ const Header: React.FC = () => {
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
   const [showEditInfoDialog, setShowEditInfoDialog] = useState(false);
+  const [showViewProfileDialog, setViewProfileDialog] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("profile");
+
+  console.log(selectedTab);
+
+  const settingsProfileData = useAppSelector(
+    (state) => state.user.settingsProfileData
+  );
+  const updateEmailProfileData = useAppSelector(
+    (state) => state.user.updateEmailProfileData
+  );
+
+  const updatePasswordProfileData = useAppSelector(
+    (state) => state.user.updatePasswordProfileData
+  );
+
+  console.log(updatePasswordProfileData);
+
+  const settingsActions = settingsProfileData?.data?.user_information?.actions;
+
+  const userStatus = useAppSelector((state) => state.user.status);
+  const updateSettingsProfileData = useAppSelector(
+    (state) => state.user.updateSettingsProfileData
+  );
+
+  const profileData = settingsProfileData?.data?.user_information;
+
+  const { toast } = useToast();
+
+  const [selectedImage, setSelectedImage] = useState(
+    "https://github.com/shadcn.png"
+  );
+
+  useEffect(() => {
+    if (userStatus === "updateSettingsProfile/failed") {
+      if (typeof updateSettingsProfileData?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: updateSettingsProfileData?.message,
+        });
+      }
+    }
+
+    if (userStatus === "updateEmailProfile/failed") {
+      if (typeof updateEmailProfileData?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: updateEmailProfileData?.message,
+        });
+      }
+    }
+
+    if (userStatus === "updatePasswordProfile/failed") {
+      if (typeof updatePasswordProfileData?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: updatePasswordProfileData?.message,
+        });
+      }
+    }
+  }, [userStatus]);
+
+  useEffect(() => {
+    const actionProfile =
+      settingsActions &&
+      settingsActions.find(
+        (button: any) => button.button_name === "Edit account"
+      );
+    if (actionProfile) {
+      actionProfile.details.forEach((val: any) => {
+        const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+        setValue(fieldName, val.value);
+      });
+
+      setModalData(actionProfile);
+    }
+  }, [settingsActions]);
+
+  const actionPassword =
+    settingsActions &&
+    settingsActions.find(
+      (buttonName: any) => buttonName.button_name === "Edit Password"
+    );
+
+  useEffect(() => {
+    dispatch(
+      settingsProfile({
+        url: "user-info/get-personal-info",
+        method: "GET",
+      })
+    );
+  }, []);
 
   const token = Cookies.get("token");
   const euDevice = Cookies.get("eu");
@@ -86,30 +221,27 @@ const Header: React.FC = () => {
     cities: [],
     barangays: [],
   });
+  const [countdown, setCountdown] = useState({ email: 0, password: 0 });
 
-  const handleEditInfo = () => {
-    // console.log(values);
-    // setFuncData(values);
-
-    // values.details.forEach((val: any) => {
-    //   const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
-    //   setValue(fieldName, val.value);
-    // });
-
-    // setModalData(values);
-
-    setShowEditInfoDialog(true);
-
-    // axios
-    //   .get("https://psgc.gitlab.io/api/regions/")
-    //   .then((res) =>
-    //     setLocationsData((prevState) => ({ ...prevState, regions: res.data }))
-    //   );
+  const handleViewProfile = () => {
+    setShowEditInfoDialog(false);
+    setViewProfileDialog(true);
   };
 
-  const handleSaveUserInfo = (values) => {
+  const handleEditInfo = () => {
+    setShowEditInfoDialog(true);
+    setViewProfileDialog(false);
+  };
+
+  const formValues = watch();
+  console.log(formValues);
+
+  const { region_name, province_name, city_or_municipality_name } = formValues;
+
+  const handleUpdateUser = (values: any) => {
     const formValues = getValues();
 
+    console.log(values);
     console.log(formValues);
 
     const regionName =
@@ -152,13 +284,204 @@ const Header: React.FC = () => {
 
     console.log(payload);
 
-    // dispatch(
-    //   editUserInfo({
-    //     url: funcData.url,
-    //     method: "POST",
-    //     data: payload,
-    //   })
-    // );
+    dispatch(
+      updateSettingsProfile({
+        url: modalData.url,
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleUpdateEmail = () => {
+    const formValues = getValues();
+
+    const payload = {
+      new_email: formValues.email,
+      current_password: formValues.password,
+      verification_number: formValues.verification_number,
+      eu_device: Cookies.get("eu"),
+    };
+
+    console.log(formValues);
+
+    dispatch(
+      updateEmailProfile({
+        url: "user-info/update-email",
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleUpdatePassword = () => {
+    const formValues = getValues();
+
+    const payload = {
+      current_password: formValues.current_password,
+      password: formValues.password,
+      password_confirmation: formValues.confirm_password,
+      verification_number: formValues.verification_number,
+      eu_device: Cookies.get("eu"),
+    };
+
+    console.log(formValues);
+
+    dispatch(
+      updatePasswordProfile({
+        url: "user-info/update-password",
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  useEffect(() => {
+    const savedCountdown = Cookies.get("countdowns");
+    if (savedCountdown) {
+      const remainingTimes = JSON.parse(savedCountdown);
+      setCountdown(remainingTimes);
+    }
+  }, []);
+
+  const handleResendCodeEmail = () => {
+    setCountdown((prev) => ({ ...prev, email: 32 }));
+
+    const payload = {
+      eu_device: Cookies.get("eu"),
+    };
+    dispatch(
+      resendCodeEmail({
+        url: "user-info/resend-code-email",
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleResendCodePassword = () => {
+    setCountdown((prev) => ({ ...prev, password: 32 }));
+
+    const payload = {
+      eu_device: Cookies.get("eu"),
+    };
+    dispatch(
+      resendCodeEmail({
+        url: "user-info/resend-code-password",
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  useEffect(() => {
+    const timerEmail =
+      countdown.email > 0
+        ? setTimeout(
+            () => setCountdown((prev) => ({ ...prev, email: prev.email - 1 })),
+            1000
+          )
+        : null;
+    const timerPassword =
+      countdown.password > 0
+        ? setTimeout(
+            () =>
+              setCountdown((prev) => ({
+                ...prev,
+                password: prev.password - 1,
+              })),
+            1000
+          )
+        : null;
+
+    if (countdown.email > 0 || countdown.password > 0) {
+      Cookies.set("countdowns", JSON.stringify(countdown), { expires: 1 }); // Save countdowns to cookies
+    } else {
+      Cookies.remove("countdowns"); // Remove the cookie when both countdowns are 0
+    }
+
+    return () => {
+      clearTimeout(timerEmail);
+      clearTimeout(timerPassword);
+    };
+  }, [countdown]);
+
+  useEffect(() => {
+    axios
+      .get("https://psgc.gitlab.io/api/regions/")
+      .then((res) =>
+        setLocationsData((prevState) => ({ ...prevState, regions: res.data }))
+      );
+  }, []);
+
+  useEffect(() => {
+    if (region_name) {
+      axios
+        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`)
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            provinces: res.data,
+          }))
+        );
+    }
+  }, [region_name]);
+
+  useEffect(() => {
+    if (province_name) {
+      axios
+        .get(
+          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`
+        )
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            cities: res.data,
+          }))
+        );
+    }
+  }, [province_name]);
+
+  useEffect(() => {
+    if (city_or_municipality_name) {
+      axios
+        .get(
+          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`
+        )
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            barangays: res.data,
+          }))
+        );
+    }
+  }, [city_or_municipality_name]);
+
+  const onChangeSelect = (type: any, values: any) => {
+    console.log(values.code);
+    setGetLocationCode((prevState) => ({
+      ...prevState,
+      [`${type.replace(/\s+/g, "_").toLowerCase()}`]: values.name,
+    }));
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      const payload = {
+        image: imageUrl,
+        eu_device: Cookies.get("eu"),
+      };
+      setSelectedImage(imageUrl);
+      dispatch(
+        uploadImage({
+          url: "user-info/update-image",
+          method: "POST",
+          data: payload,
+        })
+      );
+    }
   };
 
   return (
@@ -210,9 +533,19 @@ const Header: React.FC = () => {
                         <DropdownMenuItem className="cursor-pointer">
                           <DialogTrigger
                             className="flex items-center w-full justify-between"
-                            onClick={() => handleEditInfo()}
+                            onClick={() => handleViewProfile()}
                           >
                             Profile
+                          </DialogTrigger>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem className="cursor-pointer">
+                          <DialogTrigger
+                            className="flex items-center w-full justify-between"
+                            onClick={() => handleEditInfo()}
+                          >
+                            Settings
                           </DialogTrigger>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
@@ -234,23 +567,656 @@ const Header: React.FC = () => {
                 {showEditInfoDialog && (
                   <DialogContent className="sm:max-w-[34rem]">
                     <DialogHeader>
-                      <DialogTitle>Edit user information</DialogTitle>
-                      <DialogDescription>
-                        Edit user account details below. Update information and
-                        click save to apply changes.
-                      </DialogDescription>
+                      <DialogTitle>Profile settings</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="h-72 w-full">
-                      <div></div>
+                      <div className="mx-4">
+                        <div className="flex items-center gap-4">
+                          <div className="relative">
+                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
+                              <Input
+                                className="absolute bottom-0 h-full opacity-0"
+                                type="file"
+                                onChange={handleImageChange}
+                              />
+                              <AvatarImage src={selectedImage} alt="@shadcn" />
+                              <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <div className="bg-blue-500 z-10 w-7 h-7 top-14 right-0 rounded-full absolute items-center justify-center flex flex-col m-auto">
+                              <Icon
+                                className="z-10 text-white"
+                                fontSize={14}
+                                icon="tabler:camera-filled"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <h1 className="text-md font-semibold">
+                              {profileData.first_name} {""}{" "}
+                              {profileData.middle_name} {""}{" "}
+                              {profileData.last_name}
+                            </h1>
+                            <h1 className="text-sm text-neutral-500">
+                              Super Admin
+                            </h1>
+                          </div>
+                        </div>
+                        <Tabs defaultValue="profile" className="w-full pt-7">
+                          <TabsList className="w-full">
+                            <TabsTrigger
+                              className="w-full data-[state=active]:font-bold"
+                              value="profile"
+                              onClick={() => setSelectedTab("profile")}
+                            >
+                              Profile Information
+                            </TabsTrigger>
+                            <TabsTrigger
+                              className="w-full data-[state=active]:font-bold"
+                              value="email"
+                              onClick={() => setSelectedTab("email")}
+                            >
+                              Change Email
+                            </TabsTrigger>
+                            <TabsTrigger
+                              className="w-full data-[state=active]:font-bold"
+                              value="password"
+                              onClick={() => setSelectedTab("password")}
+                            >
+                              Change Password
+                            </TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="profile">
+                            <div className="py-10 flex flex-col gap-6">
+                              {modalData?.details.map((detail) => (
+                                <>
+                                  {detail.type === "input" && (
+                                    <div className="grid w-full items-center gap-1.5">
+                                      <Label>{detail.label}</Label>
+                                      <Input
+                                        type={detail.type}
+                                        {...register(
+                                          detail.label
+                                            .replace(/\s+/g, "_")
+                                            .toLowerCase()
+                                        )}
+                                      />
+                                      <small className="text-red-500 w-full">
+                                        {updateSettingsProfileData?.message &&
+                                          updateSettingsProfileData?.message[
+                                            _.replace(
+                                              _.lowerCase(detail.label),
+                                              " ",
+                                              "_"
+                                            )
+                                          ]}
+                                      </small>
+                                    </div>
+                                  )}
+
+                                  {detail.type === "email" && (
+                                    <div className="grid w-full items-center gap-1.5">
+                                      <Label>{detail.label}</Label>
+                                      <Input
+                                        type={detail.type}
+                                        {...register(
+                                          detail.label
+                                            .replace(/\s+/g, "_")
+                                            .toLowerCase()
+                                        )}
+                                      />
+                                      <small className="text-red-500 w-full">
+                                        {updateSettingsProfileData?.message &&
+                                          updateSettingsProfileData?.message[
+                                            _.replace(
+                                              _.lowerCase(detail.label),
+                                              " ",
+                                              "_"
+                                            )
+                                          ]}
+                                      </small>
+                                    </div>
+                                  )}
+
+                                  {detail.type === "number" && (
+                                    <div className="grid w-full items-center gap-1.5">
+                                      <Label>{detail.label}</Label>
+                                      <Input
+                                        type={detail.type}
+                                        {...register(
+                                          detail.label
+                                            .replace(/\s+/g, "_")
+                                            .toLowerCase()
+                                        )}
+                                      />
+                                      <small className="text-red-500 w-full">
+                                        {updateSettingsProfileData?.message &&
+                                          updateSettingsProfileData?.message[
+                                            _.replace(
+                                              _.lowerCase(detail.label),
+                                              " ",
+                                              "_"
+                                            )
+                                          ]}
+                                      </small>
+                                    </div>
+                                  )}
+
+                                  {detail.type === "select" &&
+                                    detail.label === "Region Name" && (
+                                      <div className="grid w-full items-center gap-1.5">
+                                        <Label className="text-neutral-600">
+                                          {detail.label}
+                                        </Label>
+                                        <Select
+                                          onValueChange={(value) => {
+                                            const selected =
+                                              locationsData.regions.find(
+                                                (region: any) =>
+                                                  region.code === value
+                                              );
+                                            setValue(
+                                              detail.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase(),
+                                              value
+                                            );
+                                            onChangeSelect(
+                                              detail.label,
+                                              selected
+                                            );
+                                          }}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue
+                                              placeholder={
+                                                detail.value_name ||
+                                                "Select a region"
+                                              }
+                                            />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectGroup>
+                                              <SelectLabel>Region</SelectLabel>
+                                              {Array.isArray(
+                                                locationsData.regions
+                                              ) &&
+                                                locationsData.regions.map(
+                                                  (region: any) => (
+                                                    <SelectItem
+                                                      key={region.code}
+                                                      value={region.code}
+                                                    >
+                                                      {region.regionName}
+                                                    </SelectItem>
+                                                  )
+                                                )}
+                                            </SelectGroup>
+                                          </SelectContent>
+                                        </Select>
+                                        <small className="text-red-500">
+                                          {updateSettingsProfileData &&
+                                            updateSettingsProfileData
+                                              ?.message?.["region_name"]}
+                                        </small>
+                                      </div>
+                                    )}
+
+                                  {detail.type === "select" &&
+                                    detail.label === "Province Name" && (
+                                      <div className="grid w-full items-center gap-1.5">
+                                        <Label className="text-neutral-600">
+                                          {detail.label}
+                                        </Label>
+                                        <Select
+                                          onValueChange={(value) => {
+                                            const selected =
+                                              locationsData?.provinces.find(
+                                                (province: any) =>
+                                                  province.code === value
+                                              );
+                                            setValue(
+                                              detail.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase(),
+                                              value
+                                            );
+                                            onChangeSelect(
+                                              detail.label,
+                                              selected
+                                            );
+                                          }}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue
+                                              placeholder={
+                                                detail.value_name ||
+                                                "Select a province"
+                                              }
+                                            />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectGroup>
+                                              <SelectLabel>
+                                                Province
+                                              </SelectLabel>
+                                              {Array.isArray(
+                                                locationsData.provinces
+                                              ) &&
+                                                locationsData.provinces.map(
+                                                  (prov: any) => (
+                                                    <SelectItem
+                                                      key={prov.code}
+                                                      value={prov.code}
+                                                    >
+                                                      {prov.name}
+                                                    </SelectItem>
+                                                  )
+                                                )}
+                                            </SelectGroup>
+                                          </SelectContent>
+                                        </Select>
+                                        <small className="text-red-500">
+                                          {updateSettingsProfileData &&
+                                            updateSettingsProfileData
+                                              ?.message?.["province_name"]}
+                                        </small>
+                                      </div>
+                                    )}
+
+                                  {detail.type === "select" &&
+                                    detail.label ===
+                                      "City Or Municipality Name" && (
+                                      <div className="grid w-full items-center gap-1.5">
+                                        <Label className="text-neutral-600">
+                                          {detail.label}
+                                        </Label>
+                                        <Select
+                                          onValueChange={(value) => {
+                                            const selected =
+                                              locationsData.cities.find(
+                                                (municipal: any) =>
+                                                  municipal.code === value
+                                              );
+                                            setValue(
+                                              detail.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase(),
+                                              value
+                                            );
+                                            onChangeSelect(
+                                              detail.label,
+                                              selected
+                                            );
+                                          }}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue
+                                              placeholder={
+                                                detail.value_name ||
+                                                "Select a City/Municipalities"
+                                              }
+                                            />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectGroup>
+                                              <SelectLabel>
+                                                City/Municipalities
+                                              </SelectLabel>
+                                              {Array.isArray(
+                                                locationsData.cities
+                                              ) &&
+                                                locationsData.cities.map(
+                                                  (mun: any) => (
+                                                    <SelectItem
+                                                      key={mun.code}
+                                                      value={mun.code}
+                                                    >
+                                                      {mun.name}
+                                                    </SelectItem>
+                                                  )
+                                                )}
+                                            </SelectGroup>
+                                          </SelectContent>
+                                        </Select>
+                                        <small className="text-red-500">
+                                          {updateSettingsProfileData &&
+                                            updateSettingsProfileData
+                                              ?.message?.[
+                                              "city_or_municipality_name"
+                                            ]}
+                                        </small>
+                                      </div>
+                                    )}
+
+                                  {detail.type === "select" &&
+                                    detail.label === "Barangay Name" && (
+                                      <div className="grid w-full items-center gap-1.5">
+                                        <Label className="text-neutral-600">
+                                          {detail.label}
+                                        </Label>
+                                        <Select
+                                          onValueChange={(value) => {
+                                            const selected =
+                                              locationsData.barangays.find(
+                                                (brgy: any) =>
+                                                  brgy.code === value
+                                              );
+                                            setValue(
+                                              detail.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase(),
+                                              value
+                                            );
+                                            onChangeSelect(
+                                              detail.label,
+                                              selected
+                                            );
+                                          }}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue
+                                              placeholder={
+                                                detail.value_name ||
+                                                "Select a barangay"
+                                              }
+                                            />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectGroup>
+                                              <SelectLabel>
+                                                Barangay
+                                              </SelectLabel>
+                                              {Array.isArray(
+                                                locationsData.barangays
+                                              ) &&
+                                                locationsData.barangays.map(
+                                                  (mun: any) => (
+                                                    <SelectItem
+                                                      key={mun.code}
+                                                      value={mun.code}
+                                                    >
+                                                      {mun.name}
+                                                    </SelectItem>
+                                                  )
+                                                )}
+                                            </SelectGroup>
+                                          </SelectContent>
+                                        </Select>
+                                        <small className="text-red-500">
+                                          {updateSettingsProfileData &&
+                                            updateSettingsProfileData
+                                              ?.message?.[
+                                              "city_or_municipality_name"
+                                            ]}
+                                        </small>
+                                      </div>
+                                    )}
+                                </>
+                              ))}
+                            </div>
+                          </TabsContent>
+                          <TabsContent value="email">
+                            <div className="py-10 flex flex-col gap-6">
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>New email</Label>
+                                <Input
+                                  type="email"
+                                  placeholder="Your new email"
+                                  {...register("email")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updateEmailProfileData?.message &&
+                                    updateEmailProfileData?.message[
+                                      "new_email"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>Password</Label>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter your new password"
+                                  {...register("password")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updateEmailProfileData?.message &&
+                                    updateEmailProfileData?.message[
+                                      "current_password"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>Verification number</Label>
+                                <Input
+                                  type="number"
+                                  placeholder="Enter verification number"
+                                  {...register("verification_number")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updateEmailProfileData?.message &&
+                                    updateEmailProfileData?.message[
+                                      "verification_number"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-20 items-center gap-1.5">
+                                <Button
+                                  onClick={handleResendCodeEmail}
+                                  disabled={countdown.email > 0}
+                                >
+                                  {countdown.email > 0
+                                    ? `Resend code in ${countdown.email}s`
+                                    : "Resend code"}
+                                </Button>
+                              </div>
+                            </div>
+                          </TabsContent>
+                          <TabsContent value="password">
+                            <div className="py-10 flex flex-col gap-6">
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>Current password</Label>
+                                <Input
+                                  type="password"
+                                  placeholder="Your current password"
+                                  {...register("current_password")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updatePasswordProfileData?.message &&
+                                    updatePasswordProfileData?.message[
+                                      "current_password"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>New password</Label>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter your new password"
+                                  {...register("password")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updatePasswordProfileData?.message &&
+                                    updatePasswordProfileData?.message[
+                                      "password"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>Confirm password</Label>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter your confirm password"
+                                  {...register("confirm_password")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updatePasswordProfileData?.message &&
+                                    updatePasswordProfileData?.message[
+                                      "password_confirmation"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-full items-center gap-1.5">
+                                <Label>Verification number</Label>
+                                <Input
+                                  type="number"
+                                  placeholder="Enter your confirm password"
+                                  {...register("verification_number")}
+                                />
+                                <small className="text-red-500 w-full">
+                                  {updatePasswordProfileData?.message &&
+                                    updatePasswordProfileData?.message[
+                                      "verification_number"
+                                    ]}
+                                </small>
+                              </div>
+                              <div className="grid w-20 items-center gap-1.5">
+                                <Button
+                                  onClick={handleResendCodePassword}
+                                  disabled={countdown.password > 0}
+                                >
+                                  {countdown.password > 0
+                                    ? `Resend code in ${countdown.password}s`
+                                    : "Resend code"}
+                                </Button>
+                              </div>
+                            </div>
+                          </TabsContent>
+                        </Tabs>
+                      </div>
                     </ScrollArea>
                     <DialogFooter>
-                      <Button
-                        className="bg-bgrjavancena"
-                        type="submit"
-                        onClick={() => handleSaveUserInfo(modalData)}
-                      >
-                        Save changes
-                      </Button>
+                      {selectedTab === "profile" && (
+                        <Button
+                          className="bg-bgrjavancena"
+                          type="submit"
+                          onClick={() => handleUpdateUser(modalData)}
+                        >
+                          Save changes
+                        </Button>
+                      )}
+                      {selectedTab === "email" && (
+                        <Button
+                          className="bg-bgrjavancena"
+                          type="submit"
+                          onClick={handleUpdateEmail}
+                        >
+                          Save changes
+                        </Button>
+                      )}
+                      {selectedTab === "password" && (
+                        <Button
+                          className="bg-bgrjavancena"
+                          type="submit"
+                          onClick={handleUpdatePassword}
+                        >
+                          Save changes
+                        </Button>
+                      )}
+                      <DialogClose asChild>
+                        <Button type="button" variant="secondary">
+                          Close
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                )}
+                {showViewProfileDialog && (
+                  <DialogContent className="sm:max-w-[34rem]">
+                    <DialogHeader>
+                      <DialogTitle>Profile Information</DialogTitle>
+                    </DialogHeader>
+                    <ScrollArea className="h-72 w-full">
+                      <div className="mx-4">
+                        <div className="flex items-center gap-4">
+                          <div className="relative">
+                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
+                              <AvatarImage src={selectedImage} alt="@shadcn" />
+                              <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <div>
+                            <h1 className="text-md font-semibold">
+                              {profileData.first_name} {""}{" "}
+                              {profileData.middle_name} {""}{" "}
+                              {profileData.last_name}
+                            </h1>
+                            <h1 className="text-sm text-neutral-500">
+                              Super Admin
+                            </h1>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="py-10 flex flex-col gap-6">
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="grid w-full items-center gap-2">
+                                <Label>Full name</Label>
+                                <Label className="text-neutral-400 text-sm">
+                                  {profileData.first_name} {""}{" "}
+                                  {profileData.middle_name} {""}{" "}
+                                  {profileData.last_name}
+                                </Label>
+                              </div>
+                              <div className="grid w-full items-center gap-2">
+                                <Label>Email</Label>
+                                <Label className="text-neutral-400 text-sm">
+                                  {profileData.contact_email}
+                                </Label>
+                              </div>
+                              <div className="grid w-full items-center gap-2">
+                                <Label>Contact number</Label>
+                                <Label className="text-neutral-400 text-sm">
+                                  {profileData.contact_number}
+                                </Label>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-6">
+                              <h1 className="font-semibold">
+                                Address Information
+                              </h1>
+                              <div className="grid grid-cols-2 gap-6">
+                                <div className="grid w-full items-center gap-2">
+                                  <Label>Address 1</Label>
+                                  <Label className="text-neutral-400 text-sm">
+                                    {profileData.address_1}
+                                  </Label>
+                                </div>
+                                <div className="grid w-full items-center gap-2">
+                                  <Label>Address 2</Label>
+                                  <Label className="text-neutral-400 text-sm">
+                                    {profileData.address_2}
+                                  </Label>
+                                </div>
+                                <div className="grid w-full items-center gap-2">
+                                  <Label>Region</Label>
+                                  <Label className="text-neutral-400 text-sm">
+                                    {profileData.region_name}
+                                  </Label>
+                                </div>
+                                <div className="grid w-full items-center gap-2">
+                                  <Label>Province</Label>
+                                  <Label className="text-neutral-400 text-sm">
+                                    {profileData.province_name}
+                                  </Label>
+                                </div>
+                                <div className="grid w-full items-center gap-2">
+                                  <Label>City/Municipalities</Label>
+                                  <Label className="text-neutral-400 text-sm">
+                                    {profileData.city_or_municipality_name}
+                                  </Label>
+                                </div>
+                                <div className="grid w-full items-center gap-2">
+                                  <Label>Barangay</Label>
+                                  <Label className="text-neutral-400 text-sm">
+                                    {profileData.barangay_name}
+                                  </Label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ScrollArea>
+                    <DialogFooter>
                       <DialogClose asChild>
                         <Button type="button" variant="secondary">
                           Close

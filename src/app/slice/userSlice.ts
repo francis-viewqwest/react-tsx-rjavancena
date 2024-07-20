@@ -27,6 +27,13 @@ const initialState: UserState = {
   getBarangay: {},
   completeProfile: {},
   errorCompleteProfile: false,
+  settingsProfileData: {},
+  updateSettingsProfileData: {},
+  updateEmailProfileData: {},
+  resendCodeEmailData: {},
+  resendCodePasswordData: {},
+  updatePasswordProfileData: {},
+  uploadImageData: {},
 }
 
 
@@ -201,6 +208,109 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+    builder
+      .addCase(settingsProfile.pending, (state) => {
+        state.status = "settingsProfile/loading";
+        state.loading = true;
+        state.error = null
+      })
+      .addCase(settingsProfile.fulfilled, (state, action) => {
+        state.status = "settingsProfile/success";
+        state.loading = false;
+        state.settingsProfileData = action.payload;
+      })
+      .addCase(settingsProfile.rejected, (state, action) => {
+        state.status = "settingsProfile/failed";
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(uploadImage.pending, (state) => {
+        state.status = "uploadImage/loading";
+
+        state.error = null
+      })
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        state.status = "uploadImage/success";
+        state.uploadImageData = action.payload;
+      })
+      .addCase(uploadImage.rejected, (state, action) => {
+        state.status = "uploadImage/failed";
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(updateSettingsProfile.pending, (state) => {
+        state.status = "updateSettingsProfile/loading";
+        state.error = null
+      })
+      .addCase(updateSettingsProfile.fulfilled, (state, action) => {
+        state.status = "updateSettingsProfile/success";
+        state.updateSettingsProfileData = action.payload;
+      })
+      .addCase(updateSettingsProfile.rejected, (state, action) => {
+        state.status = "updateSettingsProfile/failed";
+        state.error = action.payload;
+        state.updateSettingsProfileData = action.payload;
+      })
+
+    builder
+      .addCase(updateEmailProfile.pending, (state) => {
+        state.status = "updateEmailProfile/loading";
+        state.error = null
+      })
+      .addCase(updateEmailProfile.fulfilled, (state, action) => {
+        state.status = "updateEmailProfile/success";
+        state.updateEmailProfileData = action.payload;
+      })
+      .addCase(updateEmailProfile.rejected, (state, action) => {
+        state.status = "updateEmailProfile/failed";
+        state.updateEmailProfileData = action.payload;
+      })
+
+    builder
+      .addCase(resendCodeEmail.pending, (state) => {
+        state.status = "resendCodeEmail/loading";
+        state.error = null
+      })
+      .addCase(resendCodeEmail.fulfilled, (state, action) => {
+        state.status = "resendCodeEmail/success";
+        state.resendCodeEmailData = action.payload;
+      })
+      .addCase(resendCodeEmail.rejected, (state, action) => {
+        state.status = "resendCodeEmail/failed";
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(resendCodePassword.pending, (state) => {
+        state.status = "resendCodePassword/loading";
+        state.error = null
+      })
+      .addCase(resendCodePassword.fulfilled, (state, action) => {
+        state.status = "resendCodePassword/success";
+        state.resendCodePasswordData = action.payload;
+      })
+      .addCase(resendCodePassword.rejected, (state, action) => {
+        state.status = "resendCodePassword/failed";
+        state.error = action.payload;
+      })
+
+    builder
+      .addCase(updatePasswordProfile.pending, (state) => {
+        state.status = "updatePasswordProfile/loading";
+        state.error = null
+      })
+      .addCase(updatePasswordProfile.fulfilled, (state, action) => {
+        state.status = "updatePasswordProfile/success";
+        state.updatePasswordProfileData = action.payload;
+      })
+      .addCase(updatePasswordProfile.rejected, (state, action) => {
+        state.status = "updatePasswordProfile/failed";
+        state.updatePasswordProfileData = action.payload;
+      })
   },
 });
 
@@ -347,6 +457,105 @@ export const logout = createAsyncThunk("user/getLogout", async (ApiConfig: ApiCo
       url: ApiConfig.url,
       method: ApiConfig.method,
       data: ApiConfig.data
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+//* USER PROFILE
+export const uploadImage = createAsyncThunk("user/uploadImage", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+
+export const settingsProfile = createAsyncThunk("user/settingsProfile", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const updateSettingsProfile = createAsyncThunk("user/updateSettingsProfile", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const updateEmailProfile = createAsyncThunk("user/updateEmailProfile", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const updatePasswordProfile = createAsyncThunk("user/updatePasswordProfile", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const resendCodeEmail = createAsyncThunk("user/resendCodeEmail", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data,
+    })
+    return res.data
+  } catch (error: any) {
+    console.log(error)
+    return rejectWithValue(error.response.data)
+  }
+})
+
+export const resendCodePassword = createAsyncThunk("user/resendCodePassword", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+  try {
+    const res = await axiosClient({
+      url: ApiConfig.url,
+      method: ApiConfig.method,
+      data: ApiConfig.data,
     })
     return res.data
   } catch (error: any) {

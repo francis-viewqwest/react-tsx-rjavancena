@@ -217,6 +217,13 @@ export interface UserState {
   getMunicipality: object | any;
   getBarangay: object | any;
   completeProfile: object | any;
+  settingsProfileData: object | any;
+  updateSettingsProfileData: object | any;
+  updateEmailProfileData: object | any;
+  resendCodeEmailData: object | any;
+  resendCodePasswordData: object | any;
+  updatePasswordProfileData: object | any;
+  uploadImageData: object | any;
 }
 
 export interface UsersManagementState {
