@@ -31,7 +31,6 @@ const MenuList: React.FC<MenuListProps> = ({
     currency: "PHP",
   });
 
-
   const loadingMenu = useAppSelector((state) => state.menu.loadingAddCart);
 
   const customer = dataCustomer?.find(
@@ -117,7 +116,7 @@ const MenuList: React.FC<MenuListProps> = ({
                     {item.image ? (
                       <img
                         className="max-w-full h-28 rounded-lg bg-cover bg-no-repeat"
-                        src={`http://127.0.0.1:8000/storage/inventory-children/${item.image}`}
+                        src={item.image}
                         alt={item.image}
                       />
                     ) : (
