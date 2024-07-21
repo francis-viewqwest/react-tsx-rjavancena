@@ -705,7 +705,7 @@ const Welcome: React.FC = () => {
                       <div className="pt-10">
                         <Button
                           onClick={handleCompleteProfile}
-                          // disabled={progress !== 100}
+                          disabled={progress !== 100}
                           className="bg-bgrjavancena"
                         >
                           Submit

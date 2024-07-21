@@ -119,16 +119,31 @@ const Header: React.FC = () => {
   const updateSettingsProfileData = useAppSelector(
     (state) => state.user.updateSettingsProfileData
   );
+  const uploadImageData = useAppSelector(
+    (state) => state.user.uploadImageData
+  );
 
   const profileData = settingsProfileData?.data?.user_information;
 
   const { toast } = useToast();
 
-  const [selectedImage, setSelectedImage] = useState(
-    profileData?.image
-  );
+  const [selectedImage, setSelectedImage] = useState(profileData?.image);
 
   useEffect(() => {
+    if (userStatus === "uploadImage/success") {
+      toast({
+        variant: "success",
+        title: uploadImageData?.message,
+      });
+    }
+
+    if (userStatus === "updateSettingsProfile/success") {
+      toast({
+        variant: "success",
+        title: updateSettingsProfileData?.message,
+      });
+    }
+
     if (userStatus === "updateSettingsProfile/failed") {
       if (typeof updateSettingsProfileData?.message === "string") {
         toast({
@@ -470,7 +485,7 @@ const Header: React.FC = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       const payload = {
-        image: imageUrl,
+        image: file,
         eu_device: Cookies.get("eu"),
       };
       setSelectedImage(imageUrl);
@@ -513,7 +528,7 @@ const Header: React.FC = () => {
                 {!userLoading && (
                   <>
                     <DropdownMenuTrigger asChild>
-                      <Avatar>
+                      <Avatar className="cursor-pointer">
                         <AvatarImage src={headerUser?.image} />
                         <AvatarFallback className="bg-stone-900 text-white font-medium">
                           {headerUser?.name.slice(0, 2).toUpperCase()}
@@ -573,14 +588,20 @@ const Header: React.FC = () => {
                       <div className="mx-4">
                         <div className="flex items-center gap-4">
                           <div className="relative">
-                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
+                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative cursor-pointer">
                               <Input
-                                className="absolute bottom-0 h-full opacity-0"
+                                className="absolute bottom-0 h-full opacity-0 cursor-pointer"
                                 type="file"
                                 onChange={handleImageChange}
                               />
-                              <AvatarImage src={selectedImage} alt="@shadcn" />
-                              <AvatarFallback className="font-bold text-2xl">{headerUser.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                              <AvatarImage
+                                className="cursor-pointer"
+                                src={selectedImage || profileData?.image}
+                                alt="@shadcn"
+                              />
+                              <AvatarFallback className="font-bold text-2xl">
+                                {headerUser.name.slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
                             </Avatar>
                             <div className="bg-blue-500 z-10 w-7 h-7 top-14 right-0 rounded-full absolute items-center justify-center flex flex-col m-auto">
                               <Icon
@@ -1130,8 +1151,13 @@ const Header: React.FC = () => {
                         <div className="flex items-center gap-4">
                           <div className="relative">
                             <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
-                              <AvatarImage src={selectedImage} alt="@shadcn" />
-                              <AvatarFallback className="font-bold text-2xl">{headerUser.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                              <AvatarImage
+                                src={profileData?.image}
+                                alt="@shadcn"
+                              />
+                              <AvatarFallback className="font-bold text-2xl">
+                                {headerUser.name.slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
                             </Avatar>
                           </div>
                           <div>
