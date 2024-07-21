@@ -26,6 +26,11 @@ const Users: React.FC<RouteType> = (props) => {
     (state) => state.usersManagement.editUserInfoError
   );
 
+  const createUsersData = useAppSelector((state)=> state.usersManagement.createUsersData)
+
+  console.log(createUsersData);
+  
+
   useEffect(() => {
     if (usersLoading === "getUsersData/success") {
       setData(usersParentData?.data?.account);
@@ -33,6 +38,15 @@ const Users: React.FC<RouteType> = (props) => {
 
     if (usersLoading === "addUser/success") {
       dispatch(getUsersData({ url: props.path_key, method: "GET" }));
+    }
+
+    if (usersLoading === "addUser/failed") {
+      if (typeof createUsersData?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: createUsersData?.message,
+        });
+      }
     }
 
     if (usersLoading === "editUser/success") {

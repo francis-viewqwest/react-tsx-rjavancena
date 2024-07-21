@@ -237,15 +237,17 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
             values.details.find((detail: any) => detail.label === "Region Name")
               ?.value_name || getLocationCode.region_name;
           const barangayName =
-            values.details.find((detail: any) => detail.label === "Barangay Name")
-              ?.value_name || getLocationCode.barangay_name;
+            values.details.find(
+              (detail: any) => detail.label === "Barangay Name"
+            )?.value_name || getLocationCode.barangay_name;
           const citiesName =
             values.details.find(
               (detail: any) => detail.label === "City Or Municipality Name"
             )?.value_name || getLocationCode.city_or_municipality_name;
           const provinceName =
-            values.details.find((detail: any) => detail.label === "Province Name")
-              ?.value_name || getLocationCode.province_name;
+            values.details.find(
+              (detail: any) => detail.label === "Province Name"
+            )?.value_name || getLocationCode.province_name;
 
           console.log(regionName);
 
@@ -255,10 +257,14 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
             middle_name: formValues.middle_name,
             last_name: formValues.last_name,
             contact_number: formValues.contact_number,
-            contact_email: formValues.contact_email,
+            email: formValues.email,
+            password: formValues.password,
+            password_confirmation: formValues.password_confirmation,
             address_1: formValues.address_1,
             address_2: formValues.address_2,
             phone_number: formValues.phone_number,
+            role: formValues.role,
+            status: formValues.status,
             region_code: formValues.region_name,
             province_code: formValues.province_name,
             city_or_municipality_code: formValues.city_or_municipality_name,
@@ -576,6 +582,39 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                               </div>
                             )}
 
+                            {detail.type === "password" && (
+                              <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-semibold">
+                                  {detail?.label}
+                                </Label>
+                                <Input
+                                  type={detail?.type}
+                                  placeholder={`Enter your ${detail?.label}`}
+                                  className="col-span-3"
+                                  {...register(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase()
+                                  )}
+                                />
+                                {usersParentError?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ] && (
+                                  <small className="text-xs text-red-500">
+                                    {
+                                      usersParentError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]
+                                    }
+                                  </small>
+                                )}
+                              </div>
+                            )}
+
                             {detail.type === "number" && (
                               <div className="flex flex-col gap-2">
                                 <Label className="text-sm font-semibold">
@@ -612,7 +651,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             {detail.type === "select" &&
                               detail.label === "Region Name" && (
                                 <div className="grid w-full items-center gap-1.5">
-                                  <Label className="font-semibold text-sm">
+                                  <Label className="text-sm font-semibold">
                                     {detail.label}
                                   </Label>
                                   <Select
@@ -666,7 +705,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             {detail.type === "select" &&
                               detail.label === "Province Name" && (
                                 <div className="grid w-full items-center gap-1.5">
-                                  <Label className="font-semibold text-sm">
+                                  <Label className="text-sm font-semibold">
                                     {detail.label}
                                   </Label>
                                   <Select
@@ -724,7 +763,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             {detail.type === "select" &&
                               detail.label === "City Or Municipality Name" && (
                                 <div className="grid w-full items-center gap-1.5">
-                                  <Label className="font-semibold text-sm">
+                                  <Label className="text-sm font-semibold">
                                     {detail.label}
                                   </Label>
                                   <Select
@@ -782,7 +821,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             {detail.type === "select" &&
                               detail.label === "Barangay Name" && (
                                 <div className="grid w-full items-center gap-1.5">
-                                  <Label className="font-semibold text-sm">
+                                  <Label className="text-sm font-semibold">
                                     {detail.label}
                                   </Label>
                                   <Select
@@ -836,9 +875,9 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                                 </div>
                               )}
 
-                            {/* {detail?.type === "select" && (
+                            {detail?.label === "Role" && (
                               <div className="flex flex-col gap-2">
-                                <Label className="font-semibold text-xs">
+                                <Label className="text-sm font-semibold">
                                   {detail?.label}
                                 </Label>
                                 <Select
@@ -887,7 +926,60 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                                   </small>
                                 )}
                               </div>
-                            )} */}
+                            )}
+
+                            {detail?.label === "Status" && (
+                              <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-semibold">
+                                  {detail?.label}
+                                </Label>
+                                <Select
+                                  onValueChange={(value) =>
+                                    setValue(
+                                      detail.label
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase(),
+                                      value
+                                    )
+                                  }
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue
+                                      placeholder={`Select ${_.lowerCase(
+                                        detail?.label
+                                      )}`}
+                                    />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      {detail?.option?.map((opt) => (
+                                        <SelectItem
+                                          key={opt?.value}
+                                          value={opt?.value}
+                                        >
+                                          {opt?.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                                {usersParentError?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ] && (
+                                  <small className="text-xs text-red-500">
+                                    {
+                                      usersParentError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]
+                                    }
+                                  </small>
+                                )}
+                              </div>
+                            )}
                           </>
                         );
                       })}
