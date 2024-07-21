@@ -125,7 +125,7 @@ const Header: React.FC = () => {
   const { toast } = useToast();
 
   const [selectedImage, setSelectedImage] = useState(
-    "https://github.com/shadcn.png"
+    profileData?.image
   );
 
   useEffect(() => {
@@ -514,9 +514,9 @@ const Header: React.FC = () => {
                   <>
                     <DropdownMenuTrigger asChild>
                       <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarImage src={headerUser?.image} />
                         <AvatarFallback className="bg-stone-900 text-white font-medium">
-                          RJ
+                          {headerUser?.name.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
@@ -580,7 +580,7 @@ const Header: React.FC = () => {
                                 onChange={handleImageChange}
                               />
                               <AvatarImage src={selectedImage} alt="@shadcn" />
-                              <AvatarFallback>CN</AvatarFallback>
+                              <AvatarFallback className="font-bold text-2xl">{headerUser.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div className="bg-blue-500 z-10 w-7 h-7 top-14 right-0 rounded-full absolute items-center justify-center flex flex-col m-auto">
                               <Icon
@@ -1131,7 +1131,7 @@ const Header: React.FC = () => {
                           <div className="relative">
                             <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
                               <AvatarImage src={selectedImage} alt="@shadcn" />
-                              <AvatarFallback>CN</AvatarFallback>
+                              <AvatarFallback className="font-bold text-2xl">{headerUser.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                           </div>
                           <div>
