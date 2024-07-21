@@ -19,6 +19,9 @@ const initialState: UserState = {
   loading: false,
   loadingEudevice: false,
   loadingSignIn: false,
+  loadingUpdateProfile: false,
+  loadingUpdateEmail: false,
+  loadingUpdatePassword: false,
   error: false,
   errorNavbar: false,
   getRegions: {},
@@ -212,17 +215,17 @@ const userSlice = createSlice({
     builder
       .addCase(settingsProfile.pending, (state) => {
         state.status = "settingsProfile/loading";
-        state.loading = true;
+        state.loadingUpdateProfile = true;
         state.error = null
       })
       .addCase(settingsProfile.fulfilled, (state, action) => {
         state.status = "settingsProfile/success";
-        state.loading = false;
+        state.loadingUpdateProfile = false;
         state.settingsProfileData = action.payload;
       })
       .addCase(settingsProfile.rejected, (state, action) => {
         state.status = "settingsProfile/failed";
-        state.loading = false;
+        state.loadingUpdateProfile = false;
         state.error = action.payload;
       })
 
@@ -244,14 +247,17 @@ const userSlice = createSlice({
     builder
       .addCase(updateSettingsProfile.pending, (state) => {
         state.status = "updateSettingsProfile/loading";
+        state.loadingUpdateProfile = true;
         state.error = null
       })
       .addCase(updateSettingsProfile.fulfilled, (state, action) => {
         state.status = "updateSettingsProfile/success";
+        state.loadingUpdateProfile = false;
         state.updateSettingsProfileData = action.payload;
       })
       .addCase(updateSettingsProfile.rejected, (state, action) => {
         state.status = "updateSettingsProfile/failed";
+        state.loadingUpdateProfile = false;
         state.error = action.payload;
         state.updateSettingsProfileData = action.payload;
       })
@@ -259,14 +265,17 @@ const userSlice = createSlice({
     builder
       .addCase(updateEmailProfile.pending, (state) => {
         state.status = "updateEmailProfile/loading";
+        state.loadingUpdateEmail = true;
         state.error = null
       })
       .addCase(updateEmailProfile.fulfilled, (state, action) => {
         state.status = "updateEmailProfile/success";
+        state.loadingUpdateEmail = false;
         state.updateEmailProfileData = action.payload;
       })
       .addCase(updateEmailProfile.rejected, (state, action) => {
         state.status = "updateEmailProfile/failed";
+        state.loadingUpdateEmail = false;
         state.updateEmailProfileData = action.payload;
       })
 
@@ -301,14 +310,17 @@ const userSlice = createSlice({
     builder
       .addCase(updatePasswordProfile.pending, (state) => {
         state.status = "updatePasswordProfile/loading";
+        state.loadingUpdatePassword = true;
         state.error = null
       })
       .addCase(updatePasswordProfile.fulfilled, (state, action) => {
         state.status = "updatePasswordProfile/success";
+        state.loadingUpdatePassword = false;
         state.updatePasswordProfileData = action.payload;
       })
       .addCase(updatePasswordProfile.rejected, (state, action) => {
         state.status = "updatePasswordProfile/failed";
+        state.loadingUpdatePassword = false;
         state.updatePasswordProfileData = action.payload;
       })
   },

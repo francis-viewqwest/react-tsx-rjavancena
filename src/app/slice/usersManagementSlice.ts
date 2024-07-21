@@ -11,6 +11,8 @@ const initialState: UsersManagementState = {
     loadingCreateUser: false,
     loadingEditUser: false,
     loadingEditUserInfo: false,
+    loadingUpdateProfile: false,
+    loadingUpdateEmail: false,
     error: false,
     editUserError: {},
     editUserData: {},

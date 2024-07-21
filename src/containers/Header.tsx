@@ -119,6 +119,14 @@ const Header: React.FC = () => {
     (state) => state.user.updatePasswordProfileData
   );
 
+  const loadingUpdateEmail = useAppSelector(
+    (state) => state.user.loadingUpdateEmail
+  );
+
+  const loadingUpdatePassword = useAppSelector(
+    (state) => state.user.loadingUpdatePassword
+  );
+
   console.log(updatePasswordProfileData);
 
   const settingsActions = settingsProfileData?.data?.user_information?.actions;
@@ -277,6 +285,12 @@ const Header: React.FC = () => {
     barangays: [],
   });
   const [countdown, setCountdown] = useState({ email: 0, password: 0 });
+
+  const loadingUpdateProfile = useAppSelector(
+    (state) => state.user.loadingUpdateProfile
+  );
+
+  console.log(loadingUpdateProfile);
 
   const handleViewProfile = () => {
     setShowEditInfoDialog(false);
@@ -642,7 +656,7 @@ const Header: React.FC = () => {
                       <div className="mx-4">
                         <div className="flex items-center gap-4">
                           <div className="relative">
-                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
+                            <Avatar className="h-20 w-20 border-white border-2 relative">
                               <AvatarImage
                                 src={selectedImage || profileData?.image}
                                 alt="@shadcn"
@@ -1169,30 +1183,33 @@ const Header: React.FC = () => {
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
-                          disabled={!isDirty}
+                          disabled={!isDirty || loadingUpdateProfile}
                           onClick={() => handleUpdateUser(modalData)}
                         >
-                          Save changes
+                          {loadingUpdateProfile && "Saving changes..."}
+                          {!loadingUpdateProfile && "Save changes"}
                         </Button>
                       )}
                       {selectedTab === "email" && (
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
-                          disabled={!isDirty}
+                          disabled={!isDirty || loadingUpdateEmail}
                           onClick={handleUpdateEmail}
                         >
-                          Save changes
+                          {loadingUpdateEmail && "Saving changes..."}
+                          {!loadingUpdateEmail && "Save changes"}
                         </Button>
                       )}
                       {selectedTab === "password" && (
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
-                          disabled={!isDirty}
+                          disabled={!isDirty || loadingUpdatePassword}
                           onClick={handleUpdatePassword}
                         >
-                          Save changes
+                          {loadingUpdatePassword && "Saving changes..."}
+                          {!loadingUpdatePassword && "Save changes"}
                         </Button>
                       )}
                       <DialogClose asChild>

@@ -59,6 +59,7 @@ const Welcome: React.FC = () => {
     { label: "Profile", type: "file", section: "profile" },
     { label: "Contact Email", type: "email", section: "profile" },
     { label: "First name", type: "text", section: "profile" },
+    { label: "Middle name", type: "text", section: "profile" },
     { label: "Last name", type: "text", section: "profile" },
     { label: "Contact number", type: "number", section: "profile" },
     { label: "Region", type: "select", section: "address" },
@@ -104,6 +105,8 @@ const Welcome: React.FC = () => {
 
   const formValues = watch();
   const { region, province, city_municipalities } = formValues;
+
+  console.log(formValues);
 
   const { toast } = useToast();
 
@@ -184,6 +187,7 @@ const Welcome: React.FC = () => {
       const payload = {
         image: formValues?.profile?.[0] ?? null,
         first_name: formData.first_name,
+        middle_name: formData.middle_name,
         last_name: formData.last_name,
         contact_number: formData.contact_number,
         contact_email: formData.contact_email,
@@ -380,6 +384,9 @@ const Welcome: React.FC = () => {
                                 >
                                   {field.label !== "Contact number" && (
                                     <>
+                                      <Label className="text-neutral-600">
+                                        {field.label}
+                                      </Label>
                                       <Input
                                         id={field.label}
                                         placeholder={`Enter your ${field.label}`}
@@ -405,6 +412,9 @@ const Welcome: React.FC = () => {
 
                                   {field.label == "Contact number" && (
                                     <>
+                                      <Label className="text-neutral-600">
+                                        {field.label}
+                                      </Label>
                                       <span className="flex items-center relative">
                                         <div className="flex items-center">
                                           <img

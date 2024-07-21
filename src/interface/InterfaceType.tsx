@@ -207,6 +207,9 @@ export interface UserState {
   loading: boolean;
   loadingEudevice: boolean;
   loadingSignIn: boolean;
+  loadingUpdateProfile: boolean;
+  loadingUpdateEmail: boolean;
+  loadingUpdatePassword: boolean;
   errorNavbar: any;
   errorCompleteProfile: any;
   user: object;
@@ -231,6 +234,8 @@ export interface UsersManagementState {
   status: string;
   loading: boolean;
   loadingCreateUser: boolean;
+  loadingUpdateProfile: boolean;
+  loadingUpdateEmail: boolean;
   error: string | null | any;
   editUserError: string | null | any;
   editUserInfoError: string | null | any;

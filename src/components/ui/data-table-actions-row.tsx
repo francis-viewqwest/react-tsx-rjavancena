@@ -1271,7 +1271,7 @@ export function RowTransactionActions<TData>({
     <>
       {row?.original?.actions && (
         <Dialog>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger>
               <Button variant="ghost">
                 <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
@@ -1294,7 +1294,27 @@ export function RowTransactionActions<TData>({
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
+
+          {row?.original?.actions?.map((act, index) => (
+            <DialogTrigger onClick={() => handleActionFunc(act)}>
+              {act.button_name === "Void" ? (
+                <Button
+                  className="mx-1 bg-primary"
+                  onClick={() => handleActionFunc(act)}
+                  size="xs"
+                >
+                  {act.button_name}
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" className="mx-1" size="xs">
+                    {act.button_name}
+                  </Button>
+                </>
+              )}
+            </DialogTrigger>
+          ))}
           <DialogPortal>
             {showVoidDialog && (
               <DialogContent className="sm:max-w-[425px]">
@@ -1310,7 +1330,7 @@ export function RowTransactionActions<TData>({
                     type="submit"
                     onClick={() => handleVoidClick(funcData)}
                   >
-                    Delete
+                    Void
                   </Button>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">
