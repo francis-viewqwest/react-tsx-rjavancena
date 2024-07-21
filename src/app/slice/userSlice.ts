@@ -238,7 +238,7 @@ const userSlice = createSlice({
       })
       .addCase(uploadImage.rejected, (state, action) => {
         state.status = "uploadImage/failed";
-        state.error = action.payload;
+        state.uploadImageData = action.payload;
       })
 
     builder

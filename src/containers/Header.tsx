@@ -90,8 +90,15 @@ const Header: React.FC = () => {
   const axiosClient = useAxiosClient();
   const dispatch = useAppDispatch();
 
-  const { control, handleSubmit, getValues, setValue, register, watch } =
-    useForm({});
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    setValue,
+    register,
+    watch,
+    formState: { isDirty },
+  } = useForm({});
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
   const [showEditInfoDialog, setShowEditInfoDialog] = useState(false);
@@ -119,9 +126,7 @@ const Header: React.FC = () => {
   const updateSettingsProfileData = useAppSelector(
     (state) => state.user.updateSettingsProfileData
   );
-  const uploadImageData = useAppSelector(
-    (state) => state.user.uploadImageData
-  );
+  const uploadImageData = useAppSelector((state) => state.user.uploadImageData);
 
   const profileData = settingsProfileData?.data?.user_information;
 
@@ -135,6 +140,21 @@ const Header: React.FC = () => {
         variant: "success",
         title: uploadImageData?.message,
       });
+      dispatch(
+        settingsProfile({
+          url: "user-info/get-personal-info",
+          method: "GET",
+        })
+      );
+    }
+
+    if (userStatus === "uploadImage/failed") {
+      if (typeof uploadImageData?.message === "string") {
+        toast({
+          variant: "destructive",
+          title: uploadImageData?.message,
+        });
+      }
     }
 
     if (userStatus === "updateSettingsProfile/success") {
@@ -142,6 +162,12 @@ const Header: React.FC = () => {
         variant: "success",
         title: updateSettingsProfileData?.message,
       });
+      dispatch(
+        settingsProfile({
+          url: "user-info/get-personal-info",
+          method: "GET",
+        })
+      );
     }
 
     if (userStatus === "updateSettingsProfile/failed") {
@@ -529,7 +555,7 @@ const Header: React.FC = () => {
                   <>
                     <DropdownMenuTrigger asChild>
                       <Avatar className="cursor-pointer">
-                        <AvatarImage src={headerUser?.image} />
+                        <AvatarImage src={profileData?.image} />
                         <AvatarFallback className="bg-stone-900 text-white font-medium">
                           {headerUser?.name.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
@@ -588,14 +614,8 @@ const Header: React.FC = () => {
                       <div className="mx-4">
                         <div className="flex items-center gap-4">
                           <div className="relative">
-                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative cursor-pointer">
-                              <Input
-                                className="absolute bottom-0 h-full opacity-0 cursor-pointer"
-                                type="file"
-                                onChange={handleImageChange}
-                              />
+                            <Avatar className="h-20 w-20 border-[1px] border-neutral-500 shadow-md relative">
                               <AvatarImage
-                                className="cursor-pointer"
                                 src={selectedImage || profileData?.image}
                                 alt="@shadcn"
                               />
@@ -603,13 +623,6 @@ const Header: React.FC = () => {
                                 {headerUser.name.slice(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
-                            <div className="bg-blue-500 z-10 w-7 h-7 top-14 right-0 rounded-full absolute items-center justify-center flex flex-col m-auto">
-                              <Icon
-                                className="z-10 text-white"
-                                fontSize={14}
-                                icon="tabler:camera-filled"
-                              />
-                            </div>
                           </div>
                           <div>
                             <h1 className="text-md font-semibold">
@@ -620,6 +633,16 @@ const Header: React.FC = () => {
                             <h1 className="text-sm text-neutral-500">
                               Super Admin
                             </h1>
+                          </div>
+                          <div className="ml-3">
+                            <Button className="relative" size="sm">
+                              <Input
+                                className="absolute bottom-0 h-full opacity-0"
+                                type="file"
+                                onChange={handleImageChange}
+                              />
+                              Change picture
+                            </Button>
                           </div>
                         </div>
                         <Tabs defaultValue="profile" className="w-full pt-7">
@@ -1110,6 +1133,7 @@ const Header: React.FC = () => {
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
+                          disabled={!isDirty}
                           onClick={() => handleUpdateUser(modalData)}
                         >
                           Save changes
@@ -1119,6 +1143,7 @@ const Header: React.FC = () => {
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
+                          disabled={!isDirty}
                           onClick={handleUpdateEmail}
                         >
                           Save changes
@@ -1128,6 +1153,7 @@ const Header: React.FC = () => {
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
+                          disabled={!isDirty}
                           onClick={handleUpdatePassword}
                         >
                           Save changes
