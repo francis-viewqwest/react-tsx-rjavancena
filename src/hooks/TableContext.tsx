@@ -2,6 +2,7 @@ import React, {
   createContext,
   ReactNode,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -25,6 +26,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectLabel,
   SelectGroup,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -46,6 +48,7 @@ import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 import { TableContextType } from "@/interface/InterfaceType";
+import axios from "axios";
 
 const defaultTableContextValue: TableContextType = {
   children: null,
@@ -94,7 +97,16 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   let jsx;
   let rowsSelection;
 
-  const { register, handleSubmit, setValue, watch } = useForm<FormSubmit>();
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    setValue,
+    register,
+    watch,
+    formState: { isDirty },
+  } = useForm();
+
   const imageInputRef = useRef<null>(null);
 
   const { id } = useParams();
@@ -113,8 +125,80 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     (state) => state.usersManagement.loadingCreateUser
   );
 
+  const [getLocationCode, setGetLocationCode] = useState({});
+  const [locationsData, setLocationsData] = useState({
+    regions: [],
+    provinces: [],
+    cities: [],
+    barangays: [],
+  });
+
+  const formValues = watch();
+  console.log(formValues);
+
+  const { region_name, province_name, city_or_municipality_name } = formValues;
+
+  const onChangeSelect = (type: any, values: any) => {
+    console.log(values.code);
+    setGetLocationCode((prevState) => ({
+      ...prevState,
+      [`${type.replace(/\s+/g, "_").toLowerCase()}`]: values.name,
+    }));
+  };
+
+  useEffect(() => {
+    axios
+      .get("https://psgc.gitlab.io/api/regions/")
+      .then((res) =>
+        setLocationsData((prevState) => ({ ...prevState, regions: res.data }))
+      );
+  }, []);
+
+  useEffect(() => {
+    if (region_name) {
+      axios
+        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`)
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            provinces: res.data,
+          }))
+        );
+    }
+  }, [region_name]);
+
+  useEffect(() => {
+    if (province_name) {
+      axios
+        .get(
+          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`
+        )
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            cities: res.data,
+          }))
+        );
+    }
+  }, [province_name]);
+
+  useEffect(() => {
+    if (city_or_municipality_name) {
+      axios
+        .get(
+          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`
+        )
+        .then((res) =>
+          setLocationsData((prevState) => ({
+            ...prevState,
+            barangays: res.data,
+          }))
+        );
+    }
+  }, [city_or_municipality_name]);
+
   const handleFormSubmit =
-    (url: string, formType: string): SubmitHandler<FormSubmit> =>
+    (url: string, formType: string, values): SubmitHandler<FormSubmit> =>
     async (data) => {
       const euDevice = Cookies.get("eu");
 
@@ -143,18 +227,54 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
           break;
 
         case "users":
+          const formValues = getValues();
+
+          console.log(values);
+          console.log(data);
+          console.log(formValues);
+
+          const regionName =
+            values.details.find((detail: any) => detail.label === "Region Name")
+              ?.value_name || getLocationCode.region_name;
+          const barangayName =
+            values.details.find((detail: any) => detail.label === "Barangay Name")
+              ?.value_name || getLocationCode.barangay_name;
+          const citiesName =
+            values.details.find(
+              (detail: any) => detail.label === "City Or Municipality Name"
+            )?.value_name || getLocationCode.city_or_municipality_name;
+          const provinceName =
+            values.details.find((detail: any) => detail.label === "Province Name")
+              ?.value_name || getLocationCode.province_name;
+
+          console.log(regionName);
+
           const usersPayload = {
-            email: data.email,
-            password: data.password,
-            password_confirmation: data.password_confirmation,
-            role: data.role,
-            status: data.status,
-            eu_device: euDevice,
+            user_id: data.user_id,
+            first_name: formValues.first_name,
+            middle_name: formValues.middle_name,
+            last_name: formValues.last_name,
+            contact_number: formValues.contact_number,
+            contact_email: formValues.contact_email,
+            address_1: formValues.address_1,
+            address_2: formValues.address_2,
+            phone_number: formValues.phone_number,
+            region_code: formValues.region_name,
+            province_code: formValues.province_name,
+            city_or_municipality_code: formValues.city_or_municipality_name,
+            barangay_code: formValues.barangay_name,
+            barangay_name: barangayName,
+            city_or_municipality_name: citiesName,
+            province_name: provinceName,
+            region_name: regionName,
+            eu_device: Cookies.get("eu"),
           };
+
+          console.log(usersPayload);
 
           dispatch(
             addUser({
-              url: "accounts/admin/store",
+              url: url,
               method: "POST",
               data: usersPayload,
             })
@@ -383,14 +503,14 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                   <ScrollArea className="h-72 w-full">
                     <form
                       onSubmit={handleSubmit(
-                        handleFormSubmit(btn.url, "users")
+                        handleFormSubmit(btn.url, "users", btn)
                       )}
                       className="grid py-4 gap-6 px-2 sm:px-5"
                     >
                       {btn?.details?.map((detail: any) => {
                         return (
                           <>
-                            {detail.type !== "select" && (
+                            {detail.type === "input" && (
                               <div className="flex flex-col gap-2">
                                 <Label className="text-sm font-semibold">
                                   {detail?.label}
@@ -422,7 +542,301 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                                 )}
                               </div>
                             )}
-                            {detail?.type === "select" && (
+
+                            {detail.type === "email" && (
+                              <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-semibold">
+                                  {detail?.label}
+                                </Label>
+                                <Input
+                                  type={detail?.type}
+                                  placeholder={`Enter your ${detail?.label}`}
+                                  className="col-span-3"
+                                  {...register(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase()
+                                  )}
+                                />
+                                {usersParentError?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ] && (
+                                  <small className="text-xs text-red-500">
+                                    {
+                                      usersParentError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]
+                                    }
+                                  </small>
+                                )}
+                              </div>
+                            )}
+
+                            {detail.type === "number" && (
+                              <div className="flex flex-col gap-2">
+                                <Label className="text-sm font-semibold">
+                                  {detail?.label}
+                                </Label>
+                                <Input
+                                  type={detail?.type}
+                                  placeholder={`Enter your ${detail?.label}`}
+                                  className="col-span-3"
+                                  {...register(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase()
+                                  )}
+                                />
+                                {usersParentError?.message[
+                                  _.replace(_.lowerCase(detail.label), " ", "_")
+                                ] && (
+                                  <small className="text-xs text-red-500">
+                                    {
+                                      usersParentError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]
+                                    }
+                                  </small>
+                                )}
+                              </div>
+                            )}
+
+                            {detail.type === "select" &&
+                              detail.label === "Region Name" && (
+                                <div className="grid w-full items-center gap-1.5">
+                                  <Label className="font-semibold text-sm">
+                                    {detail.label}
+                                  </Label>
+                                  <Select
+                                    onValueChange={(value) => {
+                                      const selected =
+                                        locationsData.regions.find(
+                                          (region: any) => region.code === value
+                                        );
+                                      setValue(
+                                        detail.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      );
+                                      onChangeSelect(detail.label, selected);
+                                    }}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue
+                                        placeholder={
+                                          detail.value_name || "Select a region"
+                                        }
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Region</SelectLabel>
+                                        {Array.isArray(locationsData.regions) &&
+                                          locationsData.regions.map(
+                                            (region: any) => (
+                                              <SelectItem
+                                                key={region.code}
+                                                value={region.code}
+                                              >
+                                                {region.regionName}
+                                              </SelectItem>
+                                            )
+                                          )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                  <small className="text-red-500">
+                                    {/* {updateSettingsProfileData &&
+                                      updateSettingsProfileData?.message?.[
+                                        "region_name"
+                                      ]} */}
+                                  </small>
+                                </div>
+                              )}
+
+                            {detail.type === "select" &&
+                              detail.label === "Province Name" && (
+                                <div className="grid w-full items-center gap-1.5">
+                                  <Label className="font-semibold text-sm">
+                                    {detail.label}
+                                  </Label>
+                                  <Select
+                                    onValueChange={(value) => {
+                                      const selected =
+                                        locationsData?.provinces.find(
+                                          (province: any) =>
+                                            province.code === value
+                                        );
+                                      setValue(
+                                        detail.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      );
+                                      onChangeSelect(detail.label, selected);
+                                    }}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue
+                                        placeholder={
+                                          detail.value_name ||
+                                          "Select a province"
+                                        }
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Province</SelectLabel>
+                                        {Array.isArray(
+                                          locationsData.provinces
+                                        ) &&
+                                          locationsData.provinces.map(
+                                            (prov: any) => (
+                                              <SelectItem
+                                                key={prov.code}
+                                                value={prov.code}
+                                              >
+                                                {prov.name}
+                                              </SelectItem>
+                                            )
+                                          )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                  <small className="text-red-500">
+                                    {/* {updateSettingsProfileData &&
+                                      updateSettingsProfileData?.message?.[
+                                        "province_name"
+                                      ]} */}
+                                  </small>
+                                </div>
+                              )}
+
+                            {detail.type === "select" &&
+                              detail.label === "City Or Municipality Name" && (
+                                <div className="grid w-full items-center gap-1.5">
+                                  <Label className="font-semibold text-sm">
+                                    {detail.label}
+                                  </Label>
+                                  <Select
+                                    onValueChange={(value) => {
+                                      const selected =
+                                        locationsData.cities.find(
+                                          (municipal: any) =>
+                                            municipal.code === value
+                                        );
+                                      setValue(
+                                        detail.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      );
+                                      onChangeSelect(detail.label, selected);
+                                    }}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue
+                                        placeholder={
+                                          detail.value_name ||
+                                          "Select a City/Municipalities"
+                                        }
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>
+                                          City/Municipalities
+                                        </SelectLabel>
+                                        {Array.isArray(locationsData.cities) &&
+                                          locationsData.cities.map(
+                                            (mun: any) => (
+                                              <SelectItem
+                                                key={mun.code}
+                                                value={mun.code}
+                                              >
+                                                {mun.name}
+                                              </SelectItem>
+                                            )
+                                          )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                  <small className="text-red-500">
+                                    {/* {updateSettingsProfileData &&
+                                      updateSettingsProfileData?.message?.[
+                                        "city_or_municipality_name"
+                                      ]} */}
+                                  </small>
+                                </div>
+                              )}
+
+                            {detail.type === "select" &&
+                              detail.label === "Barangay Name" && (
+                                <div className="grid w-full items-center gap-1.5">
+                                  <Label className="font-semibold text-sm">
+                                    {detail.label}
+                                  </Label>
+                                  <Select
+                                    onValueChange={(value) => {
+                                      const selected =
+                                        locationsData.barangays.find(
+                                          (brgy: any) => brgy.code === value
+                                        );
+                                      setValue(
+                                        detail.label
+                                          .replace(/\s+/g, "_")
+                                          .toLowerCase(),
+                                        value
+                                      );
+                                      onChangeSelect(detail.label, selected);
+                                    }}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue
+                                        placeholder={
+                                          detail.value_name ||
+                                          "Select a barangay"
+                                        }
+                                      />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>Barangay</SelectLabel>
+                                        {Array.isArray(
+                                          locationsData.barangays
+                                        ) &&
+                                          locationsData.barangays.map(
+                                            (mun: any) => (
+                                              <SelectItem
+                                                key={mun.code}
+                                                value={mun.code}
+                                              >
+                                                {mun.name}
+                                              </SelectItem>
+                                            )
+                                          )}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                  <small className="text-red-500">
+                                    {/* {updateSettingsProfileData &&
+                                      updateSettingsProfileData?.message?.[
+                                        "city_or_municipality_name"
+                                      ]} */}
+                                  </small>
+                                </div>
+                              )}
+
+                            {/* {detail?.type === "select" && (
                               <div className="flex flex-col gap-2">
                                 <Label className="font-semibold text-xs">
                                   {detail?.label}
@@ -473,7 +887,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                                   </small>
                                 )}
                               </div>
-                            )}
+                            )} */}
                           </>
                         );
                       })}

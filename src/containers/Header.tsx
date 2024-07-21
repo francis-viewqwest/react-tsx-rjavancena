@@ -104,6 +104,7 @@ const Header: React.FC = () => {
   const [showEditInfoDialog, setShowEditInfoDialog] = useState(false);
   const [showViewProfileDialog, setViewProfileDialog] = useState(false);
   const [selectedTab, setSelectedTab] = useState("profile");
+  const [isClickImage, setIsClickImage] = useState(false);
 
   console.log(selectedTab);
 
@@ -161,6 +162,19 @@ const Header: React.FC = () => {
       toast({
         variant: "success",
         title: updateSettingsProfileData?.message,
+      });
+      dispatch(
+        settingsProfile({
+          url: "user-info/get-personal-info",
+          method: "GET",
+        })
+      );
+    }
+
+    if (userStatus === "updateEmailProfile/success") {
+      toast({
+        variant: "success",
+        title: updateEmailProfileData?.message,
       });
       dispatch(
         settingsProfile({
@@ -303,7 +317,6 @@ const Header: React.FC = () => {
 
     const payload = {
       user_id: funcData.user_id,
-      image: formValues?.image?.[0] ?? null,
       first_name: formValues.first_name,
       middle_name: formValues.middle_name,
       last_name: formValues.last_name,
@@ -436,9 +449,9 @@ const Header: React.FC = () => {
         : null;
 
     if (countdown.email > 0 || countdown.password > 0) {
-      Cookies.set("countdowns", JSON.stringify(countdown), { expires: 1 }); // Save countdowns to cookies
+      Cookies.set("countdowns", JSON.stringify(countdown), { expires: 1 });
     } else {
-      Cookies.remove("countdowns"); // Remove the cookie when both countdowns are 0
+      Cookies.remove("countdowns");
     }
 
     return () => {
@@ -523,6 +536,21 @@ const Header: React.FC = () => {
         })
       );
     }
+  };
+
+  const handleDeleteImage = () => {
+    const payload = {
+      image: "",
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      uploadImage({
+        url: "user-info/update-image",
+        method: "POST",
+        data: payload,
+      })
+    );
   };
 
   return (
@@ -634,14 +662,22 @@ const Header: React.FC = () => {
                               Super Admin
                             </h1>
                           </div>
-                          <div className="ml-3">
-                            <Button className="relative" size="sm">
+                          <div className="ml-3 flex gap-3">
+                            <Button className="relative" size="xs">
                               <Input
                                 className="absolute bottom-0 h-full opacity-0"
                                 type="file"
                                 onChange={handleImageChange}
                               />
                               Change picture
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              className="relative"
+                              size="xs"
+                              onClick={handleDeleteImage}
+                            >
+                              Delete picture
                             </Button>
                           </div>
                         </div>

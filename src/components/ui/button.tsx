@@ -19,6 +19,8 @@ const buttonVariants = cva(
         destructiveOutline:
           "text-destructive border-destructive shadow hover:border-destructive/80",
         secondary:
+          "bg-secondary text-red-500 hover:bg-secondary/80",
+        secondaryDestructive:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
@@ -26,7 +28,7 @@ const buttonVariants = cva(
       size: {
         default: "h-10 px-4 py-2",
         btnPayment: "h-6 px-2 py-2",
-        xs: "h-8 rounded-md px-2",
+        xs: "h-8 rounded-md text-xs px-3",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
