@@ -237,6 +237,7 @@ export interface UsersManagementState {
   loadingEditUser: string | null | any;
   loadingEditUserInfo: string | null | any;
   createUsersData: string | null | any;
+  editUserData: string | null | any;
 }
 
 export interface ApiConfig {

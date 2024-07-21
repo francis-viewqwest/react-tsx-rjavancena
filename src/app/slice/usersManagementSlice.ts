@@ -13,6 +13,7 @@ const initialState: UsersManagementState = {
     loadingEditUserInfo: false,
     error: false,
     editUserError: {},
+    editUserData: {},
     editUserInfoError: {},
     createUsersData: {}
 }
@@ -53,8 +54,9 @@ const usersManagementSlice = createSlice({
                 state.status = "addUser/success";
                 state.loading = false;
                 state.loadingCreateUser = false;
-                state.data = action.payload
-                state.error = null
+                state.data = action.payload;
+                state.createUsersData = action.payload;
+                state.error = null;
             })
             .addCase(addUser.rejected, (state, action) => {
                 state.status = "addUser/failed";
@@ -76,6 +78,7 @@ const usersManagementSlice = createSlice({
                 state.loading = false;
                 state.loadingEditUser = false;
                 state.error = action.payload;
+                state.editUserData = action.payload;
             })
             .addCase(editUser.rejected, (state, action) => {
                 state.status = "editUser/failed";

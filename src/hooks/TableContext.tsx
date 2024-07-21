@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { IconReload } from "@tabler/icons-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
+import phFlag from "@/assets/images/phflag.svg";
 import {
   Select,
   SelectContent,
@@ -105,7 +106,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     register,
     watch,
     formState: { isDirty },
-  } = useForm();
+  } = useForm({});
 
   const imageInputRef = useRef<null>(null);
 
@@ -228,10 +229,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
 
         case "users":
           const formValues = getValues();
-
-          console.log(values);
-          console.log(data);
-          console.log(formValues);
 
           const regionName =
             values.details.find((detail: any) => detail.label === "Region Name")
@@ -616,20 +613,31 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                             )}
 
                             {detail.type === "number" && (
-                              <div className="flex flex-col gap-2">
+                              <div className="flex flex-col gap-2 relative">
                                 <Label className="text-sm font-semibold">
                                   {detail?.label}
                                 </Label>
-                                <Input
-                                  type={detail?.type}
-                                  placeholder={`Enter your ${detail?.label}`}
-                                  className="col-span-3"
-                                  {...register(
-                                    detail.label
-                                      .replace(/\s+/g, "_")
-                                      .toLowerCase()
-                                  )}
-                                />
+                                <div className="flex items-center">
+                                  <img
+                                    className="w-5 absolute right-7"
+                                    src={phFlag}
+                                    alt=""
+                                  />
+                                  <span className="absolute right-14 text-xs">
+                                    +63
+                                  </span>
+                                  <Input
+                                    maxLength={10}
+                                    type="text"
+                                    placeholder={`Enter your ${detail?.label}`}
+                                    className="col-span-3"
+                                    {...register(
+                                      detail.label
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase()
+                                    )}
+                                  />
+                                </div>
                                 {usersParentError?.message[
                                   _.replace(_.lowerCase(detail.label), " ", "_")
                                 ] && (
@@ -984,7 +992,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         );
                       })}
                       <DialogFooter>
-                        <Button className="bg-bgrjavancena" type="submit">
+                        <Button
+                          className="bg-bgrjavancena"
+                          type="submit"
+                          disabled={!isDirty}
+                        >
                           {loadingCreateUser && (
                             <span className="flex items-center gap-1">
                               Creating...
