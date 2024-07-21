@@ -1394,7 +1394,7 @@ export function RowTransactionActions<TData>({
                                 )}
                               </CardTitle>
                             </CardHeader>
-                            <CardContent className="grid grid-cols-5 gap-4  w-full p-2">
+                            <CardContent className="grid grid-cols-5 gap-4 items-center w-full p-2">
                               <div className="w-full">
                                 <Label className="text-xs">Serial number</Label>
                                 <h1
@@ -1419,11 +1419,10 @@ export function RowTransactionActions<TData>({
                                   className="text-xs text-neutral-500"
                                   title={item.name}
                                 >
-                                  {/* {_.truncate(item.name, {
-                                    length: 32,
+                                  {_.truncate(item.name, {
+                                    length: 27,
                                     separator: "...",
-                                  })} */}
-                                  {item.name}
+                                  })}
                                 </h1>
                               </div>
                               <div className="w-full">
