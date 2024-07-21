@@ -592,9 +592,9 @@ const Header: React.FC = () => {
                           </div>
                           <div>
                             <h1 className="text-md font-semibold">
-                              {profileData.first_name} {""}{" "}
-                              {profileData.middle_name} {""}{" "}
-                              {profileData.last_name}
+                              {profileData?.first_name} {""}{" "}
+                              {profileData?.middle_name} {""}{" "}
+                              {profileData?.last_name}
                             </h1>
                             <h1 className="text-sm text-neutral-500">
                               Super Admin
@@ -627,7 +627,7 @@ const Header: React.FC = () => {
                           </TabsList>
                           <TabsContent value="profile">
                             <div className="py-10 flex flex-col gap-6">
-                              {modalData?.details.map((detail) => (
+                              {modalData?.details?.map((detail: any) => (
                                 <>
                                   {detail.type === "input" && (
                                     <div className="grid w-full items-center gap-1.5">
@@ -1136,9 +1136,9 @@ const Header: React.FC = () => {
                           </div>
                           <div>
                             <h1 className="text-md font-semibold">
-                              {profileData.first_name} {""}{" "}
-                              {profileData.middle_name} {""}{" "}
-                              {profileData.last_name}
+                              {profileData?.first_name} {""}{" "}
+                              {profileData?.middle_name} {""}{" "}
+                              {profileData?.last_name}
                             </h1>
                             <h1 className="text-sm text-neutral-500">
                               Super Admin
@@ -1151,21 +1151,21 @@ const Header: React.FC = () => {
                               <div className="grid w-full items-center gap-2">
                                 <Label>Full name</Label>
                                 <Label className="text-neutral-400 text-sm">
-                                  {profileData.first_name} {""}{" "}
-                                  {profileData.middle_name} {""}{" "}
-                                  {profileData.last_name}
+                                  {profileData?.first_name} {""}{" "}
+                                  {profileData?.middle_name} {""}{" "}
+                                  {profileData?.last_name}
                                 </Label>
                               </div>
                               <div className="grid w-full items-center gap-2">
                                 <Label>Email</Label>
                                 <Label className="text-neutral-400 text-sm">
-                                  {profileData.contact_email}
+                                  {profileData?.contact_email}
                                 </Label>
                               </div>
                               <div className="grid w-full items-center gap-2">
                                 <Label>Contact number</Label>
                                 <Label className="text-neutral-400 text-sm">
-                                  {profileData.contact_number}
+                                  {profileData?.contact_number}
                                 </Label>
                               </div>
                             </div>
@@ -1177,37 +1177,37 @@ const Header: React.FC = () => {
                                 <div className="grid w-full items-center gap-2">
                                   <Label>Address 1</Label>
                                   <Label className="text-neutral-400 text-sm">
-                                    {profileData.address_1}
+                                    {profileData?.address_1}
                                   </Label>
                                 </div>
                                 <div className="grid w-full items-center gap-2">
                                   <Label>Address 2</Label>
                                   <Label className="text-neutral-400 text-sm">
-                                    {profileData.address_2}
+                                    {profileData?.address_2}
                                   </Label>
                                 </div>
                                 <div className="grid w-full items-center gap-2">
                                   <Label>Region</Label>
                                   <Label className="text-neutral-400 text-sm">
-                                    {profileData.region_name}
+                                    {profileData?.region_name}
                                   </Label>
                                 </div>
                                 <div className="grid w-full items-center gap-2">
                                   <Label>Province</Label>
                                   <Label className="text-neutral-400 text-sm">
-                                    {profileData.province_name}
+                                    {profileData?.province_name}
                                   </Label>
                                 </div>
                                 <div className="grid w-full items-center gap-2">
                                   <Label>City/Municipalities</Label>
                                   <Label className="text-neutral-400 text-sm">
-                                    {profileData.city_or_municipality_name}
+                                    {profileData?.city_or_municipality_name}
                                   </Label>
                                 </div>
                                 <div className="grid w-full items-center gap-2">
                                   <Label>Barangay</Label>
                                   <Label className="text-neutral-400 text-sm">
-                                    {profileData.barangay_name}
+                                    {profileData?.barangay_name}
                                   </Label>
                                 </div>
                               </div>
