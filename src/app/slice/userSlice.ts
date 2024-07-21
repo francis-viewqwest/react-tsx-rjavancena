@@ -469,7 +469,7 @@ export const logout = createAsyncThunk("user/getLogout", async (ApiConfig: ApiCo
 export const uploadImage = createAsyncThunk("user/uploadImage", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
   try {
     const res = await axiosClient({
-      { headers: { "Content-Type": "multipart/form-data", },
+      headers: { "Content-Type": "multipart/form-data", },
       url: ApiConfig.url,
       method: ApiConfig.method,
       data: ApiConfig.data
