@@ -3,6 +3,15 @@ import { Row } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import phFlag from "@/assets/images/phflag.svg";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -11,6 +20,7 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { IconReload } from "@tabler/icons-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -422,6 +432,7 @@ export function RowUsersActions<TData>({
 
     setModalData(values);
     setShowEditDialog(true);
+    setShowEditInfoDialog(false);
     setShowRemoveDialog(false);
   };
 
@@ -1202,24 +1213,11 @@ export function RowTransactionActions<TData>({
   const [funcData, setFuncData] = useState({});
   const dispatch = useAppDispatch();
   const [showVoidDialog, setShowVoidDialog] = useState(false);
+  const [showViewTransacDialog, setShowViewTransacDialog] = useState(false);
   console.log(showVoidDialog);
   const [showRemoveDialog, setShowRemoveDialog] = useState(true);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const inventoryChildError = useSelector(inventoryError);
-
-  // const handleEdit = (values: any) => {
-  //   console.log(values);
-  //   setFuncData(values);
-
-  //   values.details.forEach((val) => {
-  //     const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
-  //     setValue(fieldName, val.value);
-  //   });
-
-  //   setModalData(values);
-  //   setShowEditDialog(true);
-  //   setShowRemoveDialog(false);
-  // };
 
   console.log(showRemoveDialog);
   console.log(row.original.actions);
@@ -1241,13 +1239,28 @@ export function RowTransactionActions<TData>({
     switch (buttonName) {
       case "Void":
         setShowVoidDialog(true);
+        setShowViewTransacDialog(false);
         setFuncData(values);
+        setModalData(values);
+        break;
+
+      case "View":
+        console.log(values);
+
+        setShowViewTransacDialog(true);
+        setFuncData(values);
+        setModalData(values);
         break;
 
       default:
         break;
     }
   };
+
+  const formatted = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  });
 
   const handleVoidClick = (values: any) => {
     const payload = {
@@ -1308,7 +1321,12 @@ export function RowTransactionActions<TData>({
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" className="mx-1" size="xs">
+                  <Button
+                    onClick={() => handleActionFunc(act)}
+                    variant="outline"
+                    className="mx-1"
+                    size="xs"
+                  >
                     {act.button_name}
                   </Button>
                 </>
@@ -1332,6 +1350,102 @@ export function RowTransactionActions<TData>({
                   >
                     Void
                   </Button>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+            {showViewTransacDialog && (
+              <DialogContent className="sm:max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle className="px-5">
+                    Details transaction:{" "}
+                    <span className="font-normal">
+                      {_.startCase(row?.original?.user_id)}
+                    </span>
+                  </DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-72 w-full px-5">
+                  {modalData?.details.map((detail) => (
+                    <div>
+                      <p className="text-neutral-500">
+                        Total items:{" "}
+                        {detail.items.reduce(
+                          (acc, item) => acc + item.count,
+                          0
+                        )}
+                      </p>
+                      {detail?.items.map((item) => (
+                        <div className="w-full">
+                          <Card className="flex items-center p-0 m-0 my-4">
+                            <CardHeader className="p-2">
+                              <CardTitle>
+                                {_.isEmpty(item.img) ? (
+                                  <Skeleton className="h-12 w-12 bg-neutral-200 rounded-md" />
+                                ) : (
+                                  <img
+                                    className="h-11 w-11 bg-cover bg-no-repeat"
+                                    src={item.img}
+                                    alt=""
+                                  />
+                                )}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-5 gap-4  w-full p-2">
+                              <div className="w-full">
+                                <Label className="text-xs">Serial number</Label>
+                                <h1
+                                  className="text-xs text-neutral-500"
+                                  title={item.item_code}
+                                >
+                                  {item.item_code}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Category</Label>
+                                <h1
+                                  className="text-xs text-neutral-500"
+                                  title={item.category}
+                                >
+                                  {item.category}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Product</Label>
+                                <h1
+                                  className="text-xs text-neutral-500"
+                                  title={item.name}
+                                >
+                                  {/* {_.truncate(item.name, {
+                                    length: 32,
+                                    separator: "...",
+                                  })} */}
+                                  {item.name}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Total price</Label>
+                                <h1 className="text-xs text-neutral-500">
+                                  {formatted.format(item.total_price)}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Qty</Label>
+                                <h1 className="text-xs text-neutral-500">
+                                  {item.count}
+                                </h1>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </ScrollArea>
+                <DialogFooter>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">
                       Cancel
