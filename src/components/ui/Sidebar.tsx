@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/svg/rjlogo.svg";
+import logo from "../assets/svg/rjlogo-text.svg";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -140,11 +140,25 @@ const Sidebar: React.FC = () => {
           </div>
         </DrawerContent>
       </Drawer>
-      <div className="min-h-screen hidden border-r  lg:flex flex-col bg-white transition-all relative w-20">
+      <div
+        className={`min-h-screen hidden border-r p-2 lg:flex flex-col bg-white transition-all relative ${
+          open ? "w-48" : "w-14"
+        }`}
+      >
         <div className="flex items-center justify-between">
-          <img className="w-10 m-auto pt-2" src={logo} alt="RJ Avancena Logo" />
+          <img
+            className={`transition-all ease-in-out ${
+              open ? "w-28" : "w-0 ease-in-out"
+            }`}
+            src={logo}
+            alt="RJ Avancena Logo"
+          />
+
+          <Button size="sm" variant="ghost" onClick={() => setOpen(!open)}>
+            <Icon icon="heroicons-outline:chevron-double-right" />
+          </Button>
         </div>
-        <nav className="gap-2 flex flex-col pt-10 ease-in-out transition-all relative">
+        <nav className="gap-2 flex flex-col pt-10 ease-in-out transition-all">
           {sideNavRoutes &&
             sideNavRoutes.map((menu: any, index: number) => (
               <React.Fragment key={index}>
@@ -210,24 +224,29 @@ const Sidebar: React.FC = () => {
                         size: "sm",
                         variant: "ghost",
                       }),
-                      "font-medium text-neutral-600 h-12 relative rounded-none"
+                      `justify-between font-medium text-neutral-600  ${
+                        location.pathname === `/app${menu.path}` &&
+                        "bg-[#f66359] text-white hover:bg-bgrjavancena/90 hover:text-white"
+                      } ${
+                        _.includes(
+                          location.pathname,
+                          "/app/inventory/inventory-child"
+                        ) &&
+                        menu.path === "/inventory" &&
+                        "bg-[#f66359] text-white hover:bg-bgrjavancena/90 hover:text-white"
+                      }`
                     )}
                     to={`/app${menu.path}`}
                   >
-                    <span
-                      className={`${
-                        location.pathname === `/app${menu.path}` &&
-                        "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
-                      } ${
-                        _.includes(location.pathname, menu.path) &&
-                        menu.path === menu.path &&
-                        "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
-                      } `}
-                      aria-hidden="true"
-                    ></span>
-                    <div className="flex relative w-full flex-col items-center">
-                      <Icon className="m-auto" fontSize={17} icon={menu.icon} />
-                      <span className="text-[0.6rem] text-center m-auto ease-in-out transition-all">
+                    <div className={`flex items-center gap-3 text-start`}>
+                      <Icon fontSize={17} icon={menu.icon} />
+                      <span
+                        className={`${
+                          !open
+                            ? "scale-0 hidden ease-in-out transition-all"
+                            : "ease-in-out scale-100 transition-all"
+                        }`}
+                      >
                         {menu.title}
                       </span>
                     </div>

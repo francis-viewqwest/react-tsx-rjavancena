@@ -192,6 +192,7 @@ export interface InventoryState {
   error: string | null | any;
   updateParentErrorMessage: string | null | any;
   updateChildMessage: string | null | any;
+  updateChildLoading: boolean;
   loadingTable: boolean;
   loadingCreate: boolean;
   loadingUpdate: boolean;

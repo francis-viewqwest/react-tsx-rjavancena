@@ -458,7 +458,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       </div>
 
                       <DialogFooter>
-                        <Button className="bg-bgrjavancena" type="submit">
+                        <Button
+                          className="bg-bgrjavancena"
+                          type="submit"
+                          disabled={loadingCreateChild}
+                        >
                           {loadingCreateChild && (
                             <span className="flex items-center gap-1">
                               Inserting...
@@ -995,7 +999,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                         <Button
                           className="bg-bgrjavancena"
                           type="submit"
-                          disabled={!isDirty}
+                          disabled={!isDirty || loadingCreateUser}
                         >
                           {loadingCreateUser && (
                             <span className="flex items-center gap-1">

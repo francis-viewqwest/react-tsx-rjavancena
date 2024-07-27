@@ -122,19 +122,20 @@ const Inventory: React.FC<RouteType> = (props) => {
     if (inventoryLoading === "createInventoryParent/success") {
       dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
       toast({
+        variant: "success",
         title: inventoryResData.message,
       });
     }
 
     //* UPDATE INVENTORY DATA
     if (inventoryLoading === "updateInventoryParent/success") {
-      toast({ title: inventoryResData.message });
+      toast({ variant: "success", title: inventoryResData.message });
       dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
     }
 
     //* DELETE INVENTORY DATA
     if (inventoryLoading === "deleteInventoryData/success") {
-      toast({ title: inventoryResData.message });
+      toast({ variant: "success", title: inventoryResData.message });
       dispatch(getInventoryData({ url: props.path_key, method: "GET" }));
     }
 
@@ -240,7 +241,11 @@ const Inventory: React.FC<RouteType> = (props) => {
                     })}
                   </div>
                   <DialogFooter>
-                    <Button className="bg-bgrjavancena" type="submit">
+                    <Button
+                      disabled={loadingCreate}
+                      className="bg-bgrjavancena"
+                      type="submit"
+                    >
                       {loadingCreate && (
                         <span className="flex items-center gap-1">
                           Adding...

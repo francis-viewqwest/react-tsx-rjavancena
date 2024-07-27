@@ -10,6 +10,7 @@ const initialState: InventoryState = {
     error: false,
     updateParentErrorMessage: false,
     updateChildMessage: false,
+    updateChildLoading: false,
     loadingTable: false,
     loadingCreate: false,
     loadingUpdate: false,
@@ -118,15 +119,18 @@ const inventorySlice = createSlice({
             .addCase(updateInventoryChild.pending, (state) => {
                 state.status = "updateInventoryChild/loading";
                 state.error = null;
+                state.updateChildLoading = true;
             })
             .addCase(updateInventoryChild.fulfilled, (state, action) => {
                 state.status = "updateInventoryChild/success";
                 state.data = action.payload;
                 state.updateChildMessage = action.payload;
+                state.updateChildLoading = false;
             })
             .addCase(updateInventoryChild.rejected, (state, action) => {
                 state.status = "updateInventoryChild/failed";
                 state.error = action.payload;
+                state.updateChildLoading = false;
             })
 
         //* DELETE INVENTORY 

@@ -82,8 +82,6 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
     },
   });
 
-  
-
   const handleEdit = (values: any) => {
     setFuncData(values);
 
@@ -317,7 +315,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
               </DropdownMenu>
               <DialogPortal>
                 {showEditDialog && (
-                  <DialogContent  className="sm:max-w-[425px]">
+                  <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                       <DialogTitle>Edit product details</DialogTitle>
                       <DialogDescription>
@@ -376,6 +374,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                       <Button
                         className="bg-bgrjavancena"
                         type="submit"
+                        disabled={loadingUpdate}
                         onClick={() => handleSaveClick()}
                       >
                         {loadingUpdate && (

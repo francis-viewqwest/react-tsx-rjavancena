@@ -86,6 +86,9 @@ export function RowInventoryActions<TData>({
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const inventoryChildError = useSelector(inventoryError);
+  const updateChildLoading = useAppSelector(
+    (state) => state.inventory.updateChildLoading
+  );
 
   const handleEdit = (values: any) => {
     console.log(values);
@@ -323,9 +326,16 @@ export function RowInventoryActions<TData>({
               <Button
                 className="bg-bgrjavancena"
                 type="submit"
+                disabled={updateChildLoading}
                 onClick={() => handleSaveClick()}
               >
-                Save changes
+                {updateChildLoading && (
+                  <span className="flex items-center gap-1">
+                    Saving...
+                    <IconReload className="animate-spin" size={16} />
+                  </span>
+                )}
+                {!updateChildLoading && "Save changes"}
               </Button>
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
@@ -765,6 +775,7 @@ export function RowUsersActions<TData>({
               <Button
                 className="bg-bgrjavancena"
                 type="submit"
+                disabled={loadingEditUser}
                 onClick={() => handleSaveClick()}
               >
                 {loadingEditUser && (
@@ -1141,6 +1152,7 @@ export function RowUsersActions<TData>({
               <Button
                 className="bg-bgrjavancena"
                 type="submit"
+                disabled={loadingEditUserInfo}
                 onClick={() => handleSaveUserInfo(modalData)}
               >
                 {loadingEditUserInfo && (

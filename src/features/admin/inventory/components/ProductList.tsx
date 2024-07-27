@@ -51,14 +51,25 @@ const ProductList: React.FC = () => {
       dispatch(getInventoryDataChild({ url: id }));
     }
 
+    console.log(inventoryChildError);
+
     if (inventoryLoading === "updateInventoryChild/failed") {
-      toast({
-        variant: "destructive",
-        title:
-          (inventoryChildError?.message && inventoryChildError) ||
-          "Uh oh! Something went wrong.",
-      });
+      if (typeof inventoryChildError === "string") {
+        toast({
+          variant: "destructive",
+          title: inventoryChildError,
+        });
+      }
     }
+
+    // if (usersLoading === "editUserInfo/failed") {
+    //   if (typeof editUserInfoError?.message === "string") {
+    //     toast({
+    //       variant: "destructive",
+    //       title: editUserInfoError?.message,
+    //     });
+    //   }
+    // }
 
     if (inventoryLoading === "deleteInventoryChildData/success") {
       toast({ title: inventoryChild.message || inventoryChild });

@@ -2,8 +2,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpIcon } from "@radix-ui/react-icons";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import {
   RowInventoryActions,
   RowPackOrdersAction,
@@ -17,7 +15,6 @@ import {
 } from "./data-table-actions-row";
 import { Icon } from "@iconify/react";
 import {
-  ProductType,
   TransactionType,
   UsersType,
   CustomerOrderType,

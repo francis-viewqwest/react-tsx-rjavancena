@@ -29,8 +29,6 @@ const SignIn: React.FC = () => {
   const loadingEudevice = useAppSelector((state) => state.user.loadingEudevice);
   const [loading, setLoading] = useState(false);
 
-  console.log(errors);
-
   const axiosClient = useAxiosClient();
 
   const fetchEudevice = async () => {
@@ -206,7 +204,7 @@ const SignIn: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-col w-full mt-5 gap-4">
-                <Button className="font-bold bg-bgrjavancena">
+                <Button className="font-bold bg-bgrjavancena" disabled={loading}>
                   {loading && (
                     <span className="flex items-center gap-2">
                       Signing in...
