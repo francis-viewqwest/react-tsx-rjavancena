@@ -14,7 +14,7 @@ import UpdatePassword from "../pages/user/protected/UpdatePassword";
 //* Admin Pages Element
 
 const Routes: React.FC = () => {
-  const { token } = useAuth();
+  const { authUser } = useAuth();
 
   //* Public Routes
   const publicRoutes = [
@@ -75,7 +75,7 @@ const Routes: React.FC = () => {
 
   const router = createBrowserRouter([
     ...publicRoutes,
-    ...(!token  ? noAuthUserRoutes : []),
+    ...(!authUser.token  ? noAuthUserRoutes : []),
     ...authAdmin,
     ...registerAuthUser,
   ]);

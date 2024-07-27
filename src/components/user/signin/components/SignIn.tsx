@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IconReload } from "@tabler/icons-react";
 import useAxiosClient from "@/axios-client";
+import { useAuth } from "@/app/AuthProvider";
 
 interface FormValues {
   email: String;
@@ -28,6 +29,7 @@ const SignIn: React.FC = () => {
   const dispatch = useAppDispatch();
   const loadingEudevice = useAppSelector((state) => state.user.loadingEudevice);
   const [loading, setLoading] = useState(false);
+  const { setToken } = useAuth();
 
   const axiosClient = useAxiosClient();
 
@@ -66,13 +68,17 @@ const SignIn: React.FC = () => {
       };
 
       const res = await axiosClient.post("/login", payload);
-      Cookies.set("token", res.data.token);
+      // Cookies.set("authUser", res.data.token);
 
-      const newUSer = res.data.user_info;
+      const authUser = { token: res.data.token };
+      Cookies.set("authUser", JSON.stringify(authUser));
+      setToken(authUser.token);
 
-      if (newUSer === "New User") {
+      const newUser = res.data.user_info;
+
+      if (newUser === "New User") {
         navigate("/welcome");
-      } else if (Cookies.get("token") && newUSer === "Existing User") {
+      } else if (authUser.token && newUser === "Existing User") {
         navigate("/app/menu");
       }
     } catch (error: any) {
@@ -204,7 +210,10 @@ const SignIn: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-col w-full mt-5 gap-4">
-                <Button className="font-bold bg-bgrjavancena" disabled={loading}>
+                <Button
+                  className="font-bold bg-bgrjavancena"
+                  disabled={loading}
+                >
                   {loading && (
                     <span className="flex items-center gap-2">
                       Signing in...

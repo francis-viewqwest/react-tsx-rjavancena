@@ -11,6 +11,7 @@ import axios from "axios";
 interface AuthContextProps {
   token: string | undefined | any;
   setToken: (newToken: string) => void;
+  setAuthUser: (newToken: string) => void;
 }
 
 interface AuthProviderProps {
@@ -20,26 +21,34 @@ interface AuthProviderProps {
 const AuthContext = createContext<AuthContextProps>({
   token: undefined,
   setToken: () => {},
+  setAuthUser: () => {},
 });
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken_] = useState(Cookies.get("token"));
+  const storedAuthUser = Cookies.get("authUser");
+  const parsedAuthUser = storedAuthUser ? JSON.parse(storedAuthUser) : { token: undefined };
 
-  const setToken = (newToken: string) => {
-    setToken_(newToken);
+  const [authUser, setAuthUser] = useState<any>(parsedAuthUser);
+
+  const setToken = (newToken: any) => {
+    setAuthUser({ token: newToken });
   };
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-      Cookies.set("token", token);
+    if (authUser.token) {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + authUser.token;
+      Cookies.set("authUser", JSON.stringify(authUser));
     } else {
       delete axios.defaults.headers.common["Authorization"];
-      Cookies.remove("token");
+      Cookies.remove("authUser");
     }
-  }, [token]);
+  }, [authUser.token]);
 
-  const contextValue = useMemo(() => ({ token, setToken }), [token]);
+  const contextValue = useMemo(
+    () => ({ authUser, setToken, setAuthUser }),
+    [authUser]
+  );
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

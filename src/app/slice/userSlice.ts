@@ -14,6 +14,7 @@ const initialState: UserState = {
   user: {},
   userInfo: {},
   status: "",
+  navbarStatus: "",
   profileStatus: "idle",
   profileData: "",
   loading: false,
@@ -50,27 +51,33 @@ const userSlice = createSlice({
     mockCompleteProfileSuccess(state) {
       state.profileStatus = 'completeProfile/success';
     },
+    setNavbar: (state, action) => {
+      return {
+        ...state,
+        sidebar: action.payload
+      }
+    },
   },
   extraReducers(builder) {
 
-    builder
-      .addCase(setNavbar.pending, (state) => {
-        state.status = "setNavbar/loading";
-        state.loading = true;
+    // builder
+    //   .addCase(setNavbar.pending, (state) => {
+    //     state.status = "setNavbar/loading";
+    //     state.loading = true;
 
-      })
-      .addCase(setNavbar.fulfilled, (state, action) => {
-        state.status = "setNavbar/success";
-        state.loading = false;
-        state.data = action.payload;
-        state.sidebar = action.payload;
-      })
-      .addCase(setNavbar.rejected, (state, action) => {
-        state.status = "setNavbar/failed";
-        state.loading = false;
-        state.errorNavbar = action.payload;
+    //   })
+    //   .addCase(setNavbar.fulfilled, (state, action) => {
+    //     state.navbarStatus = "setNavbar/success";
+    //     state.loading = false;
+    //     state.data = action.payload;
+    //     state.sidebar = action.payload;
+    //   })
+    //   .addCase(setNavbar.rejected, (state, action) => {
+    //     state.navbarStatus = "setNavbar/failed";
+    //     state.loading = false;
+    //     state.errorNavbar = action.payload;
 
-      })
+    //   })
 
     builder
       .addCase(setEudevice.pending, (state) => {
@@ -342,19 +349,19 @@ export const setEudevice = createAsyncThunk("user/setEudevice", async (ApiConfig
   }
 })
 
-export const setNavbar = createAsyncThunk("user/getNavbar", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
-  try {
-    const res = await axiosClient({
-      url: ApiConfig.url,
-      method: ApiConfig.method,
-      data: ApiConfig.data
-    })
-    return res.data
-  } catch (error: any) {
-    console.log(error)
-    return rejectWithValue(error.response.data)
-  }
-})
+// export const setNavbar = createAsyncThunk("user/getNavbar", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+//   try {
+//     const res = await axiosClient({
+//       url: ApiConfig.url,
+//       method: ApiConfig.method,
+//       data: ApiConfig.data
+//     })
+//     return res.data
+//   } catch (error: any) {
+//     console.log(error)
+//     return rejectWithValue(error.response.data)
+//   }
+// })
 
 export const signIn = createAsyncThunk("user/setSignin", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
   try {
@@ -581,6 +588,6 @@ export const resendCodePassword = createAsyncThunk("user/resendCodePassword", as
 export const navbarData = (state: any) => state.user.data;
 export const selectCompleteProfileStatus = (state: any) => state.user.profileStatus;
 export const loading = (state: any) => state.user.loading;
-export const { resetCompleteProfileStatus, mockCompleteProfileSuccess } = userSlice.actions;
+export const { resetCompleteProfileStatus, mockCompleteProfileSuccess, setNavbar } = userSlice.actions;
 
 export default userSlice.reducer

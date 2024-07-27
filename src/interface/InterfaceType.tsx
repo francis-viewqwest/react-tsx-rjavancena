@@ -203,6 +203,7 @@ export interface UserState {
   sidebar: any[];
   data: object | any;
   status: string;
+  navbarStatus: string;
   profileStatus: string;
   profileData: object | any;
   loading: boolean;

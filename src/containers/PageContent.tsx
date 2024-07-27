@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Menu from "../pages/admin/protected/Menu";
@@ -18,25 +18,28 @@ import {
   InventorySkeleton,
   UsersManagementSkeleton,
 } from "../pages/admin/skeleton/SkeletonPage";
+import useAxiosClient from "@/axios-client";
 
 const PageContent: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const routes = useAppSelector((state) => state.user.data.nav_links);
+  // const routes = useAppSelector((state) => state.user.data.nav_links);
+  const [routes, setRoutes] = useState([]);
   const pageLoading = useAppSelector((state) => state.user.loading);
   const errorNavbar = useAppSelector((state) => state.user.errorNavbar);
+  const sideNavRoutes = useAppSelector((state) => state.user.sidebar);
+  console.log(sideNavRoutes);
   
-
   console.log(errorNavbar);
+  const axiosClient = useAxiosClient();
 
   const requestRoutes = async () => {
     try {
-      await dispatch(
-        setNavbar({
-          url: "/role-nav-links",
-          method: "GET",
-        })
-      );
+      const res = await axiosClient.get("/role-nav-links");
+      console.log(res.data.nav_links);
+      
+      setRoutes(res.data.nav_links);
+      dispatch(setNavbar(res.data.nav_links));
     } catch (error) {
       navigate("/");
     }
@@ -101,7 +104,6 @@ const PageContent: React.FC = () => {
                     </Route>
                   )
               )}
-            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
       </div>

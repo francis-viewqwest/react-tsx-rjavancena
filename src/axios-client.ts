@@ -11,9 +11,13 @@ const useAxiosClient = () => {
 
   axiosClient.interceptors.request.use(
     (config) => {
-      const token = Cookies.get("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      const authUser = Cookies.get("authUser");
+      if (authUser) {
+        const parsedAuthUser = JSON.parse(authUser);
+        const token = parsedAuthUser.token;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
       return config;
     },

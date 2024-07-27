@@ -13,7 +13,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Accordion,
   AccordionContent,
@@ -28,7 +33,7 @@ const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
 
   const location = useLocation();
-  const sideNavRoutes = useAppSelector((state) => state.user.sidebar.nav_links);
+  const sideNavRoutes = useAppSelector((state) => state.user.sidebar);
 
   return (
     <>
@@ -204,34 +209,52 @@ const Sidebar: React.FC = () => {
                     </AccordionItem>
                   </Accordion>
                 ) : (
-                  <Link
-                    className={cn(
-                      buttonVariants({
-                        size: "sm",
-                        variant: "ghost",
-                      }),
-                      "font-medium text-neutral-600 h-12 relative rounded-none"
-                    )}
-                    to={`/app${menu.path}`}
-                  >
-                    <span
-                      className={`${
-                        location.pathname === `/app${menu.path}` &&
-                        "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
-                      } ${
-                        _.includes(location.pathname, menu.path) &&
-                        menu.path === menu.path &&
-                        "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
-                      } `}
-                      aria-hidden="true"
-                    ></span>
-                    <div className="flex relative w-full flex-col items-center">
-                      <Icon className="m-auto" fontSize={17} icon={menu.icon} />
-                      <span className="text-[0.6rem] text-center m-auto ease-in-out transition-all">
-                        {menu.title}
-                      </span>
-                    </div>
-                  </Link>
+                  <TooltipProvider>
+                    <Tooltip delayDuration={100}>
+                      <TooltipTrigger>
+                        <Link
+                          className={cn(
+                            buttonVariants({
+                              size: "sm",
+                              variant: "ghost",
+                            }),
+                            `font-medium w-full text-neutral-500 h-12 relative rounded-none ${
+                              location.pathname === `/app${menu.path}` &&
+                              "bg-bgrjavancena/5"
+                            } ${
+                              _.includes(location.pathname, menu.path) &&
+                              menu.path === menu.path &&
+                              "bg-bgrjavancena/5 text-neutral-900"
+                            } `
+                          )}
+                          to={`/app${menu.path}`}
+                        >
+                          <span
+                            className={`${
+                              location.pathname === `/app${menu.path}` &&
+                              "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
+                            } ${
+                              _.includes(location.pathname, menu.path) &&
+                              menu.path === menu.path &&
+                              "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
+                            } `}
+                            aria-hidden="true"
+                          ></span>
+                          <div className="flex relative w-full flex-col items-center">
+                            <Icon
+                              className="m-auto"
+                              fontSize={17}
+                              icon={menu.icon}
+                            />
+                            <span className="text-[0.6rem] text-center m-auto ease-in-out transition-all">
+                              {menu.title}
+                            </span>
+                          </div>
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">{menu.title}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
               </React.Fragment>
             ))}
