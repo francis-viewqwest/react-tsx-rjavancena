@@ -10,6 +10,7 @@ import Layout from "../containers/Layout";
 import PublicLayout from "../pages/user/PublicLayout";
 import VerifyEmail from "../pages/user/protected/VerifyEmail";
 import UpdatePassword from "../pages/user/protected/UpdatePassword";
+import CashierCustomer from "@/features/admin/cashier/CashierCustomer";
 
 //* Admin Pages Element
 
@@ -64,6 +65,10 @@ const Routes: React.FC = () => {
       path: "/app/*",
       element: <Layout />,
     },
+    {
+      path: "/app/customer",
+      element: <CashierCustomer />,
+    },
   ];
 
   const noAuthUserRoutes = [
@@ -75,7 +80,7 @@ const Routes: React.FC = () => {
 
   const router = createBrowserRouter([
     ...publicRoutes,
-    ...(!authUser.token  ? noAuthUserRoutes : []),
+    ...(!authUser.token ? noAuthUserRoutes : []),
     ...authAdmin,
     ...registerAuthUser,
   ]);

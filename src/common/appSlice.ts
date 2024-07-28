@@ -13,6 +13,6 @@ const appSlice = createSlice({
 });
 
 export const { setTitle } = appSlice.actions;
-export const selectTitle = (state) => state.app.title;
+export const selectTitle = (state: any) => state?.app?.title;
 
 export default appSlice.reducer;

@@ -12,7 +12,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = () => {
   const { token } = useAuth();
-  const getUserInfo = useAppSelector((state) => state.user.userInfo);
+  const getUserInfo = useAppSelector((state) => state?.user?.userInfo);
 
   const newUser = getUserInfo?.user_info;
 

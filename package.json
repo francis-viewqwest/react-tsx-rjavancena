@@ -49,6 +49,7 @@
     "react-router-dom": "^6.21.3",
     "react-spinners": "^0.14.1",
     "recharts": "^2.12.4",
+    "redux-persist": "^6.0.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "unplugin-fonts": "^1.1.1",

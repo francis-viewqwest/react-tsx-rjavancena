@@ -169,6 +169,7 @@ export interface TableContextType {
 //* REDUX INTERFACE
 export interface menuState {
   data: object;
+  customerData: object;
   updateCustomer: object;
   removeCustomer: object;
   removeProduct: object;

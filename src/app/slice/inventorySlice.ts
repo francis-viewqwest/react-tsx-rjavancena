@@ -304,9 +304,9 @@ export const deleteInventoryChildData = createAsyncThunk("inventory/deleteInvent
 })
 
 
-export const inventoryData = (state: any) => state.inventory.data
-export const loadingStatus = (state: any) => state.inventory.status;
-export const inventoryError = (state: any) => state.inventory.error
+export const inventoryData = (state: any) => state?.inventory?.data
+export const loadingStatus = (state: any) => state?.inventory?.status;
+export const inventoryError = (state: any) => state?.inventory?.error
 
 
 

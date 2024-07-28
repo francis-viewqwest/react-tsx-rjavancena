@@ -28,7 +28,7 @@ const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
 
   const location = useLocation();
-  const sideNavRoutes = useAppSelector((state) => state.user.sidebar.nav_links);
+  const sideNavRoutes = useAppSelector((state) => state?.user?.sidebar?.nav_links);
 
   return (
     <>

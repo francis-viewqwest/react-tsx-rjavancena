@@ -116,14 +116,14 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   const inventoryChildData = useAppSelector(inventoryData);
   const inventoryChildError = useAppSelector(inventoryError);
   const loadingCreateChild = useAppSelector(
-    (state) => state.inventory.loadingCreateChild
+    (state) => state?.inventory?.loadingCreateChild
   );
 
   //* ADD USER MANAGEMENT
   const usersParentData = useAppSelector(usersData);
   const usersParentError = useAppSelector(usersError);
   const loadingCreateUser = useAppSelector(
-    (state) => state.usersManagement.loadingCreateUser
+    (state) => state?.usersManagement?.loadingCreateUser
   );
 
   const [getLocationCode, setGetLocationCode] = useState({});

@@ -43,8 +43,6 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
   );
 
   const handlePlaceOrder = (values: any) => {
-    console.log(values);
-
     const payload = {
       payment_id: values.payment_id,
       purchase_group_id: values.purchase_group_id,

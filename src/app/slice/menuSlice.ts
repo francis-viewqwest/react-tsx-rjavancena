@@ -7,6 +7,7 @@ const axiosClient = useAxiosClient();
 
 const initialState: menuState = {
     data: {},
+    customerData: {},
     status: "",
     loading: false,
     loadingAddCart: false,
@@ -21,7 +22,9 @@ const menuSlice = createSlice({
     name: "menu",
     initialState,
     reducers: {
-
+        setCustomerDisplay(state, action) {
+            state.customerData = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -68,6 +71,7 @@ const menuSlice = createSlice({
                 state.status = "customerData/success";
                 state.loading = false;
                 state.data = action.payload;
+                state.customerData = action.payload;
             })
             .addCase(getCustomerData.rejected, (state, action) => {
                 state.status = "customerData/failed";
@@ -305,6 +309,7 @@ export const placeOrder = createAsyncThunk("menu/placerOrder", async (ApiConfig:
 export const menuData = (state: any) => state.menu.data
 export const loadingStatus = (state: any) => state.menu.status;
 export const loading = (state: any) => state.menu.loading;
-export const menuError = (state: any) => state.menu.error
+export const menuError = (state: any) => state.menu.error;
+export const { setCustomerDisplay } = menuSlice.actions;
 
 export default menuSlice.reducer

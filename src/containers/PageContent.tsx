@@ -23,14 +23,11 @@ import useAxiosClient from "@/axios-client";
 const PageContent: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  // const routes = useAppSelector((state) => state.user.data.nav_links);
   const [routes, setRoutes] = useState([]);
-  const pageLoading = useAppSelector((state) => state.user.loading);
-  const errorNavbar = useAppSelector((state) => state.user.errorNavbar);
-  const sideNavRoutes = useAppSelector((state) => state.user.sidebar);
-  console.log(sideNavRoutes);
-  
-  console.log(errorNavbar);
+  const pageLoading = useAppSelector((state) => state?.user?.loading);
+
+
+
   const axiosClient = useAxiosClient();
 
   const requestRoutes = async () => {

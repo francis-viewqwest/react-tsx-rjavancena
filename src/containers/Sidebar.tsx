@@ -33,7 +33,7 @@ const Sidebar: React.FC = () => {
   const { open, setOpen, handleExpandSidebar } = useSidebar();
 
   const location = useLocation();
-  const sideNavRoutes = useAppSelector((state) => state.user.sidebar);
+  const sideNavRoutes = useAppSelector((state) => state?.user?.sidebar);
 
   return (
     <>

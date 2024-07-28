@@ -210,9 +210,9 @@ export const deleteUser = createAsyncThunk("usersManagement/deleteUser", async (
     }
 })
 
-export const usersData = (state: any) => state.usersManagement.data
-export const loadingStatus = (state: any) => state.usersManagement.status;
-export const usersError = (state: any) => state.usersManagement.error
+export const usersData = (state: any) => state?.usersManagement?.data
+export const loadingStatus = (state: any) => state?.usersManagement?.status;
+export const usersError = (state: any) => state?.usersManagement?.error
 
 
 export default usersManagementSlice.reducer

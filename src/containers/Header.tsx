@@ -84,8 +84,8 @@ import {
 
 const Header: React.FC = () => {
   const pageTitle = useSelector(selectTitle);
-  const headerUser = useAppSelector((state) => state.user.data.user);
-  const userLoading = useAppSelector((state) => state.user.loading);
+  const headerUser = useAppSelector((state) => state?.user?.data?.user);
+  const userLoading = useAppSelector((state) => state?.user?.loading);
   const navigate = useNavigate();
   const axiosClient = useAxiosClient();
   const dispatch = useAppDispatch();
@@ -109,33 +109,31 @@ const Header: React.FC = () => {
   console.log(selectedTab);
 
   const settingsProfileData = useAppSelector(
-    (state) => state.user.settingsProfileData
+    (state) => state?.user?.settingsProfileData
   );
   const updateEmailProfileData = useAppSelector(
-    (state) => state.user.updateEmailProfileData
+    (state) => state?.user?.updateEmailProfileData
   );
 
   const updatePasswordProfileData = useAppSelector(
-    (state) => state.user.updatePasswordProfileData
+    (state) => state?.user?.updatePasswordProfileData
   );
 
   const loadingUpdateEmail = useAppSelector(
-    (state) => state.user.loadingUpdateEmail
+    (state) => state?.user?.loadingUpdateEmail
   );
 
   const loadingUpdatePassword = useAppSelector(
-    (state) => state.user.loadingUpdatePassword
+    (state) => state?.user?.loadingUpdatePassword
   );
-
-  console.log(updatePasswordProfileData);
 
   const settingsActions = settingsProfileData?.data?.user_information?.actions;
 
-  const userStatus = useAppSelector((state) => state.user.status);
+  const userStatus = useAppSelector((state) => state?.user?.status);
   const updateSettingsProfileData = useAppSelector(
-    (state) => state.user.updateSettingsProfileData
+    (state) => state?.user?.updateSettingsProfileData
   );
-  const uploadImageData = useAppSelector((state) => state.user.uploadImageData);
+  const uploadImageData = useAppSelector((state) => state?.user?.uploadImageData);
 
   const profileData = settingsProfileData?.data?.user_information;
 
@@ -287,7 +285,7 @@ const Header: React.FC = () => {
   const [countdown, setCountdown] = useState({ email: 0, password: 0 });
 
   const loadingUpdateProfile = useAppSelector(
-    (state) => state.user.loadingUpdateProfile
+    (state) => state?.user?.loadingUpdateProfile
   );
 
   console.log(loadingUpdateProfile);

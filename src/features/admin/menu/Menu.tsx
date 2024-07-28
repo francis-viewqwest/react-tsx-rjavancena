@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import MenuList from "./components/MenuList";
 import OrdersList from "./components/OrdersList";
 import Payment from "./components/Payment";
@@ -13,6 +14,7 @@ import {
   menuData,
   getMenuData,
   getCustomerData,
+  setCustomerDisplay,
 } from "@/app/slice/menuSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
@@ -35,6 +37,8 @@ const Menu: React.FC = () => {
   const updateCustomer = useAppSelector((state) => state.menu.updateCustomer);
   const removeCustomer = useAppSelector((state) => state.menu.removeCustomer);
   const removeProduct = useAppSelector((state) => state.menu.removeProduct);
+
+  const customerData = useAppSelector((state) => state.menu.customerData);
 
   useEffect(() => {
     if (menuStatus === "menuData/success") {
@@ -89,6 +93,7 @@ const Menu: React.FC = () => {
           method: "GET",
         })
       );
+      // dispatch(setCustomerDisplay(customer));
     }
 
     if (menuStatus === "incrementQty/failed") {
@@ -196,6 +201,7 @@ const Menu: React.FC = () => {
         variant: "success",
         title: menuRes?.message,
       });
+      // localStorage.removeItem("customerData");
     }
   }, [menuStatus, dispatch]);
 
@@ -223,18 +229,27 @@ const Menu: React.FC = () => {
     setActiveTab((prevValue: string) => (prevValue === value ? null : value));
   };
 
+  const handleShowCustomerBtn = () => {
+    window.open("/app/customer/", "_blank");
+  };
+
   return (
     <>
       <div className="py-7 lg:grid lg:grid-cols-4 lg:grid-rows-4 lg:py-4 lg:gap-4">
         <div className="lg:col-span-3 lg:row-span-4">
-          <div className="w-full relative flex items-center lg:w-96">
-            <MagnifyingGlassIcon className="absolute ml-4 text-neutral-500 h-5 w-5" />
-            <Input
-              value={searchQuery}
-              onChange={handleSearch}
-              className="pl-12"
-              placeholder="Search Product"
-            />
+          <div className="w-full  flex items-center justify-between">
+            <div className="flex items-center relative lg:w-96">
+              <MagnifyingGlassIcon className="absolute ml-4 text-neutral-500 h-5 w-5" />
+              <Input
+                value={searchQuery}
+                onChange={handleSearch}
+                className="pl-12"
+                placeholder="Search Product"
+              />
+            </div>
+            <Button size="sm" onClick={handleShowCustomerBtn}>
+              Display payment
+            </Button>
           </div>
           <div className="py-4">
             {menuRes && (
