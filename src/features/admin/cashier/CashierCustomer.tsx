@@ -25,7 +25,7 @@ const CashierCustomer: React.FC = () => {
           setCustomerData(newCustomerData);
         } catch (error) {
           console.error("Failed to parse new customer data:", error);
-          setCustomerData(null); 
+          setCustomerData(null);
         }
       }
     };

@@ -84,7 +84,7 @@ import {
 
 const Header: React.FC = () => {
   const pageTitle = useSelector(selectTitle);
-  const headerUser = useAppSelector((state) => state?.user?.data?.user);
+  const headerUser = useAppSelector((state) => state?.user?.headerUser);
   const userLoading = useAppSelector((state) => state?.user?.loading);
   const navigate = useNavigate();
   const axiosClient = useAxiosClient();
@@ -105,8 +105,6 @@ const Header: React.FC = () => {
   const [showViewProfileDialog, setViewProfileDialog] = useState(false);
   const [selectedTab, setSelectedTab] = useState("profile");
   const [isClickImage, setIsClickImage] = useState(false);
-
-  console.log(selectedTab);
 
   const settingsProfileData = useAppSelector(
     (state) => state?.user?.settingsProfileData
@@ -133,7 +131,9 @@ const Header: React.FC = () => {
   const updateSettingsProfileData = useAppSelector(
     (state) => state?.user?.updateSettingsProfileData
   );
-  const uploadImageData = useAppSelector((state) => state?.user?.uploadImageData);
+  const uploadImageData = useAppSelector(
+    (state) => state?.user?.uploadImageData
+  );
 
   const profileData = settingsProfileData?.data?.user_information;
 
@@ -597,7 +597,7 @@ const Header: React.FC = () => {
                       <Avatar className="cursor-pointer">
                         <AvatarImage src={profileData?.image} />
                         <AvatarFallback className="bg-stone-900 text-white font-medium">
-                          {headerUser?.name.slice(0, 2).toUpperCase()}
+                          {headerUser?.name?.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
@@ -660,7 +660,7 @@ const Header: React.FC = () => {
                                 alt="@shadcn"
                               />
                               <AvatarFallback className="font-bold text-2xl">
-                                {headerUser.name.slice(0, 2).toUpperCase()}
+                                {headerUser?.name?.slice(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                           </div>
@@ -1233,7 +1233,7 @@ const Header: React.FC = () => {
                                 alt="@shadcn"
                               />
                               <AvatarFallback className="font-bold text-2xl">
-                                {headerUser.name.slice(0, 2).toUpperCase()}
+                                {headerUser?.name?.slice(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                           </div>

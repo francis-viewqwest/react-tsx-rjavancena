@@ -7,7 +7,7 @@ import Inventory from "../pages/admin/protected/Inventory";
 import ProductList from "../pages/admin/protected/ProductList";
 import Users from "../pages/admin/protected/Users";
 import Profile from "../pages/admin/protected/Profile";
-import { setNavbar } from "@/app/slice/userSlice";
+import { headerUser, setNavbar } from "@/app/slice/userSlice";
 import { RouteType } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
@@ -26,17 +26,15 @@ const PageContent: React.FC = () => {
   const [routes, setRoutes] = useState([]);
   const pageLoading = useAppSelector((state) => state?.user?.loading);
 
-
-
   const axiosClient = useAxiosClient();
 
   const requestRoutes = async () => {
     try {
       const res = await axiosClient.get("/role-nav-links");
-      console.log(res.data.nav_links);
-      
+
       setRoutes(res.data.nav_links);
       dispatch(setNavbar(res.data.nav_links));
+      dispatch(headerUser(res.data.user));
     } catch (error) {
       navigate("/");
     }

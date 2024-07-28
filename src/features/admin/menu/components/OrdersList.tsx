@@ -24,7 +24,6 @@ import {
   deleteProduct,
   getMenuData,
   getCustomerData,
-  setCustomerDisplay,
 } from "@/app/slice/menuSlice";
 import Cookies from "js-cookie";
 import _ from "lodash";
@@ -112,7 +111,6 @@ const OrdersList: React.FC<OrderListProps> = ({ customerId, dataCustomer }) => {
   }, [menuStatus, dispatch, orderListError]);
 
   useEffect(() => {
-    dispatch(setCustomerDisplay(customer));
     localStorage.setItem("customerData", JSON.stringify(customer));
   }, [customer]);
 

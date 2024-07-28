@@ -10,6 +10,7 @@ const axiosClient = useAxiosClient();
 
 const initialState: UserState = {
   sidebar: [],
+  headerUser: [],
   data: {},
   user: {},
   userInfo: {},
@@ -55,6 +56,12 @@ const userSlice = createSlice({
       return {
         ...state,
         sidebar: action.payload
+      }
+    },
+    headerUser: (state, action) => {
+      return {
+        ...state,
+        headerUser: action.payload
       }
     },
   },
@@ -397,10 +404,9 @@ export const getRegions = createAsyncThunk("user/getRegions", async (ApiConfig: 
 
 
 export const getProvinces = createAsyncThunk("user/getProvinces", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
-  console.log(ApiConfig.url)
   try {
 
-    const res = await axios.get(ApiConfig.url)
+    const res = await axios.get(ApiConfig.url, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', } })
 
     console.log(res)
 
@@ -588,6 +594,6 @@ export const resendCodePassword = createAsyncThunk("user/resendCodePassword", as
 export const navbarData = (state: any) => state.user.data;
 export const selectCompleteProfileStatus = (state: any) => state.user.profileStatus;
 export const loading = (state: any) => state.user.loading;
-export const { resetCompleteProfileStatus, mockCompleteProfileSuccess, setNavbar } = userSlice.actions;
+export const { resetCompleteProfileStatus, mockCompleteProfileSuccess, setNavbar, headerUser } = userSlice.actions;
 
 export default userSlice.reducer

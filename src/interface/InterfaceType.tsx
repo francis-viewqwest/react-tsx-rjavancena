@@ -202,6 +202,7 @@ export interface InventoryState {
 
 export interface UserState {
   sidebar: any[];
+  headerUser: any[];
   data: object | any;
   status: string;
   navbarStatus: string;

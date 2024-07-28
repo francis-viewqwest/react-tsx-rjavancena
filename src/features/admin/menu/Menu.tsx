@@ -201,7 +201,6 @@ const Menu: React.FC = () => {
         variant: "success",
         title: menuRes?.message,
       });
-      // localStorage.removeItem("customerData");
     }
   }, [menuStatus, dispatch]);
 
