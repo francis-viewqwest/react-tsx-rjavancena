@@ -41,7 +41,7 @@ import { dashboardData } from "@/app/slice/dashboardSlice";
 import { useAppSelector } from "@/app/hooks";
 
 const useColumnsProduct = (
-  dataSource: "inventory" | "users" | "transaction" | "Customer"
+  dataSource: "inventory" | "users" | "transaction" | "Customer" | "Logs"
 ) => {
   const inventoryChild = useSelector(inventoryData);
   const usersParent = useSelector(usersData);
@@ -49,8 +49,9 @@ const useColumnsProduct = (
   const customerCashierData = useAppSelector(
     (state) => state.customer.customerCashierData
   );
+  const logsData = useAppSelector((state) => state.logs.logsData);
 
-  console.log(customerCashierData);
+  console.log(logsData);
 
   const baseColumns: ColumnDef<any>[] = [];
 
@@ -65,136 +66,133 @@ const useColumnsProduct = (
           return dashboardTransaction;
         case "Customer":
           return customerCashierData;
+        case "Logss":
+          return logsData;
         default:
           break;
       }
     };
 
     const currentData = getColumns();
-    console.log(currentData.columns);
 
     return (
-      currentData?.data?.columns?.map(
-        (column: string) => {
-          const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");
+      currentData?.data?.columns?.map((column: string) => {
+        const accessorKey = column.trim().toLowerCase().replace(/\s+/g, "_");
 
-          return {
-            accessorKey: accessorKey,
-            header: ({ column }) => {
-              const columnHeader = column.id;
-              return (
-                <h1
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() =>
-                    column.toggleSorting(column.getIsSorted() === "asc")
-                  }
-                >
-                  {_.startCase(columnHeader)}
-                  <Icon icon="radix-icons:caret-sort" />
-                </h1>
-              );
-            },
-            cell: ({ row }: { row: any }) => {
-              const columnHeader = _.lowerCase(column);
-
-              if (columnHeader.includes("retailprice")) {
-                const value = parseFloat(row.getValue(accessorKey));
-                const formatted = new Intl.NumberFormat("en-PH", {
-                  style: "currency",
-                  currency: "PHP",
-                }).format(value);
-                return (
-                  <div className="text-right font-medium">{formatted}</div>
-                );
-              }
-              if (columnHeader.includes("image")) {
-                const imageUrl = row.getValue(accessorKey);
-
-                return (
-                  <>
-                    {_.isEmpty(imageUrl) ? (
-                      <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />
-                    ) : (
-                      <img
-                        className="h-11 w-11 bg-cover bg-no-repeat"
-                        src={imageUrl}
-                        alt=""
-                      />
-                    )}
-                  </>
-                );
-              }
-              if (columnHeader.includes("status_color")) {
-                console.log(row);
-
-                return <Badge>{row.getValue(accessorKey)}</Badge>;
-              }
-              if (columnHeader.includes("status")) {
-                console.log(row.getValue(accessorKey));
-
-                const badgeColor = (row: string) => {
-                  switch (row) {
-                    case "Activate":
-                      return "successStatus";
-                    case "Done":
-                      return "successStatus";
-                    case "Paid":
-                      return "successStatus";
-                    case "Not Paid":
-                      return "destructiveStatus";
-                    case "Incative":
-                      return "dimmedStatus";
-                    case "Pending":
-                      return "warning";
-                    case "Banned":
-                      return "destructiveStatus";
-                    case "Restricted":
-                      return "destructiveStatus";
-
-                    default:
-                      break;
-                  }
-                  console.log(row);
-                };
-
-                const statusColor = row.getValue(accessorKey);
-
-                return (
-                  <Badge variant={badgeColor(statusColor)}>
-                    {row.getValue(accessorKey)}
-                  </Badge>
-                );
-              }
-              if (columnHeader.includes("user id")) {
-                return <>{row.getValue(accessorKey)}</>;
-              }
-              if (columnHeader.includes("total amount")) {
-                const value = parseFloat(row.getValue(accessorKey));
-                const formatted = new Intl.NumberFormat("en-PH", {
-                  style: "currency",
-                  currency: "PHP",
-                }).format(value);
-                return <>{formatted}</>;
-              }
-              if (columnHeader.includes("actions")) {
-                switch (dataSource) {
-                  case "inventory":
-                    return <RowInventoryActions row={row} />;
-                  case "users":
-                    return <RowUsersActions row={row} />;
-                  case "transaction":
-                    return <RowTransactionActions row={row} />;
-                  case "Customer":
-                    return <RowCustomerTransactionActions row={row} />;
-                  default:
-                    return null;
+        return {
+          accessorKey: accessorKey,
+          header: ({ column }) => {
+            const columnHeader = column.id;
+            return (
+              <h1
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
                 }
-              }
+              >
+                {_.startCase(columnHeader)}
+                <Icon icon="radix-icons:caret-sort" />
+              </h1>
+            );
+          },
+          cell: ({ row }: { row: any }) => {
+            const columnHeader = _.lowerCase(column);
+
+            if (columnHeader.includes("retailprice")) {
+              const value = parseFloat(row.getValue(accessorKey));
+              const formatted = new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+              }).format(value);
+              return <div className="text-right font-medium">{formatted}</div>;
+            }
+            if (columnHeader.includes("image")) {
+              const imageUrl = row.getValue(accessorKey);
+
+              return (
+                <>
+                  {_.isEmpty(imageUrl) ? (
+                    <Skeleton className="h-11 w-11 bg-neutral-200 rounded-xl" />
+                  ) : (
+                    <img
+                      className="h-11 w-11 bg-cover bg-no-repeat"
+                      src={imageUrl}
+                      alt=""
+                    />
+                  )}
+                </>
+              );
+            }
+            if (columnHeader.includes("status_color")) {
+              console.log(row);
+
+              return <Badge>{row.getValue(accessorKey)}</Badge>;
+            }
+            if (columnHeader.includes("status")) {
+              console.log(row.getValue(accessorKey));
+
+              const badgeColor = (row: string) => {
+                switch (row) {
+                  case "Activate":
+                    return "successStatus";
+                  case "Done":
+                    return "successStatus";
+                  case "Paid":
+                    return "successStatus";
+                  case "Not Paid":
+                    return "destructiveStatus";
+                  case "Incative":
+                    return "dimmedStatus";
+                  case "Pending":
+                    return "warning";
+                  case "Banned":
+                    return "destructiveStatus";
+                  case "Restricted":
+                    return "destructiveStatus";
+
+                  default:
+                    break;
+                }
+                console.log(row);
+              };
+
+              const statusColor = row.getValue(accessorKey);
+
+              return (
+                <Badge variant={badgeColor(statusColor)}>
+                  {row.getValue(accessorKey)}
+                </Badge>
+              );
+            }
+            if (columnHeader.includes("user id")) {
               return <>{row.getValue(accessorKey)}</>;
-            },
-          };
-        }
-      ) || []
+            }
+            if (columnHeader.includes("total amount")) {
+              const value = parseFloat(row.getValue(accessorKey));
+              const formatted = new Intl.NumberFormat("en-PH", {
+                style: "currency",
+                currency: "PHP",
+              }).format(value);
+              return <>{formatted}</>;
+            }
+            if (columnHeader.includes("actions")) {
+              switch (dataSource) {
+                case "inventory":
+                  return <RowInventoryActions row={row} />;
+                case "users":
+                  return <RowUsersActions row={row} />;
+                case "transaction":
+                  return <RowTransactionActions row={row} />;
+                case "Customer":
+                  return <RowCustomerTransactionActions row={row} />;
+                default:
+                  return null;
+              }
+            }
+            return <>{row.getValue(accessorKey)}</>;
+          },
+        };
+      }) || []
     );
   }, [dataSource, inventoryChild, usersParent, dashboardTransaction]);
 

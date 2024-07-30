@@ -17,9 +17,9 @@ const Customer: React.FC<any> = (props: any) => {
     dispatch(getCustomerCashierData({ url: props.path_key, method: "GET" }));
   }, []);
 
-  const status = useAppSelector((state) => state.customer.status);
+  const status = useAppSelector((state) => state?.customer?.status);
   const customerCashierData = useAppSelector(
-    (state) => state.customer.customerCashierData.recent_transactions
+    (state) => state.customer.customerCashierData?.data?.recent_transactions
   );
 
   useEffect(() => {
@@ -40,14 +40,12 @@ const Customer: React.FC<any> = (props: any) => {
 
   return (
     <div className="w-full">
-      <TableProvider page="Customer">
-        <div>
-          <DataTable
-            title="Customer Transactions"
-            columns={columnsProduct}
-            data={customerCashierData}
-          />
-        </div>
+      <TableProvider page={props.title}>
+        <DataTable
+          title="Customer Transactions"
+          columns={columnsProduct}
+          data={customerCashierData}
+        />
       </TableProvider>
     </div>
   );

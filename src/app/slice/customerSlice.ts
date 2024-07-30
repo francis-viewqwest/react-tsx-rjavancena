@@ -92,12 +92,4 @@ export const voidPaidCustomer = createAsyncThunk("customer/voidPaidCustomer", as
     }
 })
 
-
-
-// export const menuData = (state: any) => state.menu.data
-// export const loadingStatus = (state: any) => state.menu.status;
-// export const loading = (state: any) => state.menu.loading;
-// export const menuError = (state: any) => state.menu.error;
-// export const { setCustomerDisplay } = customerSlice.actions;
-
 export default customerSlice.reducer

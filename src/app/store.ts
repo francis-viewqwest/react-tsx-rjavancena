@@ -8,6 +8,7 @@ import menuReducer from "@/app/slice/menuSlice"
 import usersManagementReducer from "@/app/slice/usersManagementSlice"
 import dashboardReducer from "@/app/slice/dashboardSlice"
 import customerReducer from "@/app/slice/customerSlice"
+import logsReducer from "@/app/slice/LogsSlice"
 
 const persistConfig = {
   key: "root",
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   usersManagement: usersManagementReducer,
   dashboard: dashboardReducer,
   customer: customerReducer,
+  logs: logsReducer,
 });
 
 const persistedReducer = persistReducer<any>(persistConfig, rootReducer);

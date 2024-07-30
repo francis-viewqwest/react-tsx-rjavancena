@@ -1029,6 +1029,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       columnName = "user_id";
       rowsSelection = false;
       break;
+    case "Logs":
+      placeHolder = "Search log";
+      columnName = "user_id";
+      rowsSelection = false;
+      break;
     default:
       placeHolder = null;
       columnName = null;

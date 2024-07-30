@@ -189,6 +189,13 @@ export interface customerState {
   error: any;
 }
 
+export interface logsState {
+  logsData: object;
+  status: string;
+  loading: any;
+  error: any;
+}
+
 export interface DashboardState {
   data: object;
   status: string;
