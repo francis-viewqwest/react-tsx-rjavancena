@@ -10,6 +10,7 @@ const initialState: DashboardState = {
     data: {},
     status: "",
     error: false,
+    voidLoading: false,
     voidMessage: ""
 }
 
@@ -43,15 +44,18 @@ const dashboardSlice = createSlice({
         builder
             .addCase(voidPaid.pending, (state) => {
                 state.status = "voidPaid/loading";
+                state.voidLoading = true;
                 state.error = null
             })
             .addCase(voidPaid.fulfilled, (state, action) => {
                 state.status = "voidPaid/success";
                 state.voidMessage = action.payload;
+                state.voidLoading = false;
                 state.data = action.payload
             })
             .addCase(voidPaid.rejected, (state, action) => {
                 state.status = "voidPaid/failed";
+                state.voidLoading = false;
                 state.error = action.payload
             })
 

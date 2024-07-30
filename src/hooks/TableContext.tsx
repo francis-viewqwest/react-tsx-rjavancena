@@ -292,7 +292,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
 
   switch (page) {
     case "Inventory":
-      placeHolder = "Search Product";
+      placeHolder = "Search product";
       columnName = "name";
       jsx = (
         <>
@@ -482,7 +482,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       rowsSelection = true;
       break;
     case "Dashboard":
-      placeHolder = "Search Transaction";
+      placeHolder = "Search transaction";
       columnName = "customerId";
       rowsSelection = false;
       break;
@@ -1020,8 +1020,13 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       rowsSelection = false;
       break;
     case "CustomerOrder":
-      placeHolder = "Search Users";
+      placeHolder = "Search users";
       columnName = "customerName";
+      rowsSelection = false;
+      break;
+    case "Customer":
+      placeHolder = "Search customer";
+      columnName = "user_id";
       rowsSelection = false;
       break;
     default:

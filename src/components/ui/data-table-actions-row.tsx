@@ -64,6 +64,7 @@ import {
   editUserInfo,
 } from "@/app/slice/usersManagementSlice";
 import { voidPaid } from "@/app/slice/dashboardSlice";
+import { voidPaidCustomer } from "@/app/slice/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import useAxiosClient from "@/axios-client";
 import axios from "axios";
@@ -1214,9 +1215,6 @@ export function RowUsersActions<TData>({
 export function RowTransactionActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const { control, handleSubmit, getValues, setValue, register, watch } =
-    useForm({});
-
   const errorMessage = useSelector(usersError);
 
   console.log(errorMessage?.message);
@@ -1226,21 +1224,8 @@ export function RowTransactionActions<TData>({
   const dispatch = useAppDispatch();
   const [showVoidDialog, setShowVoidDialog] = useState(false);
   const [showViewTransacDialog, setShowViewTransacDialog] = useState(false);
-  console.log(showVoidDialog);
-  const [showRemoveDialog, setShowRemoveDialog] = useState(true);
-  const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const inventoryChildError = useSelector(inventoryError);
 
-  console.log(showRemoveDialog);
-  console.log(row.original.actions);
-
-  const handleRemove = (values: any) => {
-    console.log(values);
-    setFuncData(values);
-    setModalData(values);
-
-    setShowVoidDialog(true);
-  };
+  const voidLoading = useAppSelector((state) => state.dashboard.voidLoading);
 
   const handleActionFunc = (values: any) => {
     console.log(values);
@@ -1358,9 +1343,245 @@ export function RowTransactionActions<TData>({
                   <Button
                     variant="destructive"
                     type="submit"
+                    disabled={voidLoading}
                     onClick={() => handleVoidClick(funcData)}
                   >
-                    Void
+                    {voidLoading && (
+                      <span className="flex items-center gap-1">
+                        Voiding...
+                        <IconReload className="animate-spin" size={16} />
+                      </span>
+                    )}
+                    {!voidLoading && "Void"}
+                  </Button>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+            {showViewTransacDialog && (
+              <DialogContent className="sm:max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle className="px-5">
+                    Details transaction:{" "}
+                    <span className="font-normal">
+                      {_.startCase(row?.original?.user_id)}
+                    </span>
+                  </DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-72 w-full px-5">
+                  {modalData?.details.map((detail) => (
+                    <div>
+                      <p className="text-neutral-500">
+                        Total items:{" "}
+                        {detail.items.reduce(
+                          (acc, item) => acc + item.count,
+                          0
+                        )}
+                      </p>
+                      {detail?.items.map((item) => (
+                        <div className="w-full">
+                          <Card className="flex items-center p-0 m-0 my-4">
+                            <CardHeader className="p-2">
+                              <CardTitle>
+                                {_.isEmpty(item.img) ? (
+                                  <Skeleton className="h-12 w-12 bg-neutral-200 rounded-md" />
+                                ) : (
+                                  <img
+                                    className="h-11 w-11 bg-cover bg-no-repeat"
+                                    src={item.img}
+                                    alt=""
+                                  />
+                                )}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="grid grid-cols-5 gap-4 items-center w-full p-2">
+                              <div className="w-full">
+                                <Label className="text-xs">Serial number</Label>
+                                <h1
+                                  className="text-xs text-neutral-500"
+                                  title={item.item_code}
+                                >
+                                  {item.item_code}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Category</Label>
+                                <h1
+                                  className="text-xs text-neutral-500"
+                                  title={item.category}
+                                >
+                                  {item.category}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Product</Label>
+                                <h1
+                                  className="text-xs text-neutral-500"
+                                  title={item.name}
+                                >
+                                  {_.truncate(item.name, {
+                                    length: 27,
+                                    separator: "...",
+                                  })}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Total price</Label>
+                                <h1 className="text-xs text-neutral-500">
+                                  {formatted.format(item.total_price)}
+                                </h1>
+                              </div>
+                              <div className="w-full">
+                                <Label className="text-xs">Qty</Label>
+                                <h1 className="text-xs text-neutral-500">
+                                  {item.count}
+                                </h1>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </ScrollArea>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+          </DialogPortal>
+        </Dialog>
+      )}
+    </>
+  );
+}
+
+export function RowCustomerTransactionActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
+  const errorMessage = useSelector(usersError);
+
+  console.log(errorMessage?.message);
+
+  const [modalData, setModalData] = useState({});
+  const [funcData, setFuncData] = useState({});
+  const dispatch = useAppDispatch();
+  const [showVoidDialog, setShowVoidDialog] = useState(false);
+  const [showViewTransacDialog, setShowViewTransacDialog] = useState(false);
+
+  const voidLoading = useAppSelector((state) => state.customer.voidLoading);
+
+  console.log(voidLoading);
+
+  const handleActionFunc = (values: any) => {
+    console.log(values);
+
+    const buttonName = values.button_name;
+    console.log(buttonName);
+
+    switch (buttonName) {
+      case "Void":
+        setShowVoidDialog(true);
+        setShowViewTransacDialog(false);
+        setFuncData(values);
+        setModalData(values);
+        break;
+
+      case "View":
+        console.log(values);
+
+        setShowViewTransacDialog(true);
+        setFuncData(values);
+        setModalData(values);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const formatted = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  });
+
+  const handleVoidClick = (values: any) => {
+    const payload = {
+      payment_id: values.payment_id,
+      user_id: values.user_id,
+      purchase_group_id: values.purchase_group_id,
+      status: values.status,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      voidPaidCustomer({
+        url: values.url,
+        method: values.method,
+        data: payload,
+      })
+    );
+  };
+
+  return (
+    <>
+      {row?.original?.actions && (
+        <Dialog>
+          {row?.original?.actions?.map((act, index) => (
+            <DialogTrigger onClick={() => handleActionFunc(act)}>
+              {act.button_name === "Void" ? (
+                <Button
+                  className="mx-1 bg-primary"
+                  onClick={() => handleActionFunc(act)}
+                  size="xs"
+                >
+                  {act.button_name}
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={() => handleActionFunc(act)}
+                    variant="outline"
+                    className="mx-1"
+                    size="xs"
+                  >
+                    {act.button_name}
+                  </Button>
+                </>
+              )}
+            </DialogTrigger>
+          ))}
+          <DialogPortal>
+            {showVoidDialog && (
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Void Transaction(s) </DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to void the transaction(s)?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="destructive"
+                    type="submit"
+                    disabled={voidLoading}
+                    onClick={() => handleVoidClick(funcData)}
+                  >
+                    {voidLoading && (
+                      <span className="flex items-center gap-1">
+                        Voiding...
+                        <IconReload className="animate-spin" size={16} />
+                      </span>
+                    )}
+                    {!voidLoading && "Void"}
                   </Button>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">

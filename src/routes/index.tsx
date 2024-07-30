@@ -66,7 +66,7 @@ const Routes: React.FC = () => {
       element: <Layout />,
     },
     {
-      path: "/app/customer",
+      path: "/app/customer-payment",
       element: <CashierCustomer />,
     },
   ];

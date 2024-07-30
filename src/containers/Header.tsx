@@ -671,7 +671,7 @@ const Header: React.FC = () => {
                               {profileData?.last_name}
                             </h1>
                             <h1 className="text-sm text-neutral-500">
-                              Super Admin
+                              {profileData?.role}
                             </h1>
                           </div>
                           <div className="ml-3 flex gap-3">
@@ -1244,7 +1244,7 @@ const Header: React.FC = () => {
                               {profileData?.last_name}
                             </h1>
                             <h1 className="text-sm text-neutral-500">
-                              Super Admin
+                              {profileData?.role}
                             </h1>
                           </div>
                         </div>

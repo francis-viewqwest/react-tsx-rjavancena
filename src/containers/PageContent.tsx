@@ -6,7 +6,7 @@ import Dashboard from "../pages/admin/protected/Dashboard";
 import Inventory from "../pages/admin/protected/Inventory";
 import ProductList from "../pages/admin/protected/ProductList";
 import Users from "../pages/admin/protected/Users";
-import Profile from "../pages/admin/protected/Profile";
+import Customer from "../pages/admin/protected/Customer";
 import { headerUser, setNavbar } from "@/app/slice/userSlice";
 import { RouteType } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
@@ -52,10 +52,10 @@ const PageContent: React.FC = () => {
         return <ProductList />;
       case "parent-Users":
         return <Users {...routeData} />;
-      case "profile":
-        return <Profile />;
+      case "parent-Customer":
+        return <Customer {...routeData} />;
       default:
-        return console.log("404");
+        return null;
     }
   };
 

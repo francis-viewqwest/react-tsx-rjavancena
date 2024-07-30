@@ -180,11 +180,21 @@ export interface menuState {
   error: string | null | any;
 }
 
+export interface customerState {
+  customerCashierData: any;
+  status: string;
+  voidMessage: string;
+  loading: string | boolean;
+  voidLoading: string | boolean;
+  error: any;
+}
+
 export interface DashboardState {
   data: object;
   status: string;
   error: string | null | any;
   voidMessage: string;
+  voidLoading: boolean;
 }
 
 export interface InventoryState {

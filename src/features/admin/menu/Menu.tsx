@@ -229,7 +229,7 @@ const Menu: React.FC = () => {
   };
 
   const handleShowCustomerBtn = () => {
-    window.open("/app/customer/", "_blank");
+    window.open("/app/customer-payment/", "_blank");
   };
 
   return (
