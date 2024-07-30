@@ -6,10 +6,8 @@ import { getLogsData } from "@/app/slice/LogsSlice";
 import React, { useEffect } from "react";
 
 const Logs: React.FC = (props: any) => {
-  const columnsTable = useColumnsProduct("Logs");
-  const logsData = useAppSelector((state) => state.logs.logsData.data.logs);
-
-  console.log(logsData);
+  const columnsTable = useColumnsProduct("logs");
+  const logsData = useAppSelector((state) => state?.logs?.logsData?.data?.logs);
 
   const dispatch = useAppDispatch();
   useEffect(() => {

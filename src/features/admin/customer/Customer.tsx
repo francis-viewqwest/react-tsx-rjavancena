@@ -7,7 +7,7 @@ import { getCustomerCashierData } from "@/app/slice/customerSlice";
 import { useToast } from "@/components/ui/use-toast";
 
 const Customer: React.FC<any> = (props: any) => {
-  const columnsProduct = useColumnsProduct(props.title);
+  const columnsProduct = useColumnsProduct("customer");
 
   const dispatch = useAppDispatch();
   const voidMessage = useAppSelector((state) => state.customer.voidMessage);
@@ -19,7 +19,7 @@ const Customer: React.FC<any> = (props: any) => {
 
   const status = useAppSelector((state) => state?.customer?.status);
   const customerCashierData = useAppSelector(
-    (state) => state.customer.customerCashierData?.data?.recent_transactions
+    (state) => state?.customer?.customerCashierData?.data?.recent_transactions
   );
 
   useEffect(() => {

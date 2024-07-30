@@ -36,7 +36,6 @@ const Sidebar: React.FC = () => {
   const sideNavRoutes = useAppSelector((state) => state?.user?.sidebar);
 
   const iconStyle = (menuPath: any, icon: any) => {
-  
     if (
       (location.pathname === `/app${menuPath}` &&
         _.includes(location.pathname, menuPath)) ||

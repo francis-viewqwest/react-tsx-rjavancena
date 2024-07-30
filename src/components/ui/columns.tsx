@@ -41,17 +41,17 @@ import { dashboardData } from "@/app/slice/dashboardSlice";
 import { useAppSelector } from "@/app/hooks";
 
 const useColumnsProduct = (
-  dataSource: "inventory" | "users" | "transaction" | "Customer" | "Logs"
+  dataSource: "inventory" | "users" | "transaction" | "customer" | "logs"
 ) => {
   const inventoryChild = useSelector(inventoryData);
   const usersParent = useSelector(usersData);
   const dashboardTransaction = useSelector(dashboardData);
   const customerCashierData = useAppSelector(
-    (state) => state.customer.customerCashierData
+    (state) => state.customer?.customerCashierData
   );
-  const logsData = useAppSelector((state) => state.logs.logsData);
+  const logsData = useAppSelector((state) => state.logs?.logsData);
 
-  console.log(logsData);
+  // console.log(logsData);
 
   const baseColumns: ColumnDef<any>[] = [];
 
@@ -64,9 +64,9 @@ const useColumnsProduct = (
           return usersParent;
         case "transaction":
           return dashboardTransaction;
-        case "Customer":
+        case "customer":
           return customerCashierData;
-        case "Logss":
+        case "logs":
           return logsData;
         default:
           break;
@@ -183,7 +183,7 @@ const useColumnsProduct = (
                   return <RowUsersActions row={row} />;
                 case "transaction":
                   return <RowTransactionActions row={row} />;
-                case "Customer":
+                case "customer":
                   return <RowCustomerTransactionActions row={row} />;
                 default:
                   return null;
