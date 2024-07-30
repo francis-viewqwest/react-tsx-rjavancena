@@ -35,6 +35,19 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
   const sideNavRoutes = useAppSelector((state) => state?.user?.sidebar);
 
+  const iconStyle = (menuPath: any, icon: any) => {
+  
+    if (
+      (location.pathname === `/app${menuPath}` &&
+        _.includes(location.pathname, menuPath)) ||
+      (_.includes(location.pathname, menuPath) && menuPath === menuPath)
+    ) {
+      return icon.replace("outline", "solid");
+    }
+
+    return icon;
+  };
+
   return (
     <>
       <Drawer direction="left">
@@ -237,14 +250,21 @@ const Sidebar: React.FC = () => {
                               _.includes(location.pathname, menu.path) &&
                               menu.path === menu.path &&
                               "bg-bgrjavancena absolute inset-y-0 left-0 w-1"
-                            } `}
+                            }`}
                             aria-hidden="true"
                           ></span>
                           <div className="flex relative w-full flex-col items-center">
                             <Icon
-                              className="m-auto"
+                              className={`m-auto ${
+                                location.pathname === `/app${menu.path}` &&
+                                "text-bgrjavancena/80"
+                              } ${
+                                _.includes(location.pathname, menu.path) &&
+                                menu.path === menu.path &&
+                                "text-bgrjavancena/70"
+                              }`}
                               fontSize={17}
-                              icon={menu.icon}
+                              icon={iconStyle(menu.path, menu.icon)}
                             />
                             <span className="text-[0.6rem] text-center m-auto ease-in-out transition-all">
                               {menu.title}
