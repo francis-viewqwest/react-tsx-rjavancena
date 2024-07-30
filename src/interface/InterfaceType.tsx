@@ -192,6 +192,7 @@ export interface customerState {
 export interface logsState {
   logsData: object;
   status: string;
+  logsMessage: string;
   loading: any;
   error: any;
 }

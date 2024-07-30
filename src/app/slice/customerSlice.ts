@@ -92,4 +92,6 @@ export const voidPaidCustomer = createAsyncThunk("customer/voidPaidCustomer", as
     }
 })
 
+export const customerData = (state: any) => state?.customer?.customerCashierData
+
 export default customerSlice.reducer

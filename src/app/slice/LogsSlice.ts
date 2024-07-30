@@ -9,6 +9,7 @@ const initialState: logsState = {
     logsData: {},
     status: "",
     loading: false,
+    logsMessage: "",
     error: false,
 }
 
@@ -53,5 +54,7 @@ export const getLogsData = createAsyncThunk("logs/getCustomerData", async (ApiCo
         return rejectWithValue(error.response.data)
     }
 })
+
+export const logsData = (state: any) => state?.logs?.logsData
 
 export default logsSlice.reducer
