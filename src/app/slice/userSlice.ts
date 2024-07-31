@@ -393,7 +393,11 @@ export const signIn = createAsyncThunk("user/setSignin", async (ApiConfig: ApiCo
 export const getRegions = createAsyncThunk("user/getRegions", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
   try {
 
-    const res = await axios.get(ApiConfig.url)
+    const res = await axios.get(ApiConfig.url, {
+      headers: {
+        Authorization: undefined,
+      },
+    })
 
     return res.data
   } catch (error: any) {
@@ -406,7 +410,11 @@ export const getRegions = createAsyncThunk("user/getRegions", async (ApiConfig: 
 export const getProvinces = createAsyncThunk("user/getProvinces", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
   try {
 
-    const res = await axios.get(ApiConfig.url, { headers: { 'Content-Type': 'application/x-www-form-urlencoded', } })
+    const res = await axios.get(ApiConfig.url, {
+      headers: {
+        Authorization: undefined,
+      },
+    })
 
     console.log(res)
 
@@ -422,7 +430,11 @@ export const getMunicipality = createAsyncThunk("user/getMunicipality", async (A
   console.log(ApiConfig.url)
   try {
 
-    const res = await axios.get(ApiConfig.url)
+    const res = await axios.get(ApiConfig.url, {
+      headers: {
+        Authorization: undefined,
+      },
+    })
 
     console.log(res)
 
@@ -437,7 +449,11 @@ export const getBarangay = createAsyncThunk("user/getBarangay", async (ApiConfig
   console.log(ApiConfig.url)
   try {
 
-    const res = await axios.get(ApiConfig.url)
+    const res = await axios.get(ApiConfig.url, {
+      headers: {
+        Authorization: undefined,
+      },
+    })
 
     console.log(res)
 

@@ -470,7 +470,11 @@ export function RowUsersActions<TData>({
     setShowRemoveDialog(false);
 
     axios
-      .get("https://psgc.gitlab.io/api/regions/")
+      .get("https://psgc.gitlab.io/api/regions/", {
+        headers: {
+          Authorization: undefined,
+        },
+      })
       .then((res) =>
         setLocationsData((prevState) => ({ ...prevState, regions: res.data }))
       );
@@ -484,7 +488,11 @@ export function RowUsersActions<TData>({
   useEffect(() => {
     if (region_name) {
       axios
-        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`)
+        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`, {
+          headers: {
+            Authorization: undefined,
+          },
+        })
         .then((res) =>
           setLocationsData((prevState) => ({
             ...prevState,
@@ -498,7 +506,12 @@ export function RowUsersActions<TData>({
     if (province_name) {
       axios
         .get(
-          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`
+          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`,
+          {
+            headers: {
+              Authorization: undefined,
+            },
+          }
         )
         .then((res) =>
           setLocationsData((prevState) => ({
@@ -513,7 +526,12 @@ export function RowUsersActions<TData>({
     if (city_or_municipality_name) {
       axios
         .get(
-          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`
+          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`,
+          {
+            headers: {
+              Authorization: undefined,
+            },
+          }
         )
         .then((res) =>
           setLocationsData((prevState) => ({
@@ -1704,6 +1722,11 @@ export function RowLogsActions<TData>({
   const [funcData, setFuncData] = useState({});
   const dispatch = useAppDispatch();
   const [showLogsDialog, setShowLogsDialog] = useState(false);
+  console.log(modalData.user_action_details);
+
+  let detailsParse = JSON.stringify(modalData);
+
+  console.log(detailsParse);
 
   const handleActionFunc = (values: any) => {
     console.log(values);
@@ -1712,7 +1735,13 @@ export function RowLogsActions<TData>({
     console.log(buttonName);
 
     switch (buttonName) {
-      case "View Details":
+      case "View details":
+        setShowLogsDialog(true);
+        setFuncData(values);
+        setModalData(values);
+        break;
+
+      case "View device":
         setShowLogsDialog(true);
         setFuncData(values);
         setModalData(values);
@@ -1757,9 +1786,13 @@ export function RowLogsActions<TData>({
                   </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-72 w-full px-5">
-                  {modalData?.details.map((detail: any) => (
-                    <div>
-                      <div className="w-full grid grid-cols-2 gap-1.5">
+                  {modalData?.user_action_details?.map((detail: any) => (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: detail,
+                      }}
+                    >
+                      {/* <div className="w-full grid grid-cols-2 gap-1.5">
                         {Object.entries(detail?.device_info ?? {}).map(
                           ([key, value]) => (
                             <>
@@ -1768,8 +1801,8 @@ export function RowLogsActions<TData>({
                             </>
                           )
                         )}
-                      </div>
-                      <div className="w-full grid grid-cols-2 gap-1.5">
+                      </div> */}
+                      {/* <div className="w-full grid grid-cols-2 gap-1.5">
                         {Object.entries(detail?.isp ?? {}).map(
                           ([key, value]) => (
                             <>
@@ -1778,8 +1811,8 @@ export function RowLogsActions<TData>({
                             </>
                           )
                         )}
-                      </div>
-                      <div className="w-full grid grid-cols-2 gap-1.5">
+                      </div> */}
+                      {/* <div className="w-full grid grid-cols-2 gap-1.5">
                         {Object.entries(detail?.fields ?? {}).map(
                           ([key, value]) => (
                             <>
@@ -1788,7 +1821,7 @@ export function RowLogsActions<TData>({
                             </>
                           )
                         )}
-                      </div>
+                      </div> */}
                     </div>
                   ))}
                 </ScrollArea>

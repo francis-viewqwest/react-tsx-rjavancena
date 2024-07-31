@@ -57,11 +57,9 @@ const Welcome: React.FC = () => {
 
   const inputFields = [
     { label: "Profile", type: "file", section: "profile" },
-    { label: "Contact Email", type: "email", section: "profile" },
     { label: "First name", type: "text", section: "profile" },
     { label: "Middle name", type: "text", section: "profile" },
     { label: "Last name", type: "text", section: "profile" },
-    { label: "Contact number", type: "number", section: "profile" },
     { label: "Region", type: "select", section: "address" },
     { label: "Province", type: "select", section: "address" },
     { label: "City/Municipalities", type: "select", section: "address" },
@@ -189,8 +187,6 @@ const Welcome: React.FC = () => {
         first_name: formData.first_name,
         middle_name: formData.middle_name,
         last_name: formData.last_name,
-        contact_number: formData.contact_number,
-        contact_email: formData.contact_email,
         address_1: formData.address_1,
         address_2: formData.address_2,
         region_name: getLocationCode.regionName,
