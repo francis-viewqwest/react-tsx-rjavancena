@@ -68,6 +68,7 @@ import { voidPaidCustomer } from "@/app/slice/customerSlice";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import useAxiosClient from "@/axios-client";
 import axios from "axios";
+import { Separator } from "@/components/ui/separator";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -1721,12 +1722,129 @@ export function RowLogsActions<TData>({
   const [modalData, setModalData] = useState({});
   const [funcData, setFuncData] = useState({});
   const dispatch = useAppDispatch();
+  const [showDeviceLogs, setShowDeviceLogs] = useState(false);
   const [showLogsDialog, setShowLogsDialog] = useState(false);
-  console.log(modalData.user_action_details);
+  console.log(modalData?.user_device);
 
-  let detailsParse = JSON.stringify(modalData);
+  let formattedData: string | JSX.Element[] | object = "No data availables";
 
-  console.log(detailsParse);
+  // if (
+  //   Array.isArray(modalData?.user_action_details) &&
+  //   modalData.user_action_details.length > 0
+  // ) {
+  //   const jsonString = modalData.user_action_details[0];
+
+  //   const data = JSON.parse(jsonString);
+  //   const { purchase, payment } = data?.fields || {};
+
+  //   console.log("Is Payment an Array?:", Array.isArray(data?.fields?.payment));
+  //   console.log(
+  //     data?.fields?.payment && data?.fields?.payment?.map((item: any) => item)
+  //   );
+
+  //   if (!_.isUndefined(purchase) || !_.isUndefined(payment)) {
+  //     formattedData = (
+  //       <div>
+  //         {purchase && (
+  //           <>
+  //             {purchase?.map((purchaseItem: any, index: number) => (
+  //               <div key={`purchase-${index}`} className="mb-4 py-4">
+  //                 <h3 className="font-medium text-lg mb-4">Purchase Details</h3>
+  //                 {Object.entries(purchaseItem).map(([key, value]) => (
+  //                   <div key={key} className="grid grid-cols-2 py-1">
+  //                     <h1 className="text-sm">{_.startCase(key)}:</h1>
+  //                     <p className="text-sm">{value ?? ""}</p>
+  //                   </div>
+  //                 ))}
+  //               </div>
+  //             ))}
+  //           </>
+  //         )}
+  //         <Separator />
+  //         {payment && (
+  //           <>
+  //             {payment.length > 0 &&
+  //               payment?.map((paymentItem: any, index: number) => (
+  //                 <div key={`payment-${index}`} className="mb-4 py-4">
+  //                   <h3 className="font-medium text-lg mb-4">
+  //                     Payment Details
+  //                   </h3>
+  //                   {Object.entries(paymentItem).map(([key, value]) => (
+  //                     <div key={key} className="grid grid-cols-2 py-1">
+  //                       <h1 className="text-sm">{_.startCase(key)}:</h1>
+  //                       <p className="text-sm">{value ?? ""}</p>
+  //                     </div>
+  //                   ))}
+  //                 </div>
+  //               ))}
+  //           </>
+  //         )}
+  //       </div>
+  //     );
+  //   } else {
+  //     formattedData = "No purchase data available";
+  //   }
+  // }
+
+  console.log(modalData?.user_action_details?.[0].fields);
+
+  let getDataFields = modalData?.user_action_details?.[0]?.fields || {};
+
+  console.log(getDataFields);
+
+  const { purchase, payment } = getDataFields || {};
+
+  if (!_.isUndefined(purchase) || !_.isUndefined(payment)) {
+    formattedData = (
+      <div>
+        {purchase && (
+          <>
+            {purchase?.map((purchaseItem: any, index: number) => (
+              <div key={`purchase-${index}`} className="mb-4 py-4">
+                <h3 className="font-medium text-lg mb-4">Purchase Details:</h3>
+                {Object.entries(purchaseItem).map(([key, value]) => (
+                  <div key={key} className="grid grid-cols-2 py-1">
+                    <h1 className="text-sm">{_.startCase(key)}:</h1>
+                    <p className="text-sm">{value ?? ""}</p>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </>
+        )}
+        {payment && (
+          <>
+            {payment.length > 0 &&
+              payment?.map((paymentItem: any, index: number) => (
+                <div key={index} className="mb-4 py-4">
+                  <h3 className="font-medium text-lg mb-4">Payment Details:</h3>
+                  {Object.entries(paymentItem).map(([key, value]) => (
+                    <div key={key} className="grid grid-cols-2 py-1">
+                      <h1 className="text-sm">{_.startCase(key)}:</h1>
+                      <p className="text-sm">{value ?? ""}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+          </>
+        )}
+      </div>
+    );
+  } else {
+    formattedData = (
+      <div className="mb-4 py-4">
+        <h3 className="font-medium text-lg mb-4">Other Details</h3>
+        {Object.entries(getDataFields).map(([key, value]) => (
+          <div key={key} className="grid grid-cols-2 py-1">
+            <h1 className="text-sm">{_.startCase(key)}:</h1>
+            <p className="text-sm">{value ?? ""}</p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // console.log(purchase);
 
   const handleActionFunc = (values: any) => {
     console.log(values);
@@ -1737,12 +1855,14 @@ export function RowLogsActions<TData>({
     switch (buttonName) {
       case "View details":
         setShowLogsDialog(true);
+        setShowDeviceLogs(false);
         setFuncData(values);
         setModalData(values);
         break;
 
       case "View device":
-        setShowLogsDialog(true);
+        setShowLogsDialog(false);
+        setShowDeviceLogs(true);
         setFuncData(values);
         setModalData(values);
         break;
@@ -1786,46 +1906,32 @@ export function RowLogsActions<TData>({
                   </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-72 w-full px-5">
-                  {modalData?.user_action_details?.map((detail: any) => (
-                    <div>
-                      <pre
-                        style={{
-                          whiteSpace: "pre-wrap",
-                          wordWrap: "break-word",
-                        }}
-                      >
-                        {detailsParse}
-                      </pre>
-                      {/* <div className="w-full grid grid-cols-2 gap-1.5">
-                        {Object.entries(detail?.device_info ?? {}).map(
-                          ([key, value]) => (
-                            <>
-                              <h1>{_.startCase(key)}:</h1>
-                              <p className="text-sm">{value}</p>
-                            </>
-                          )
-                        )}
-                      </div> */}
-                      {/* <div className="w-full grid grid-cols-2 gap-1.5">
-                        {Object.entries(detail?.isp ?? {}).map(
-                          ([key, value]) => (
-                            <>
-                              <h1>{_.startCase(key)}:</h1>
-                              <p className="text-sm">{value}</p>
-                            </>
-                          )
-                        )}
-                      </div> */}
-                      {/* <div className="w-full grid grid-cols-2 gap-1.5">
-                        {Object.entries(detail?.fields ?? {}).map(
-                          ([key, value]) => (
-                            <>
-                              <h1>{_.startCase(key)}:</h1>
-                              <p className="text-sm">{value}</p>
-                            </>
-                          )
-                        )}
-                      </div> */}
+                  {formattedData}
+                </ScrollArea>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+            {showDeviceLogs && (
+              <DialogContent className="sm:max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle className="px-5">
+                    Log Details:{" "}
+                    <span className="font-normal">
+                      {_.startCase(row?.original?.name)}
+                    </span>
+                  </DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-72 w-full px-5">
+                  {modalData?.user_device?.map((detail: any) => (
+                    <div className="w-full grid grid-cols-2">
+                      <h1>{_.startCase(detail.label)}</h1>
+                      <p className="text-sm">{detail.value}</p>
                     </div>
                   ))}
                 </ScrollArea>
