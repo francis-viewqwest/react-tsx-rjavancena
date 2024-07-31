@@ -56,16 +56,21 @@ const Welcome: React.FC = () => {
   const axiosClient = useAxiosClient();
 
   const inputFields = [
-    { label: "Profile", type: "file", section: "profile" },
-    { label: "First name", type: "text", section: "profile" },
-    { label: "Middle name", type: "text", section: "profile" },
-    { label: "Last name", type: "text", section: "profile" },
-    { label: "Region", type: "select", section: "address" },
-    { label: "Province", type: "select", section: "address" },
-    { label: "City/Municipalities", type: "select", section: "address" },
-    { label: "Barangay", type: "select", section: "address" },
-    { label: "Address 1", type: "text", section: "address" },
-    { label: "Address 2", type: "text", section: "address" },
+    { label: "Profile", type: "file", section: "profile", required: false },
+    { label: "First name", type: "text", section: "profile", required: true },
+    { label: "Middle name", type: "text", section: "profile", required: true },
+    { label: "Last name", type: "text", section: "profile", required: true },
+    { label: "Region", type: "select", section: "address", required: true },
+    { label: "Province", type: "select", section: "address", required: true },
+    {
+      label: "City/Municipalities",
+      type: "select",
+      section: "address",
+      required: true,
+    },
+    { label: "Barangay", type: "select", section: "address", required: true },
+    { label: "Address 1", type: "text", section: "address", required: true },
+    { label: "Address 2", type: "text", section: "address", required: false }, // Optional
   ];
 
   useEffect(() => {
@@ -104,8 +109,6 @@ const Welcome: React.FC = () => {
   const formValues = watch();
   const { region, province, city_municipalities } = formValues;
 
-  console.log(formValues);
-
   const { toast } = useToast();
 
   useEffect(() => {
@@ -142,19 +145,26 @@ const Welcome: React.FC = () => {
   }, [city_municipalities]);
 
   useEffect(() => {
-    const completedFields = Object.values(formValues).filter(
-      (value) => value
+    const completedFields = Object.entries(formValues).filter(
+      ([key, value]) =>
+        value &&
+        inputFields.find(
+          (field) =>
+            field.label.replace(/\//g, "_").replace(/ /g, "_").toLowerCase() ===
+              key && field.required
+        )
     ).length;
 
-    const totalFields = inputFields.length;
+    const totalRequiredFields = inputFields.filter(
+      (field) => field.required
+    ).length;
 
-    setProgress((completedFields / totalFields) * 100);
+    setProgress((completedFields / totalRequiredFields) * 100);
   }, [formValues]);
 
   const [getLocationCode, setGetLocationCode] = useState({});
 
   const onChangeSelect = (type: any, values: any) => {
-    console.log(values.code);
     setGetLocationCode((prevState) => ({
       ...prevState,
       [`${type.replace(/\//g, "_").toLowerCase()}Name`]: values.name,
