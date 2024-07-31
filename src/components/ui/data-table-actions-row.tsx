@@ -1787,11 +1787,15 @@ export function RowLogsActions<TData>({
                 </DialogHeader>
                 <ScrollArea className="h-72 w-full px-5">
                   {modalData?.user_action_details?.map((detail: any) => (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: detail,
-                      }}
-                    >
+                    <div>
+                      <pre
+                        style={{
+                          whiteSpace: "pre-wrap",
+                          wordWrap: "break-word",
+                        }}
+                      >
+                        {detailsParse}
+                      </pre>
                       {/* <div className="w-full grid grid-cols-2 gap-1.5">
                         {Object.entries(detail?.device_info ?? {}).map(
                           ([key, value]) => (

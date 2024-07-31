@@ -149,7 +149,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
 
   useEffect(() => {
     axios
-      .get("https://psgc.gitlab.io/api/regions/")
+      .get("https://psgc.gitlab.io/api/regions/", {
+        headers: {
+          Authorization: undefined,
+        },
+      })
       .then((res) =>
         setLocationsData((prevState) => ({ ...prevState, regions: res.data }))
       );
@@ -158,7 +162,11 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   useEffect(() => {
     if (region_name) {
       axios
-        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`)
+        .get(`https://psgc.gitlab.io/api/regions/${region_name}/provinces/`, {
+          headers: {
+            Authorization: undefined,
+          },
+        })
         .then((res) =>
           setLocationsData((prevState) => ({
             ...prevState,
@@ -172,7 +180,12 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     if (province_name) {
       axios
         .get(
-          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`
+          `https://psgc.gitlab.io/api/provinces/${province_name}/cities-municipalities/`,
+          {
+            headers: {
+              Authorization: undefined,
+            },
+          }
         )
         .then((res) =>
           setLocationsData((prevState) => ({
@@ -187,7 +200,12 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     if (city_or_municipality_name) {
       axios
         .get(
-          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`
+          `https://psgc.gitlab.io/api/cities-municipalities/${city_or_municipality_name}/barangays/`,
+          {
+            headers: {
+              Authorization: undefined,
+            },
+          }
         )
         .then((res) =>
           setLocationsData((prevState) => ({
