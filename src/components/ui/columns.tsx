@@ -13,6 +13,7 @@ import {
   RowHandoverAction,
   RowUsersActions,
   RowCustomerTransactionActions,
+  RowLogsActions,
 } from "./data-table-actions-row";
 import { Icon } from "@iconify/react";
 import {
@@ -185,6 +186,8 @@ const useColumnsProduct = (
                   return <RowTransactionActions row={row} />;
                 case "customer":
                   return <RowCustomerTransactionActions row={row} />;
+                case "logs":
+                  return <RowLogsActions row={row} />;
                 default:
                   return null;
               }

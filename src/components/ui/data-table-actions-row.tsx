@@ -1693,6 +1693,121 @@ export function RowCustomerTransactionActions<TData>({
   );
 }
 
+export function RowLogsActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
+  const errorMessage = useSelector(usersError);
+
+  console.log(row.original.action);
+
+  const [modalData, setModalData] = useState({});
+  const [funcData, setFuncData] = useState({});
+  const dispatch = useAppDispatch();
+  const [showLogsDialog, setShowLogsDialog] = useState(false);
+
+  const handleActionFunc = (values: any) => {
+    console.log(values);
+
+    const buttonName = values.button_name;
+    console.log(buttonName);
+
+    switch (buttonName) {
+      case "View Details":
+        setShowLogsDialog(true);
+        setFuncData(values);
+        setModalData(values);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const formatted = new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+  });
+
+  return (
+    <>
+      {row?.original?.action && (
+        <Dialog>
+          {row?.original?.action?.map((act, index) => (
+            <DialogTrigger>
+              {
+                <Button
+                  className="mx-1 bg-primary"
+                  onClick={() => handleActionFunc(act)}
+                  size="xs"
+                >
+                  {act.button_name}
+                </Button>
+              }
+            </DialogTrigger>
+          ))}
+          <DialogPortal>
+            {showLogsDialog && (
+              <DialogContent className="sm:max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle className="px-5">
+                    Log Details:{" "}
+                    <span className="font-normal">
+                      {_.startCase(row?.original?.name)}
+                    </span>
+                  </DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-72 w-full px-5">
+                  {modalData?.details.map((detail: any) => (
+                    <div>
+                      <div className="w-full grid grid-cols-2 gap-1.5">
+                        {Object.entries(detail?.device_info ?? {}).map(
+                          ([key, value]) => (
+                            <>
+                              <h1>{_.startCase(key)}:</h1>
+                              <p className="text-sm">{value}</p>
+                            </>
+                          )
+                        )}
+                      </div>
+                      <div className="w-full grid grid-cols-2 gap-1.5">
+                        {Object.entries(detail?.isp ?? {}).map(
+                          ([key, value]) => (
+                            <>
+                              <h1>{_.startCase(key)}:</h1>
+                              <p className="text-sm">{value}</p>
+                            </>
+                          )
+                        )}
+                      </div>
+                      <div className="w-full grid grid-cols-2 gap-1.5">
+                        {Object.entries(detail?.fields ?? {}).map(
+                          ([key, value]) => (
+                            <>
+                              <h1>{_.startCase(key)}:</h1>
+                              <p className="text-sm">{value}</p>
+                            </>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </ScrollArea>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+          </DialogPortal>
+        </Dialog>
+      )}
+    </>
+  );
+}
+
 export function RowReturnOrderAction<
   TData
 >({}: DataTableRowActionsProps<TData>) {
