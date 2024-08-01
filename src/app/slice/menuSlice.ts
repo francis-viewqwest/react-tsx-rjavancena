@@ -10,6 +10,8 @@ const initialState: menuState = {
     customerData: {},
     status: "",
     loading: false,
+    loadingAddMenuCart: false,
+    addMenuCartMessage: "",
     loadingAddCart: false,
     loadingPurchase: false,
     updateCustomer: {},
@@ -25,6 +27,9 @@ const menuSlice = createSlice({
         setCustomerDisplay(state, action) {
             state.customerData = action.payload;
         },
+        setAddCartLoading(state, action) {
+            state.loadingAddCart = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -48,16 +53,21 @@ const menuSlice = createSlice({
             .addCase(menuAddCart.pending, (state) => {
                 state.status = "menuAddCart/loading";
                 state.loadingAddCart = true;
+                state.loadingAddMenuCart = true;
                 state.error = null
             })
             .addCase(menuAddCart.fulfilled, (state, action) => {
                 state.status = "menuAddCart/success";
                 state.loadingAddCart = false;
+                state.loadingAddMenuCart = false;
+                state.addMenuCartMessage = action.payload;
                 state.data = action.payload;
             })
             .addCase(menuAddCart.rejected, (state, action) => {
                 state.status = "menuAddCart/failed";
                 state.loadingAddCart = false;
+                state.loadingAddMenuCart = false;
+                state.addMenuCartMessage = action.payload;
                 state.error = action.payload;
             })
 
@@ -310,6 +320,6 @@ export const menuData = (state: any) => state.menu.data
 export const loadingStatus = (state: any) => state.menu.status;
 export const loading = (state: any) => state.menu.loading;
 export const menuError = (state: any) => state.menu.error;
-export const { setCustomerDisplay } = menuSlice.actions;
+export const { setCustomerDisplay, setAddCartLoading } = menuSlice.actions;
 
 export default menuSlice.reducer

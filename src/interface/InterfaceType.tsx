@@ -173,8 +173,10 @@ export interface menuState {
   updateCustomer: object;
   removeCustomer: object;
   removeProduct: object;
+  addMenuCartMessage: any;
   status: string;
   loading: boolean;
+  loadingAddMenuCart: boolean;
   loadingAddCart: boolean;
   loadingPurchase: boolean;
   error: string | null | any;

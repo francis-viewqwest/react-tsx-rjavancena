@@ -163,7 +163,7 @@ const Payment: React.FC<PaymentProps> = ({ customerId, dataCustomer }) => {
                   }
                   onClick={() => handlePlaceOrder(customer)}
                   size="lg"
-                  className="w-full font-semibold bg-bgrjavancena"
+                  className={`w-full font-semibold bg-bgrjavancena ${loadingPurchase && "disabled:opacity-100"}`}
                 >
                   {loadingPurchase && (
                     <span className="flex items-center gap-2">

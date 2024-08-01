@@ -40,6 +40,12 @@ const Menu: React.FC = () => {
 
   const customerData = useAppSelector((state) => state.menu.customerData);
 
+  const addMenuCartMessage = useAppSelector(
+    (state) => state.menu.addMenuCartMessage
+  );
+
+  console.log(addMenuCartMessage);
+
   useEffect(() => {
     if (menuStatus === "menuData/success") {
       setDataMenu(menuRes?.data?.inventory_product);
@@ -74,6 +80,11 @@ const Menu: React.FC = () => {
           method: "GET",
         })
       );
+
+      toast({
+        variant: "success",
+        title: addMenuCartMessage?.message,
+      });
     }
 
     if (menuStatus === "customerData/success") {

@@ -372,7 +372,7 @@ const InventoryList: React.FC<InventoryListProps> = ({ filteredData }) => {
                     </div>
                     <DialogFooter>
                       <Button
-                        className="bg-bgrjavancena"
+                        className="bg-bgrjavancena disabled:opacity-100"
                         type="submit"
                         disabled={loadingUpdate}
                         onClick={() => handleSaveClick()}

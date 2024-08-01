@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
+import SyncLoader from "react-spinners/SyncLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IconZoomExclamation } from "@tabler/icons-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { menuAddCart } from "@/app/slice/menuSlice";
+import { menuAddCart, setAddCartLoading } from "@/app/slice/menuSlice";
 import Cookies from "js-cookie";
 import { MenuListProps } from "@/interface/InterfaceType";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { useToast } from "@/components/ui/use-toast";
+import { useAppDispatch } from "@/app/hooks";
+import { motion, AnimatePresence } from "framer-motion";
 import _ from "lodash";
 
 const MenuList: React.FC<MenuListProps> = ({
@@ -23,15 +24,14 @@ const MenuList: React.FC<MenuListProps> = ({
   customerId,
   dataCustomer,
 }) => {
+  
   const dispatch = useAppDispatch();
-  const { toast } = useToast();
+  const [selectedItem, setSelectedItem] = useState<string>("");
 
   const formatted = new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
   });
-
-  const loadingMenu = useAppSelector((state) => state.menu.loadingAddCart);
 
   const customer = dataCustomer?.find(
     (customer) => customer?.customer_id === customerId
@@ -51,14 +51,11 @@ const MenuList: React.FC<MenuListProps> = ({
     }));
   };
 
+
   const handleAddToCart = (itemId: string, quantity: number) => {
-    // if (quantity <= 0) {
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Please select quantity to add to the cart.",
-    //   });
-    //   return;
-    // }
+    setSelectedItem(itemId);
+    dispatch(setAddCartLoading(true));
+
     const payload = {
       ...(customer?.user_id_customer && {
         user_id_customer: customer?.user_id_customer,
@@ -70,6 +67,7 @@ const MenuList: React.FC<MenuListProps> = ({
       quantity: quantity || 1,
       eu_device: Cookies.get("eu"),
     };
+
 
     dispatch(
       menuAddCart({
@@ -178,7 +176,7 @@ const MenuList: React.FC<MenuListProps> = ({
                       </div>
                       <div className="flex items-center gap-2 justify-end">
                         <Button
-                          className="bg-bgrjavancena hover:bg-primary/90 text-xs font-medium"
+                          className="bg-bgrjavancena hover:bg-primary/90 text-xs font-medium disabled:opacity-100"
                           size="xs"
                           onClick={() =>
                             handleAddToCart(
@@ -186,10 +184,35 @@ const MenuList: React.FC<MenuListProps> = ({
                               quantities[item?.inventory_id]
                             )
                           }
-                          disabled={item.stocks <= 0}
+                          disabled={
+                            item.stocks <= 0 ||
+                            selectedItem === item?.inventory_product_id
+                          }
                         >
-                          <PlusIcon />
-                          Add
+                          {selectedItem === item?.inventory_product_id ? (
+                            <>
+                              Adding{" "}
+                              <SyncLoader
+                                size={5}
+                                speedMultiplier={0.5}
+                                color="white"
+                              />
+                            </>
+                          ) : (
+                            <motion.div
+                              className="flex items-center"
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 260,
+                                damping: 20,
+                              }}
+                            >
+                              <PlusIcon />
+                              Add item
+                            </motion.div>
+                          )}
                         </Button>
                       </div>
                     </div>

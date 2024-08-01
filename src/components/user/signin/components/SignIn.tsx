@@ -211,7 +211,7 @@ const SignIn: React.FC = () => {
               </div>
               <div className="flex flex-col w-full mt-5 gap-4">
                 <Button
-                  className="font-bold bg-bgrjavancena"
+                  className="font-bold bg-bgrjavancena disabled:opacity-100"
                   disabled={loading}
                 >
                   {loading && (

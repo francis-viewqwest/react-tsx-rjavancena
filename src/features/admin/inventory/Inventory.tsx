@@ -243,7 +243,7 @@ const Inventory: React.FC<RouteType> = (props) => {
                   <DialogFooter>
                     <Button
                       disabled={loadingCreate}
-                      className="bg-bgrjavancena"
+                      className="bg-bgrjavancena disabled:opacity-100"
                       type="submit"
                     >
                       {loadingCreate && (

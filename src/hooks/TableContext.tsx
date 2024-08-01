@@ -477,7 +477,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
 
                       <DialogFooter>
                         <Button
-                          className="bg-bgrjavancena"
+                          className="bg-bgrjavancena disabled:opacity-100"
                           type="submit"
                           disabled={loadingCreateChild}
                         >
@@ -1015,7 +1015,7 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
                       })}
                       <DialogFooter>
                         <Button
-                          className="bg-bgrjavancena"
+                          className="bg-bgrjavancena disabled:opacity-100"
                           type="submit"
                           disabled={!isDirty || loadingCreateUser}
                         >

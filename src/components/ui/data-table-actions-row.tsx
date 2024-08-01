@@ -326,7 +326,7 @@ export function RowInventoryActions<TData>({
             </ScrollArea>
             <DialogFooter>
               <Button
-                className="bg-bgrjavancena"
+                className="bg-bgrjavancena disabled:opacity-100"
                 type="submit"
                 disabled={updateChildLoading}
                 onClick={() => handleSaveClick()}
@@ -368,6 +368,7 @@ export function RowInventoryActions<TData>({
             </DialogHeader>
             <DialogFooter>
               <Button
+                className="disabled:opacity-100"
                 variant="destructive"
                 type="submit"
                 onClick={() => handleDeleteClick()}
@@ -793,7 +794,7 @@ export function RowUsersActions<TData>({
             </ScrollArea>
             <DialogFooter>
               <Button
-                className="bg-bgrjavancena"
+                className="bg-bgrjavancena disabled:opacity-100"
                 type="submit"
                 disabled={loadingEditUser}
                 onClick={() => handleSaveClick()}
@@ -1170,7 +1171,7 @@ export function RowUsersActions<TData>({
             </ScrollArea>
             <DialogFooter>
               <Button
-                className="bg-bgrjavancena"
+                className="bg-bgrjavancena disabled:opacity-100"
                 type="submit"
                 disabled={loadingEditUserInfo}
                 onClick={() => handleSaveUserInfo(modalData)}
@@ -1212,6 +1213,7 @@ export function RowUsersActions<TData>({
             </DialogHeader>
             <DialogFooter>
               <Button
+                className="disabled:opacity-100"
                 variant="destructive"
                 type="submit"
                 onClick={() => handleDeleteClick()}
@@ -1360,6 +1362,7 @@ export function RowTransactionActions<TData>({
                 </DialogHeader>
                 <DialogFooter>
                   <Button
+                    className="disabled:opacity-100"
                     variant="destructive"
                     type="submit"
                     disabled={voidLoading}
@@ -1589,6 +1592,7 @@ export function RowCustomerTransactionActions<TData>({
                 </DialogHeader>
                 <DialogFooter>
                   <Button
+                    className="disabled:opacity-100"
                     variant="destructive"
                     type="submit"
                     disabled={voidLoading}
@@ -1728,64 +1732,6 @@ export function RowLogsActions<TData>({
 
   let formattedData: string | JSX.Element[] | object = "No data availables";
 
-  // if (
-  //   Array.isArray(modalData?.user_action_details) &&
-  //   modalData.user_action_details.length > 0
-  // ) {
-  //   const jsonString = modalData.user_action_details[0];
-
-  //   const data = JSON.parse(jsonString);
-  //   const { purchase, payment } = data?.fields || {};
-
-  //   console.log("Is Payment an Array?:", Array.isArray(data?.fields?.payment));
-  //   console.log(
-  //     data?.fields?.payment && data?.fields?.payment?.map((item: any) => item)
-  //   );
-
-  //   if (!_.isUndefined(purchase) || !_.isUndefined(payment)) {
-  //     formattedData = (
-  //       <div>
-  //         {purchase && (
-  //           <>
-  //             {purchase?.map((purchaseItem: any, index: number) => (
-  //               <div key={`purchase-${index}`} className="mb-4 py-4">
-  //                 <h3 className="font-medium text-lg mb-4">Purchase Details</h3>
-  //                 {Object.entries(purchaseItem).map(([key, value]) => (
-  //                   <div key={key} className="grid grid-cols-2 py-1">
-  //                     <h1 className="text-sm">{_.startCase(key)}:</h1>
-  //                     <p className="text-sm">{value ?? ""}</p>
-  //                   </div>
-  //                 ))}
-  //               </div>
-  //             ))}
-  //           </>
-  //         )}
-  //         <Separator />
-  //         {payment && (
-  //           <>
-  //             {payment.length > 0 &&
-  //               payment?.map((paymentItem: any, index: number) => (
-  //                 <div key={`payment-${index}`} className="mb-4 py-4">
-  //                   <h3 className="font-medium text-lg mb-4">
-  //                     Payment Details
-  //                   </h3>
-  //                   {Object.entries(paymentItem).map(([key, value]) => (
-  //                     <div key={key} className="grid grid-cols-2 py-1">
-  //                       <h1 className="text-sm">{_.startCase(key)}:</h1>
-  //                       <p className="text-sm">{value ?? ""}</p>
-  //                     </div>
-  //                   ))}
-  //                 </div>
-  //               ))}
-  //           </>
-  //         )}
-  //       </div>
-  //     );
-  //   } else {
-  //     formattedData = "No purchase data available";
-  //   }
-  // }
-
   console.log(modalData?.user_action_details?.[0].fields);
 
   let getDataFields = modalData?.user_action_details?.[0]?.fields || {};
@@ -1844,8 +1790,6 @@ export function RowLogsActions<TData>({
     );
   }
 
-  // console.log(purchase);
-
   const handleActionFunc = (values: any) => {
     console.log(values);
 
@@ -1881,19 +1825,30 @@ export function RowLogsActions<TData>({
     <>
       {row?.original?.action && (
         <Dialog>
-          {row?.original?.action?.map((act, index) => (
-            <DialogTrigger>
-              {
-                <Button
-                  className="mx-1 bg-primary"
-                  onClick={() => handleActionFunc(act)}
-                  size="xs"
-                >
-                  {act.button_name}
-                </Button>
-              }
-            </DialogTrigger>
-          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="ghost">
+                <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full">
+              <DropdownMenuLabel>Action</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {row?.original?.action?.map((act, index) => (
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    onClick={() => handleActionFunc(act)}
+                    className="flex items-center w-full justify-between"
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <DialogPortal>
             {showLogsDialog && (
               <DialogContent className="sm:max-w-2xl">
