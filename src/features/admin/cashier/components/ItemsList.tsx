@@ -11,7 +11,9 @@ const ItemsList: React.FC = (props) => {
 
   return (
     <>
-      <h1 className="font-medium text-sm">Total items (5)</h1>
+      <h1 className="font-medium text-sm">
+        Total items ({items.reduce((acc, item) => acc + item.count, 0)})
+      </h1>
       <ScrollArea className="h-[400px] w-full p-4">
         {items &&
           items?.map((item, index) => (
@@ -25,7 +27,9 @@ const ItemsList: React.FC = (props) => {
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-xs text-neutral-500">({formatted.format(item.total_price)}) x {item.count}</h1>
+                  <h1 className="text-xs text-neutral-500">
+                    ({formatted.format(item.total_price)}) x {item.count}
+                  </h1>
                 </div>
               </CardContent>
             </Card>

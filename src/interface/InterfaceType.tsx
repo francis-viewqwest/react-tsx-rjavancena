@@ -269,6 +269,14 @@ export interface UsersManagementState {
   editUserData: string | null | any;
 }
 
+export interface voucherState {
+  voucherData: object;
+  status: string;
+  message: string;
+  loading: boolean;
+  error: any;
+}
+
 export interface ApiConfig {
   url: string;
   method: string;

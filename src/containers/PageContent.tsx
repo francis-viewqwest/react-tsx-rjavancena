@@ -8,6 +8,7 @@ import ProductList from "../pages/admin/protected/ProductList";
 import Users from "../pages/admin/protected/Users";
 import Customer from "../pages/admin/protected/Customer";
 import Logs from "../pages/admin/protected/Logs";
+import Voucher from "../pages/admin/protected/Voucher";
 import { headerUser, setNavbar } from "@/app/slice/userSlice";
 import { RouteType } from "@/interface/InterfaceType";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
@@ -57,6 +58,8 @@ const PageContent: React.FC = () => {
         return <Customer {...routeData} />;
       case "parent-Logs":
         return <Logs {...routeData} />;
+      case "parent-Voucher":
+        return <Voucher {...routeData} />;
       default:
         return null;
     }
