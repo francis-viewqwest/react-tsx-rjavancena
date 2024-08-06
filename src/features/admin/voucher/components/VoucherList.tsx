@@ -1,4 +1,3 @@
-import { useAppSelector } from "@/app/hooks";
 import React, { useState } from "react";
 import {
   Card,
@@ -34,7 +33,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-const VoucherList: React.FC = () => {
+const VoucherList: React.FC = ({ voucherData }) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [modalData, setModalData] = useState(false);
 
@@ -43,14 +42,10 @@ const VoucherList: React.FC = () => {
     setModalData(values);
     setShowEditDialog(true);
   };
-  const voucherData = useAppSelector(
-    (state) => state.voucher.voucherData.data.voucher
-  );
-  console.log(voucherData);
 
   return (
     <div className="w-full grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {voucherData.map((item, index) => (
+      {voucherData?.voucher?.map((item: any, index: number) => (
         <Card key={index}>
           <CardHeader>
             <CardTitle className="text-lg">{item.voucher_code}</CardTitle>
@@ -78,7 +73,11 @@ const VoucherList: React.FC = () => {
             {item.action.map((btn: any) => (
               <>
                 {btn.button_name === "View details" ? (
-                  <Button size="sm" className="w-full">
+                  <Button
+                    size="sm"
+                    className="w-full"
+                    variant="outlineRjavancena"
+                  >
                     {btn?.button_name}
                   </Button>
                 ) : (

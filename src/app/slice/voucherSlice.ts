@@ -11,6 +11,9 @@ const initialState: voucherState = {
     message: "",
     loading: false,
     error: false,
+    addVoucherLoading: false,
+    addVoucherMessage: "",
+    addVoucherError: false,
 }
 
 const voucherSlice = createSlice({
@@ -39,6 +42,24 @@ const voucherSlice = createSlice({
                 state.error = action.payload
             })
 
+        builder
+            .addCase(addVoucherData.pending, (state) => {
+                state.status = "addVoucherData/loading";
+                state.loading = true;
+                state.error = false;
+            })
+            .addCase(addVoucherData.fulfilled, (state, action) => {
+                state.status = "addVoucherData/success";
+                state.loading = false;
+                state.message = action.payload;
+                state.voucherData = action.payload
+            })
+            .addCase(addVoucherData.rejected, (state, action) => {
+                state.status = "addVoucherData/failed";
+                state.loading = false;
+                state.error = action.payload
+            })
+
     }
 
 })
@@ -48,6 +69,21 @@ export const getVoucherData = createAsyncThunk("voucher/getVoucherData", async (
         const res = await axiosClient({
             url: ApiConfig.url,
             method: ApiConfig.method
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const addVoucherData = createAsyncThunk("voucher/addVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
         })
 
         return res.data

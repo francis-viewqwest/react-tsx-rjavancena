@@ -275,6 +275,9 @@ export interface voucherState {
   message: string;
   loading: boolean;
   error: any;
+  addVoucherLoading: boolean;
+  addVoucherMessage: string;
+  addVoucherError: any;
 }
 
 export interface ApiConfig {
