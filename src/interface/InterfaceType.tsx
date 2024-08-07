@@ -278,6 +278,12 @@ export interface voucherState {
   addVoucherLoading: boolean;
   addVoucherMessage: string;
   addVoucherError: any;
+  editVoucherLoading: boolean;
+  editVoucherMessage: string;
+  editVoucherError: any;
+  deleteVoucherLoading: boolean;
+  deleteVoucherMessage: string;
+  deleteVoucherError: any;
 }
 
 export interface ApiConfig {

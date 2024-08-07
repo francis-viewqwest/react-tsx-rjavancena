@@ -14,6 +14,12 @@ const initialState: voucherState = {
     addVoucherLoading: false,
     addVoucherMessage: "",
     addVoucherError: false,
+    editVoucherLoading: false,
+    editVoucherMessage: "",
+    editVoucherError: false,
+    deleteVoucherLoading: false,
+    deleteVoucherMessage: "",
+    deleteVoucherError: false,
 }
 
 const voucherSlice = createSlice({
@@ -45,19 +51,54 @@ const voucherSlice = createSlice({
         builder
             .addCase(addVoucherData.pending, (state) => {
                 state.status = "addVoucherData/loading";
-                state.loading = true;
+                state.addVoucherLoading = true;
                 state.error = false;
             })
             .addCase(addVoucherData.fulfilled, (state, action) => {
                 state.status = "addVoucherData/success";
-                state.loading = false;
-                state.message = action.payload;
+                state.addVoucherLoading = false;
+                state.addVoucherMessage = action.payload;
                 state.voucherData = action.payload
             })
             .addCase(addVoucherData.rejected, (state, action) => {
                 state.status = "addVoucherData/failed";
-                state.loading = false;
-                state.error = action.payload
+                state.addVoucherLoading = false;
+                state.addVoucherError = action.payload
+            })
+        builder
+            .addCase(editVoucherData.pending, (state) => {
+                state.status = "editVoucherData/loading";
+                state.editVoucherLoading = true;
+                state.error = false;
+            })
+            .addCase(editVoucherData.fulfilled, (state, action) => {
+                state.status = "editVoucherData/success";
+                state.editVoucherLoading = false;
+                state.editVoucherMessage = action.payload;
+                state.voucherData = action.payload
+            })
+            .addCase(editVoucherData.rejected, (state, action) => {
+                state.status = "editVoucherData/failed";
+                state.editVoucherLoading = false;
+                state.editVoucherError = action.payload
+            })
+
+        builder
+            .addCase(deleteVoucherData.pending, (state) => {
+                state.status = "deleteVoucherData/loading";
+                state.deleteVoucherLoading = true;
+                state.deleteVoucherError = false;
+            })
+            .addCase(deleteVoucherData.fulfilled, (state, action) => {
+                state.status = "deleteVoucherData/success";
+                state.deleteVoucherLoading = false;
+                state.deleteVoucherMessage = action.payload;
+                state.voucherData = action.payload
+            })
+            .addCase(deleteVoucherData.rejected, (state, action) => {
+                state.status = "deleteVoucherData/failed";
+                state.deleteVoucherLoading = false;
+                state.deleteVoucherError = action.payload
             })
 
     }
@@ -79,6 +120,36 @@ export const getVoucherData = createAsyncThunk("voucher/getVoucherData", async (
 })
 
 export const addVoucherData = createAsyncThunk("voucher/addVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const editVoucherData = createAsyncThunk("voucher/editVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const deleteVoucherData = createAsyncThunk("voucher/deleteVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
     try {
         const res = await axiosClient({
             url: ApiConfig.url,

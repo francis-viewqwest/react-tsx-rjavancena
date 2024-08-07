@@ -5,14 +5,15 @@ import VoucherList from "./components/VoucherList";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useForm } from "react-hook-form";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import _ from "lodash";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogClose,
@@ -26,24 +27,25 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Cookies from "js-cookie";
-import { Calendar as CalendarIcon } from "lucide-react"
-
+import "flatpickr/dist/flatpickr.min.css";
+import { IconReload } from "@tabler/icons-react";
 
 const Voucher: React.FC = (props: any) => {
   const dispatch = useAppDispatch();
   const voucherData = useAppSelector((state) => state.voucher.voucherData.data);
   const addVoucherError = useAppSelector((state) => state.voucher.error);
-  console.log(addVoucherError);
-  const [date, setDate] = React.useState<Date>();
+  const voucherStatus = useAppSelector((state) => state.voucher.status);
 
   const { control, handleSubmit, getValues, setValue, register, watch } =
     useForm({});
 
-  const formValues = getValues();
-
-  console.log(formValues);
+  const [counterVoucherVal, setCounterVoucherVal] = useState("");
+  const addVoucherLoading = useAppSelector(
+    (state) => state.voucher.addVoucherLoading
+  );
 
   const handleAddVoucher = () => {
+    const formValues = getValues();
     const payload = {
       voucher_code: formValues.voucher_code,
       name: formValues.name,
@@ -55,22 +57,42 @@ const Voucher: React.FC = (props: any) => {
       status: formValues.status,
       eu_device: Cookies.get("eu"),
     };
+    console.log(formValues);
+
     dispatch(
       addVoucherData({
         url: "voucher/parent/store",
-        method: "GET",
+        method: "POST",
         data: payload,
       })
     );
   };
+  const formValues = getValues();
+  const generateVouchers = watch("generate_vouchers");
+
+  useEffect(() => {
+    if (generateVouchers === "YES") {
+      setCounterVoucherVal(formValues.max_usage);
+    }
+  }, [generateVouchers, formValues.max_usage]);
 
   useEffect(() => {
     dispatch(getVoucherData({ url: props.path_key, method: "GET" }));
   }, []);
 
+  useEffect(() => {
+    if (voucherStatus === "addVoucherData/success") {
+      dispatch(getVoucherData({ url: props.path_key, method: "GET" }));
+    }
+    if (voucherStatus === "deleteVoucherData/success") {
+      dispatch(getVoucherData({ url: props.path_key, method: "GET" }));
+    }
+  }, [voucherStatus]);
+
   return (
     <div className="w-full">
       <VoucherList voucherData={voucherData} />
+
       {voucherData?.buttons.map((btn: any) => (
         <div className="bottom-5 fixed pb-4 right-10">
           <Dialog>
@@ -86,53 +108,88 @@ const Voucher: React.FC = (props: any) => {
               </DialogHeader>
               <div className="w-full">
                 <ScrollArea className="h-72 w-full">
-                  {btn?.details?.map((detail) => (
+                  {btn?.details?.map((detail, index) => (
                     <>
                       <div className="grid py-2 mx-6">
                         <div className="grid gap-1">
-                          <Label className="font-semibold text-xs">
-                            {detail?.label}
-                          </Label>
-                          <Input
-                            type={detail.type}
-                            {...register(
-                              detail.label.replace(/\s+/g, "_").toLowerCase()
-                            )}
-                            className="w-full"
-                          />
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-[280px] justify-start text-left font-normal",
-                                  !date && "text-muted-foreground"
+                          {detail.type !== "select" && (
+                            <>
+                              <Label className="font-semibold text-xs">
+                                {detail?.label}
+                              </Label>
+                              <Input
+                                placeholder={`Enter ${detail.label}`}
+                                type={detail.type}
+                                {...register(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase()
+                                )}
+                                value={
+                                  detail.label === "Counter vouchers"
+                                    ? counterVoucherVal
+                                    : undefined // Don't pass value for other inputs to allow typing
+                                }
+                                onChange={(e) => {
+                                  if (detail.label === "Counter vouchers") {
+                                    setCounterVoucherVal(e.target.value);
+                                  }
+                                  setValue(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase(),
+                                    e.target.value
+                                  );
+                                }}
+                                className="w-full"
+                              />
+                            </>
+                          )}
+                          {detail.type === "select" && (
+                            <>
+                              <Label className="font-semibold text-xs">
+                                {detail?.label}
+                              </Label>
+                              <Select
+                                onValueChange={(value) =>
+                                  setValue(
+                                    detail.label
+                                      .replace(/\s+/g, "_")
+                                      .toLowerCase(),
+                                    value
+                                  )
+                                }
+                                value={watch(
+                                  detail.label
+                                    .replace(/\s+/g, "_")
+                                    .toLowerCase()
                                 )}
                               >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {date ? (
-                                  format(date, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <Calendar
-                                mode="single"
-                                selected={date}
-                                onSelect={setDate}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={detail.value} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    {detail?.option?.map((opt: any) => (
+                                      <SelectItem
+                                        key={opt.value}
+                                        value={opt.value}
+                                      >
+                                        {opt.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </>
+                          )}
 
-                          {/* <small className="text-red-500 w-full">
-                            {errorMessage?.message &&
-                              errorMessage?.message[
+                          <small className="text-red-500 w-full">
+                            {addVoucherError?.message &&
+                              addVoucherError?.message[
                                 _.replace(_.lowerCase(detail.label), " ", "_")
                               ]}
-                          </small> */}
+                          </small>
                         </div>
                       </div>
                     </>
@@ -143,19 +200,16 @@ const Voucher: React.FC = (props: any) => {
                 <Button
                   className="bg-bgrjavancena disabled:opacity-100"
                   type="submit"
-                  // disabled={loadingEditUser}
+                  disabled={addVoucherLoading}
                   onClick={() => handleAddVoucher()}
                 >
-                  {/* {loadingEditUser && (
-                                  <span className="flex items-center gap-1">
-                                    Saving...
-                                    <IconReload
-                                      className="animate-spin"
-                                      size={16}
-                                    />
-                                  </span>
-                                )} */}
-                  {"Add new"}
+                  {addVoucherLoading && (
+                    <span className="flex items-center gap-1">
+                      Adding...
+                      <IconReload className="animate-spin" size={16} />
+                    </span>
+                  )}
+                  {!addVoucherLoading && "Add new"}
                 </Button>
                 <DialogClose asChild>
                   <Button type="button" variant="secondary">

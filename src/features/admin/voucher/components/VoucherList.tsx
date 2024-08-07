@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,6 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+} from "@/components/ui/select";
+import { useForm } from "react-hook-form";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,15 +41,67 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useAppDispatch } from "@/app/hooks";
+import { deleteVoucherData } from "@/app/slice/voucherSlice";
+import Cookies from "js-cookie";
 
 const VoucherList: React.FC = ({ voucherData }) => {
+  const { control, handleSubmit, getValues, setValue, register, watch } =
+    useForm({});
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [modalData, setModalData] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const handleEdit = (values: any) => {
-    console.log(values);
-    setModalData(values);
-    setShowEditDialog(true);
+  const [counterVoucherVal, setCounterVoucherVal] = useState("");
+  const formValues = getValues();
+  const generateVouchers = watch("generate_vouchers");
+
+  useEffect(() => {
+    if (generateVouchers === "YES") {
+      setCounterVoucherVal(formValues.max_usage);
+    }
+  }, [generateVouchers, formValues.max_usage]);
+
+  const handleDelete = () => {
+    setShowDeleteDialog(true);
+    setShowEditDialog(false);
+
+    const payload = {
+      voucher_id: modalData?.voucher_id,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      deleteVoucherData({
+        url: modalData?.url,
+        method: "DELETE",
+        data: payload,
+      })
+    );
+  };
+
+  const handleClickBtn = (values: any) => {
+    const btnName = values.button_name;
+
+    switch (btnName) {
+      case "Edit":
+        console.log(btnName);
+        setModalData(values);
+        setShowEditDialog(true);
+        setShowDeleteDialog(false);
+        break;
+
+      case "Delete":
+        console.log(btnName);
+        setModalData(values);
+        setShowDeleteDialog(true);
+        setShowEditDialog(false);
+        break;
+
+      default:
+        break;
+    }
   };
 
   return (
@@ -72,7 +133,7 @@ const VoucherList: React.FC = ({ voucherData }) => {
           <CardFooter className="w-full flex items-center gap-3">
             {item.action.map((btn: any) => (
               <>
-                {btn.button_name === "View details" ? (
+                {btn.button_name === "View details" && (
                   <Button
                     size="sm"
                     className="w-full"
@@ -80,83 +141,160 @@ const VoucherList: React.FC = ({ voucherData }) => {
                   >
                     {btn?.button_name}
                   </Button>
-                ) : (
-                  <>
-                    <Dialog>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <Button size="sm" variant="outline">
-                            <Icon icon="radix-icons:dots-horizontal" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DialogTrigger className="w-full">
+                )}
+              </>
+            ))}
+            <>
+              <Dialog>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Button size="sm" variant="outline">
+                      <Icon icon="radix-icons:dots-horizontal" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DialogTrigger className="w-full">
+                      {item.action.map((btn: any) => (
+                        <>
+                          {btn.button_name === "Edit" && (
                             <DropdownMenuItem
                               className="cursor-pointer w-full"
-                              onClick={() => handleEdit(btn)}
+                              onClick={() => handleClickBtn(btn)}
                             >
                               <Icon className="mr-2" icon={btn.icon} />
                               <span>{btn?.button_name}</span>
                             </DropdownMenuItem>
-                          </DialogTrigger>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      <DialogPortal>
-                        {showEditDialog && (
-                          <DialogContent className="sm:max-w-[34rem]">
-                            <DialogHeader>
-                              <DialogTitle>
-                                Edit voucher code details
-                              </DialogTitle>
-                              <DialogDescription>
-                                Edit voucher code details below. Update
-                                information and click save to apply changes.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <ScrollArea className="h-72 w-full">
-                              <div className="w-full">
-                                {modalData?.details.map((detail) => (
-                                  <>
-                                    <div className="grid gap-2 py-3 mx-6">
+                          )}
+                          {btn.button_name === "Delete" && (
+                            <DropdownMenuItem
+                              className="cursor-pointer w-full"
+                              onClick={() => handleClickBtn(btn)}
+                            >
+                              <Icon className="mr-2" icon={btn.icon} />
+                              <span>{btn?.button_name}</span>
+                            </DropdownMenuItem>
+                          )}
+                        </>
+                      ))}
+                    </DialogTrigger>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DialogPortal>
+                  {showEditDialog && (
+                    <DialogContent className="sm:max-w-[34rem]">
+                      <DialogHeader>
+                        <DialogTitle>Edit voucher code details</DialogTitle>
+                        <DialogDescription>
+                          Edit voucher code details below. Update information
+                          and click save to apply changes.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <ScrollArea className="h-72 w-full">
+                        <div className="w-full">
+                          {modalData?.details.map((detail) => (
+                            <>
+                              <div className="grid py-2 mx-6">
+                                <div className="grid gap-1">
+                                  {detail.type !== "select" && (
+                                    <>
                                       <Label className="font-semibold text-xs">
                                         {detail?.label}
                                       </Label>
-                                      <>
-                                        <Input
-                                          type={detail.type}
-                                          // {...register(
-                                          //   detail.label
-                                          //     .replace(/\s+/g, "_")
-                                          //     .toLowerCase()
-                                          // )}
-                                          className="w-full"
-                                        />
-                                        {/* <small className="text-red-500 w-full">
-                                          {errorMessage?.message &&
-                                            errorMessage?.message[
-                                              _.replace(
-                                                _.lowerCase(detail.label),
-                                                " ",
-                                                "_"
-                                              )
-                                            ]}
-                                        </small> */}
-                                      </>
-                                    </div>
-                                  </>
-                                ))}
+                                      <Input
+                                        placeholder={`Enter ${detail.label}`}
+                                        type={detail.type}
+                                        {...register(
+                                          detail.label
+                                            .replace(/\s+/g, "_")
+                                            .toLowerCase()
+                                        )}
+                                        value={detail.value}
+                                        onChange={(e) => {
+                                          if (
+                                            detail.label === "Counter vouchers"
+                                          ) {
+                                            setCounterVoucherVal(
+                                              e.target.value
+                                            );
+                                          }
+                                          setValue(
+                                            detail.label
+                                              .replace(/\s+/g, "_")
+                                              .toLowerCase(),
+                                            e.target.value
+                                          );
+                                        }}
+                                        className="w-full"
+                                      />
+                                    </>
+                                  )}
+                                  {detail.type === "select" && (
+                                    <>
+                                      <Label className="font-semibold text-xs">
+                                        {detail?.label}
+                                      </Label>
+                                      <Select
+                                        onValueChange={(value) =>
+                                          setValue(
+                                            detail.label
+                                              .replace(/\s+/g, "_")
+                                              .toLowerCase(),
+                                            value
+                                          )
+                                        }
+                                        value={watch(
+                                          detail.label
+                                            .replace(/\s+/g, "_")
+                                            .toLowerCase()
+                                        )}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue
+                                            placeholder={detail.value}
+                                          />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectGroup>
+                                            {detail?.option?.map((opt: any) => (
+                                              <SelectItem
+                                                key={opt.value}
+                                                value={opt.value}
+                                              >
+                                                {opt.label}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectGroup>
+                                        </SelectContent>
+                                      </Select>
+                                    </>
+                                  )}
+
+                                  {/* <small className="text-red-500 w-full">
+                                    {addVoucherError?.message &&
+                                      addVoucherError?.message[
+                                        _.replace(
+                                          _.lowerCase(detail.label),
+                                          " ",
+                                          "_"
+                                        )
+                                      ]}
+                                  </small> */}
+                                </div>
                               </div>
-                            </ScrollArea>
-                            <DialogFooter>
-                              <Button
-                                className="bg-bgrjavancena disabled:opacity-100"
-                                type="submit"
-                                // disabled={loadingEditUser}
-                                // onClick={() => handleSaveClick()}
-                              >
-                                {/* {loadingEditUser && (
+                            </>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                      <DialogFooter>
+                        <Button
+                          className="bg-bgrjavancena disabled:opacity-100"
+                          type="submit"
+                          // disabled={loadingEditUser}
+                          // onClick={() => handleSaveClick()}
+                        >
+                          {/* {loadingEditUser && (
                                   <span className="flex items-center gap-1">
                                     Saving...
                                     <IconReload
@@ -165,22 +303,58 @@ const VoucherList: React.FC = ({ voucherData }) => {
                                     />
                                   </span>
                                 )} */}
-                                {"Save changes"}
-                              </Button>
-                              <DialogClose asChild>
-                                <Button type="button" variant="secondary">
-                                  Close
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </DialogContent>
-                        )}
-                      </DialogPortal>
-                    </Dialog>
-                  </>
-                )}
-              </>
-            ))}
+                          {"Save changes"}
+                        </Button>
+                        <DialogClose asChild>
+                          <Button type="button" variant="secondary">
+                            Close
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  )}
+                  {showDeleteDialog && (
+                    <DialogContent className="sm:max-w-[34rem]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          Are you sure you want to delete this voucher?{" "}
+                          {modalData?.voucher_code}
+                        </DialogTitle>
+                        <DialogDescription>
+                          Deleting this voucher code is a permanent action and
+                          cannot be undone.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <DialogFooter>
+                        <Button
+                          className="bg-bgrjavancena disabled:opacity-100"
+                          type="submit"
+                          // disabled={loadingEditUser}
+                          onClick={() => handleDelete()}
+                        >
+                          {/* {loadingEditUser && (
+                                  <span className="flex items-center gap-1">
+                                    Saving...
+                                    <IconReload
+                                      className="animate-spin"
+                                      size={16}
+                                    />
+                                  </span>
+                                )} */}
+                          {"Save changes"}
+                        </Button>
+                        <DialogClose asChild>
+                          <Button type="button" variant="secondary">
+                            Close
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  )}
+                </DialogPortal>
+              </Dialog>
+            </>
           </CardFooter>
         </Card>
       ))}
