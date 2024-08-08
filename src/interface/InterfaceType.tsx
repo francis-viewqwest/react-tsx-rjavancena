@@ -284,6 +284,9 @@ export interface voucherState {
   deleteVoucherLoading: boolean;
   deleteVoucherMessage: string;
   deleteVoucherError: any;
+  childVoucherLoading: boolean;
+  childVoucherMessage: string;
+  childVoucherError: any;
 }
 
 export interface ApiConfig {

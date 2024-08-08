@@ -42,7 +42,13 @@ import { dashboardData } from "@/app/slice/dashboardSlice";
 import { useAppSelector } from "@/app/hooks";
 
 const useColumnsProduct = (
-  dataSource: "inventory" | "users" | "transaction" | "customer" | "logs"
+  dataSource:
+    | "inventory"
+    | "users"
+    | "transaction"
+    | "customer"
+    | "logs"
+    | "voucher"
 ) => {
   const inventoryChild = useSelector(inventoryData);
   const usersParent = useSelector(usersData);
@@ -51,8 +57,11 @@ const useColumnsProduct = (
     (state) => state.customer?.customerCashierData
   );
   const logsData = useAppSelector((state) => state.logs?.logsData);
+  const childVoucherData = useAppSelector(
+    (state) => state.voucher?.voucherData
+  );
 
-  // console.log(logsData);
+  console.log(childVoucherData);
 
   const baseColumns: ColumnDef<any>[] = [];
 
@@ -69,6 +78,8 @@ const useColumnsProduct = (
           return customerCashierData;
         case "logs":
           return logsData;
+        case "voucher":
+          return childVoucherData;
         default:
           break;
       }

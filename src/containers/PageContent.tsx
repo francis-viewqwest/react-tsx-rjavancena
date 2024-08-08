@@ -21,6 +21,7 @@ import {
   UsersManagementSkeleton,
 } from "../pages/admin/skeleton/SkeletonPage";
 import useAxiosClient from "@/axios-client";
+import VoucherChildList from "@/pages/admin/protected/VoucherChildList";
 
 const PageContent: React.FC = () => {
   const navigate = useNavigate();
@@ -60,6 +61,8 @@ const PageContent: React.FC = () => {
         return <Logs {...routeData} />;
       case "parent-Voucher":
         return <Voucher {...routeData} />;
+      case "child-Voucher":
+        return <VoucherChildList />;
       default:
         return null;
     }
@@ -96,6 +99,16 @@ const PageContent: React.FC = () => {
                         <Route
                           key={`${index}-child`}
                           path="inventory-child/:id"
+                          element={routeComponent(
+                            `child-${route.title}`,
+                            route
+                          )}
+                        />
+                      )}
+                      {route.title === "Voucher" && (
+                        <Route
+                          key={`${index}-child`}
+                          path="voucher-child/:id"
                           element={routeComponent(
                             `child-${route.title}`,
                             route

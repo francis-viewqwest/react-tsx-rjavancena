@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import _ from "lodash";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
@@ -41,9 +41,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useAppDispatch } from "@/app/hooks";
-import { deleteVoucherData } from "@/app/slice/voucherSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { deleteVoucherData, editVoucherData } from "@/app/slice/voucherSlice";
 import Cookies from "js-cookie";
+import { IconReload } from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 
 const VoucherList: React.FC = ({ voucherData }) => {
   const { control, handleSubmit, getValues, setValue, register, watch } =
@@ -52,9 +54,18 @@ const VoucherList: React.FC = ({ voucherData }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [modalData, setModalData] = useState(false);
   const dispatch = useAppDispatch();
+  const editVoucherLoading = useAppSelector(
+    (state) => state.voucher.editVoucherLoading
+  );
+  const editVoucherError = useAppSelector(
+    (state) => state.voucher.editVoucherError
+  );
+
+  console.log(modalData);
 
   const [counterVoucherVal, setCounterVoucherVal] = useState("");
   const formValues = getValues();
+
   const generateVouchers = watch("generate_vouchers");
 
   useEffect(() => {
@@ -86,7 +97,11 @@ const VoucherList: React.FC = ({ voucherData }) => {
 
     switch (btnName) {
       case "Edit":
-        console.log(btnName);
+        values.details.forEach((val) => {
+          const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+          setValue(fieldName, val.value);
+        });
+
         setModalData(values);
         setShowEditDialog(true);
         setShowDeleteDialog(false);
@@ -102,6 +117,27 @@ const VoucherList: React.FC = ({ voucherData }) => {
       default:
         break;
     }
+  };
+
+  const handleSaveClick = () => {
+    const formValues = getValues();
+
+    const payload = {
+      voucher_id: modalData.voucher_id,
+      voucher_code: formValues.voucher_code,
+      name: formValues.name,
+      description: formValues.description,
+      discount_amount: formValues.discount_amount,
+      max_usage: formValues.max_usage,
+      start_at: formValues.start_at,
+      end_at: formValues.end_at,
+      status: formValues.status,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      editVoucherData({ url: modalData.url, method: "POST", data: payload })
+    );
   };
 
   return (
@@ -134,13 +170,15 @@ const VoucherList: React.FC = ({ voucherData }) => {
             {item.action.map((btn: any) => (
               <>
                 {btn.button_name === "View details" && (
-                  <Button
-                    size="sm"
-                    className="w-full"
-                    variant="outlineRjavancena"
-                  >
-                    {btn?.button_name}
-                  </Button>
+                  <Link to={`/app/voucher/voucher-child/${btn.url}`}>
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      variant="outlineRjavancena"
+                    >
+                      {btn?.button_name}
+                    </Button>
+                  </Link>
                 )}
               </>
             ))}
@@ -193,39 +231,58 @@ const VoucherList: React.FC = ({ voucherData }) => {
                       </DialogHeader>
                       <ScrollArea className="h-72 w-full">
                         <div className="w-full">
-                          {modalData?.details.map((detail) => (
+                          {modalData?.details.map((detail: any) => (
                             <>
                               <div className="grid py-2 mx-6">
                                 <div className="grid gap-1">
-                                  {detail.type !== "select" && (
+                                  {detail.type !== "select" &&
+                                    detail.type !== "date" && (
+                                      <>
+                                        <Label className="font-semibold text-xs">
+                                          {detail.label}
+                                        </Label>
+                                        <Input
+                                          placeholder={`Enter ${detail.label}`}
+                                          type={detail?.type}
+                                          {...register(
+                                            detail?.label
+                                              .replace(/\s+/g, "_")
+                                              .toLowerCase()
+                                          )}
+                                          onChange={(e) => {
+                                            if (
+                                              detail.label ===
+                                              "Counter vouchers"
+                                            ) {
+                                              setCounterVoucherVal(
+                                                e.target.value
+                                              );
+                                            }
+                                            setValue(
+                                              detail.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase(),
+                                              e.target.value
+                                            );
+                                          }}
+                                          className="w-full"
+                                        />
+                                      </>
+                                    )}
+                                  {detail.type === "date" && (
                                     <>
                                       <Label className="font-semibold text-xs">
-                                        {detail?.label}
+                                        {detail.label}
                                       </Label>
                                       <Input
                                         placeholder={`Enter ${detail.label}`}
-                                        type={detail.type}
+                                        type={detail?.type}
                                         {...register(
-                                          detail.label
+                                          detail?.label
                                             .replace(/\s+/g, "_")
                                             .toLowerCase()
                                         )}
                                         value={detail.value}
-                                        onChange={(e) => {
-                                          if (
-                                            detail.label === "Counter vouchers"
-                                          ) {
-                                            setCounterVoucherVal(
-                                              e.target.value
-                                            );
-                                          }
-                                          setValue(
-                                            detail.label
-                                              .replace(/\s+/g, "_")
-                                              .toLowerCase(),
-                                            e.target.value
-                                          );
-                                        }}
                                         className="w-full"
                                       />
                                     </>
@@ -270,17 +327,16 @@ const VoucherList: React.FC = ({ voucherData }) => {
                                       </Select>
                                     </>
                                   )}
-
-                                  {/* <small className="text-red-500 w-full">
-                                    {addVoucherError?.message &&
-                                      addVoucherError?.message[
+                                  <small className="text-red-500 w-full">
+                                    {editVoucherError?.message &&
+                                      editVoucherError?.message[
                                         _.replace(
                                           _.lowerCase(detail.label),
                                           " ",
                                           "_"
                                         )
                                       ]}
-                                  </small> */}
+                                  </small>
                                 </div>
                               </div>
                             </>
@@ -291,19 +347,16 @@ const VoucherList: React.FC = ({ voucherData }) => {
                         <Button
                           className="bg-bgrjavancena disabled:opacity-100"
                           type="submit"
-                          // disabled={loadingEditUser}
-                          // onClick={() => handleSaveClick()}
+                          disabled={editVoucherLoading}
+                          onClick={() => handleSaveClick()}
                         >
-                          {/* {loadingEditUser && (
-                                  <span className="flex items-center gap-1">
-                                    Saving...
-                                    <IconReload
-                                      className="animate-spin"
-                                      size={16}
-                                    />
-                                  </span>
-                                )} */}
-                          {"Save changes"}
+                          {editVoucherLoading && (
+                            <span className="flex items-center gap-1">
+                              Saving...
+                              <IconReload className="animate-spin" size={16} />
+                            </span>
+                          )}
+                          {!editVoucherLoading && "Save changes"}
                         </Button>
                         <DialogClose asChild>
                           <Button type="button" variant="secondary">

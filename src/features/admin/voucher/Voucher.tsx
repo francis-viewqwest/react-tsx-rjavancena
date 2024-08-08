@@ -84,6 +84,11 @@ const Voucher: React.FC = (props: any) => {
     if (voucherStatus === "addVoucherData/success") {
       dispatch(getVoucherData({ url: props.path_key, method: "GET" }));
     }
+
+    if (voucherStatus === "editVoucherData/success") {
+      dispatch(getVoucherData({ url: props.path_key, method: "GET" }));
+    }
+
     if (voucherStatus === "deleteVoucherData/success") {
       dispatch(getVoucherData({ url: props.path_key, method: "GET" }));
     }
@@ -108,7 +113,7 @@ const Voucher: React.FC = (props: any) => {
               </DialogHeader>
               <div className="w-full">
                 <ScrollArea className="h-72 w-full">
-                  {btn?.details?.map((detail, index) => (
+                  {btn?.details?.map((detail) => (
                     <>
                       <div className="grid py-2 mx-6">
                         <div className="grid gap-1">

@@ -20,6 +20,9 @@ const initialState: voucherState = {
     deleteVoucherLoading: false,
     deleteVoucherMessage: "",
     deleteVoucherError: false,
+    childVoucherLoading: false,
+    childVoucherMessage: "",
+    childVoucherError: false,
 }
 
 const voucherSlice = createSlice({
@@ -101,6 +104,24 @@ const voucherSlice = createSlice({
                 state.deleteVoucherError = action.payload
             })
 
+        builder
+            .addCase(getChildVoucherData.pending, (state) => {
+                state.status = "getChildVoucherData/loading";
+                state.childVoucherLoading = true;
+                state.childVoucherError = false;
+            })
+            .addCase(getChildVoucherData.fulfilled, (state, action) => {
+                state.status = "getChildVoucherData/success";
+                state.childVoucherLoading = false;
+                state.childVoucherMessage = action.payload;
+                state.voucherData = action.payload
+            })
+            .addCase(getChildVoucherData.rejected, (state, action) => {
+                state.status = "getChildVoucherData/failed";
+                state.childVoucherLoading = false;
+                state.childVoucherError = action.payload
+            })
+
     }
 
 })
@@ -153,6 +174,21 @@ export const deleteVoucherData = createAsyncThunk("voucher/deleteVoucherData", a
     try {
         const res = await axiosClient({
             url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const getChildVoucherData = createAsyncThunk("voucher/getChildVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: `voucher/parent/items/show/${ApiConfig.url}`,
             method: ApiConfig.method,
             data: ApiConfig.data
         })
