@@ -14,6 +14,7 @@ import {
   RowUsersActions,
   RowCustomerTransactionActions,
   RowLogsActions,
+  RowVoucherActions,
 } from "./data-table-actions-row";
 import { Icon } from "@iconify/react";
 import {
@@ -58,7 +59,7 @@ const useColumnsProduct = (
   );
   const logsData = useAppSelector((state) => state.logs?.logsData);
   const childVoucherData = useAppSelector(
-    (state) => state.voucher?.voucherData
+    (state) => state.voucher?.voucherChildData
   );
 
   console.log(childVoucherData);
@@ -153,8 +154,10 @@ const useColumnsProduct = (
                     return "successStatus";
                   case "Not Paid":
                     return "destructiveStatus";
-                  case "Incative":
+                  case "Inactive":
                     return "dimmedStatus";
+                  case "Available":
+                    return "successStatus";
                   case "Pending":
                     return "warning";
                   case "Banned":
@@ -199,6 +202,8 @@ const useColumnsProduct = (
                   return <RowCustomerTransactionActions row={row} />;
                 case "logs":
                   return <RowLogsActions row={row} />;
+                case "voucher":
+                  return <RowVoucherActions row={row} />;
                 default:
                   return null;
               }

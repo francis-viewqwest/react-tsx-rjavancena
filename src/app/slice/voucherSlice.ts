@@ -7,6 +7,7 @@ const axiosClient = useAxiosClient();
 
 const initialState: voucherState = {
     voucherData: {},
+    voucherChildData: {},
     status: "",
     message: "",
     loading: false,
@@ -23,6 +24,15 @@ const initialState: voucherState = {
     childVoucherLoading: false,
     childVoucherMessage: "",
     childVoucherError: false,
+    addChildVoucherLoading: false,
+    addChildVoucherMessage: "",
+    addChildVoucherError: false,
+    updateChildVoucherLoading: false,
+    updateChildVoucherMessage: "",
+    updateChildVoucherError: false,
+    deleteChildVoucherLoading: false,
+    deleteChildVoucherMessage: "",
+    deleteChildVoucherError: false,
 }
 
 const voucherSlice = createSlice({
@@ -114,12 +124,66 @@ const voucherSlice = createSlice({
                 state.status = "getChildVoucherData/success";
                 state.childVoucherLoading = false;
                 state.childVoucherMessage = action.payload;
-                state.voucherData = action.payload
+                state.voucherChildData = action.payload
             })
             .addCase(getChildVoucherData.rejected, (state, action) => {
                 state.status = "getChildVoucherData/failed";
                 state.childVoucherLoading = false;
                 state.childVoucherError = action.payload
+            })
+
+        builder
+            .addCase(addChildVoucherData.pending, (state) => {
+                state.status = "addChildVoucherData/loading";
+                state.childVoucherLoading = true;
+                state.childVoucherError = false;
+            })
+            .addCase(addChildVoucherData.fulfilled, (state, action) => {
+                state.status = "addChildVoucherData/success";
+                state.childVoucherLoading = false;
+                state.childVoucherMessage = action.payload;
+                state.voucherChildData = action.payload
+            })
+            .addCase(addChildVoucherData.rejected, (state, action) => {
+                state.status = "addChildVoucherData/failed";
+                state.childVoucherLoading = false;
+                state.childVoucherError = action.payload
+            })
+
+        builder
+            .addCase(updateChildVoucherData.pending, (state) => {
+                state.status = "updateChildVoucherData/loading";
+                state.updateChildVoucherLoading = true;
+                state.updateChildVoucherError = false;
+            })
+            .addCase(updateChildVoucherData.fulfilled, (state, action) => {
+                state.status = "updateChildVoucherData/success";
+                state.updateChildVoucherLoading = false;
+                state.updateChildVoucherMessage = action.payload;
+                state.voucherChildData = action.payload
+            })
+            .addCase(updateChildVoucherData.rejected, (state, action) => {
+                state.status = "updateChildVoucherData/failed";
+                state.updateChildVoucherLoading = false;
+                state.updateChildVoucherError = action.payload
+            })
+
+        builder
+            .addCase(deleteChildVoucherData.pending, (state) => {
+                state.status = "deleteChildVoucherData/loading";
+                state.deleteChildVoucherLoading = true;
+                state.deleteChildVoucherError = false;
+            })
+            .addCase(deleteChildVoucherData.fulfilled, (state, action) => {
+                state.status = "deleteChildVoucherData/success";
+                state.deleteChildVoucherLoading = false;
+                state.deleteChildVoucherMessage = action.payload;
+                state.voucherChildData = action.payload
+            })
+            .addCase(deleteChildVoucherData.rejected, (state, action) => {
+                state.status = "deleteChildVoucherData/failed";
+                state.deleteChildVoucherLoading = false;
+                state.deleteChildVoucherError = action.payload
             })
 
     }
@@ -189,6 +253,52 @@ export const getChildVoucherData = createAsyncThunk("voucher/getChildVoucherData
     try {
         const res = await axiosClient({
             url: `voucher/parent/items/show/${ApiConfig.url}`,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const addChildVoucherData = createAsyncThunk("voucher/addChildVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+export const updateChildVoucherData = createAsyncThunk("voucher/updateChildVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
+            method: ApiConfig.method,
+            data: ApiConfig.data
+        })
+
+        return res.data
+    } catch (error: any) {
+        console.log(error)
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
+export const deleteChildVoucherData = createAsyncThunk("voucher/deleteChildVoucherData", async (ApiConfig: ApiConfig, { rejectWithValue }) => {
+    try {
+        const res = await axiosClient({
+            url: ApiConfig.url,
             method: ApiConfig.method,
             data: ApiConfig.data
         })

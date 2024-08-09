@@ -50,6 +50,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 import { TableContextType } from "@/interface/InterfaceType";
 import axios from "axios";
+import { addChildVoucherData } from "@/app/slice/voucherSlice";
 
 const defaultTableContextValue: TableContextType = {
   children: null,
@@ -126,6 +127,14 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
     (state) => state?.usersManagement?.loadingCreateUser
   );
 
+  //* ADD VOUCHER
+  const childVoucherData = useAppSelector(
+    (state) => state.voucher?.voucherChildData
+  );
+  const childVoucherError = useAppSelector(
+    (state) => state.voucher?.childVoucherError
+  );
+
   const [getLocationCode, setGetLocationCode] = useState({});
   const [locationsData, setLocationsData] = useState({
     regions: [],
@@ -135,7 +144,6 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
   });
 
   const formValues = watch();
-  console.log(formValues);
 
   const { region_name, province_name, city_or_municipality_name } = formValues;
 
@@ -301,6 +309,24 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
             })
           );
 
+          break;
+
+        case "voucher":
+          const payloadVoucher = {
+            voucher_id: id,
+            voucher_code: data.voucher_code,
+            eu_device: Cookies.get("eu"),
+          };
+
+          console.log(data);
+
+          dispatch(
+            addChildVoucherData({
+              url: url,
+              method: "POST",
+              data: payloadVoucher,
+            })
+          );
           break;
 
         default:
@@ -1051,6 +1077,78 @@ export const TableProvider: React.FC<{ children: ReactNode; page: string }> = ({
       placeHolder = "Search log";
       columnName = "log_id";
       rowsSelection = false;
+      break;
+    case "Voucher":
+      placeHolder = "Search voucher";
+      columnName = "voucher_code";
+      jsx = (
+        <>
+          {Array.isArray(childVoucherData.data?.buttons) &&
+            childVoucherData.data?.buttons.map((btn: any, index: any) => (
+              <Dialog key={index}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="font-semibold bg-bgrjavancena">
+                    {btn.button_name}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader className="sm:px-5">
+                    <DialogTitle>Create new voucher</DialogTitle>
+                    <DialogDescription>
+                      This form allows you to seamlessly add a new voucher.
+                      Please fill out the required fields to proceed.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <form
+                    onSubmit={handleSubmit(
+                      handleFormSubmit(btn.url, "voucher")
+                    )}
+                    className="grid py-4 gap-6 px-2 sm:px-5"
+                  >
+                    {btn?.details?.map((detail: any, index: number) => (
+                      <div className="flex flex-col gap-2" key={index}>
+                        <Label className="text-sm font-semibold">
+                          {detail.label}
+                        </Label>
+                        <Input
+                          type={detail.type}
+                          placeholder={`Enter ${detail.label}`}
+                          className="col-span-3"
+                          {...register(
+                            detail?.label.replace(/\s+/g, "_").toLowerCase()
+                          )}
+                        />
+                        {childVoucherError?.message?.voucher_code && (
+                          <small className="text-xs text-red-500">
+                            {childVoucherError?.message?.voucher_code}
+                          </small>
+                        )}
+                      </div>
+                    ))}
+
+                    <DialogFooter>
+                      <Button
+                        className="bg-bgrjavancena disabled:opacity-100"
+                        type="submit"
+                        disabled={loadingCreateChild}
+                      >
+                        {loadingCreateChild && (
+                          <span className="flex items-center gap-1">
+                            Inserting...
+                            <IconReload className="animate-spin" size={16} />
+                          </span>
+                        )}
+                        {!loadingCreateChild && "Insert to table"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            ))}
+        </>
+      );
+      rowsSelection = true;
       break;
     default:
       placeHolder = null;

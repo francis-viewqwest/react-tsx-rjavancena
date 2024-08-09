@@ -10,8 +10,10 @@ import { Link, useParams } from "react-router-dom";
 const VoucherChildList: React.FC = (props) => {
   const dispatch = useAppDispatch();
   const childVoucherData = useAppSelector(
-    (state) => state.voucher.voucherData?.data?.voucher_items
+    (state) => state.voucher.voucherChildData?.data?.voucher_items
   );
+  console.log(childVoucherData);
+
   const [data, setData] = useState([]);
   const status = useAppSelector((state) => state.voucher.status);
   const { id } = useParams();
@@ -26,13 +28,25 @@ const VoucherChildList: React.FC = (props) => {
     if (status === "getChildVoucherData/success") {
       setData(childVoucherData);
     }
-  }, [status]);
+
+    if (status === "addChildVoucherData/success") {
+      dispatch(getChildVoucherData({ url: id, method: "GET" }));
+    }
+
+    if (status === "updateChildVoucherData/success") {
+      dispatch(getChildVoucherData({ url: id, method: "GET" }));
+    }
+
+    if (status === "deleteChildVoucherData/success") {
+      dispatch(getChildVoucherData({ url: id, method: "GET" }));
+    }
+  }, [status, id]);
 
   console.log(childVoucherData);
 
   return (
     <>
-      <TableProvider page="Inventory">
+      <TableProvider page="Voucher" voucherId={id}>
         <Link
           to="/app/voucher"
           className="flex gap-2 items-center mb-6 text-xs w-32"

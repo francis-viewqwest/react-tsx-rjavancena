@@ -271,6 +271,7 @@ export interface UsersManagementState {
 
 export interface voucherState {
   voucherData: object;
+  voucherChildData: object;
   status: string;
   message: string;
   loading: boolean;
@@ -287,6 +288,15 @@ export interface voucherState {
   childVoucherLoading: boolean;
   childVoucherMessage: string;
   childVoucherError: any;
+  addChildVoucherLoading: boolean;
+  addChildVoucherMessage: string;
+  addChildVoucherError: any;
+  updateChildVoucherLoading: boolean;
+  updateChildVoucherMessage: string;
+  updateChildVoucherError: any;
+  deleteChildVoucherLoading: boolean;
+  deleteChildVoucherMessage: string;
+  deleteChildVoucherError: any;
 }
 
 export interface ApiConfig {

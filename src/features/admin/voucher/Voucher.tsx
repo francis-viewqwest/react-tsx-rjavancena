@@ -52,8 +52,8 @@ const Voucher: React.FC = (props: any) => {
       description: formValues.description,
       discount_amount: formValues.discount_amount,
       max_usage: formValues.max_usage,
-      start_at: formValues.start_at,
-      end_at: formValues.end_at,
+      expiration_start_at: formValues.expiration_start_at,
+      expiration_end_at: formValues.expiration_end_at,
       status: formValues.status,
       eu_device: Cookies.get("eu"),
     };

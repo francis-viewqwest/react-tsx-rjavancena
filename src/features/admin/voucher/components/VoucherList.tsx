@@ -60,6 +60,9 @@ const VoucherList: React.FC = ({ voucherData }) => {
   const editVoucherError = useAppSelector(
     (state) => state.voucher.editVoucherError
   );
+  const deleteVoucherLoading = useAppSelector(
+    (state) => state.voucher.deleteVoucherLoading
+  );
 
   console.log(modalData);
 
@@ -122,6 +125,8 @@ const VoucherList: React.FC = ({ voucherData }) => {
   const handleSaveClick = () => {
     const formValues = getValues();
 
+    console.log(formValues);
+
     const payload = {
       voucher_id: modalData.voucher_id,
       voucher_code: formValues.voucher_code,
@@ -129,8 +134,8 @@ const VoucherList: React.FC = ({ voucherData }) => {
       description: formValues.description,
       discount_amount: formValues.discount_amount,
       max_usage: formValues.max_usage,
-      start_at: formValues.start_at,
-      end_at: formValues.end_at,
+      expiration_start_at: formValues.expiration_start_at,
+      expiration_end_at: formValues.expiration_end_at,
       status: formValues.status,
       eu_device: Cookies.get("eu"),
     };
@@ -142,101 +147,142 @@ const VoucherList: React.FC = ({ voucherData }) => {
 
   return (
     <div className="w-full grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {voucherData?.voucher?.map((item: any, index: number) => (
-        <Card key={index}>
-          <CardHeader>
-            <CardTitle className="text-lg">{item.voucher_code}</CardTitle>
-            <CardDescription className="text-sm">{item.name}</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-2">
-            <div className="grid grid-cols-2">
-              <small className="font-bold">Price:</small>
-              <small className="text-neutral-400">{item.discount_amount}</small>
-            </div>
-            <div className="grid grid-cols-2">
-              <small className="font-bold">Vouchers:</small>
-              <small className="text-neutral-400">{item.vouchers}</small>
-            </div>
-            <div className="grid grid-cols-2">
-              <small className="font-bold">Used:</small>
-              <small className="text-neutral-400">{item.used}</small>
-            </div>
-            <div className="grid grid-cols-2">
-              <small className="font-bold">Expiration:</small>
-              <small className="text-neutral-400">{item.end_at}</small>
-            </div>
-          </CardContent>
-          <CardFooter className="w-full flex items-center gap-3">
-            {item.action.map((btn: any) => (
-              <>
-                {btn.button_name === "View details" && (
-                  <Link to={`/app/voucher/voucher-child/${btn.url}`}>
-                    <Button
-                      size="sm"
+      {voucherData &&
+        voucherData?.voucher?.map((item: any, index: number) => (
+          <Card key={index}>
+            <CardHeader>
+              <CardTitle className="text-lg">{item?.voucher_code}</CardTitle>
+              <CardDescription className="text-sm">
+                {item?.name}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-2">
+              <div className="grid grid-cols-2">
+                <small className="font-bold">Price:</small>
+                <small className="text-neutral-400">
+                  {item?.discount_amount}
+                </small>
+              </div>
+              <div className="grid grid-cols-2">
+                <small className="font-bold">Vouchers:</small>
+                <small className="text-neutral-400">{item?.vouchers}</small>
+              </div>
+              <div className="grid grid-cols-2">
+                <small className="font-bold">Used:</small>
+                <small className="text-neutral-400">{item?.used}</small>
+              </div>
+              <div className="grid grid-cols-2">
+                <small className="font-bold">Expiration:</small>
+                <small className="text-neutral-400">{item?.end_at}</small>
+              </div>
+            </CardContent>
+            <CardFooter className="w-full gap-3">
+              {item?.actions?.map((btn: any) => (
+                <>
+                  {btn?.button_name === "View details" && (
+                    <Link
                       className="w-full"
-                      variant="outlineRjavancena"
+                      to={`/app/voucher/voucher-child/${btn.url}`}
                     >
-                      {btn?.button_name}
-                    </Button>
-                  </Link>
-                )}
-              </>
-            ))}
-            <>
-              <Dialog>
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <Button size="sm" variant="outline">
-                      <Icon icon="radix-icons:dots-horizontal" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DialogTrigger className="w-full">
-                      {item.action.map((btn: any) => (
-                        <>
-                          {btn.button_name === "Edit" && (
-                            <DropdownMenuItem
-                              className="cursor-pointer w-full"
-                              onClick={() => handleClickBtn(btn)}
-                            >
-                              <Icon className="mr-2" icon={btn.icon} />
-                              <span>{btn?.button_name}</span>
-                            </DropdownMenuItem>
-                          )}
-                          {btn.button_name === "Delete" && (
-                            <DropdownMenuItem
-                              className="cursor-pointer w-full"
-                              onClick={() => handleClickBtn(btn)}
-                            >
-                              <Icon className="mr-2" icon={btn.icon} />
-                              <span>{btn?.button_name}</span>
-                            </DropdownMenuItem>
-                          )}
-                        </>
-                      ))}
-                    </DialogTrigger>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <DialogPortal>
-                  {showEditDialog && (
-                    <DialogContent className="sm:max-w-[34rem]">
-                      <DialogHeader>
-                        <DialogTitle>Edit voucher code details</DialogTitle>
-                        <DialogDescription>
-                          Edit voucher code details below. Update information
-                          and click save to apply changes.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <ScrollArea className="h-72 w-full">
-                        <div className="w-full">
-                          {modalData?.details.map((detail: any) => (
-                            <>
-                              <div className="grid py-2 mx-6">
-                                <div className="grid gap-1">
-                                  {detail.type !== "select" &&
-                                    detail.type !== "date" && (
+                      <Button
+                        size="sm"
+                        className="w-full"
+                        variant="outlineRjavancena"
+                      >
+                        {btn?.button_name}
+                      </Button>
+                    </Link>
+                  )}
+                </>
+              ))}
+              <>
+                <Dialog>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button className="w-full" size="sm" variant="outline">
+                        <Icon icon="radix-icons:dots-horizontal" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DialogTrigger className="w-full">
+                        {item?.actions?.map((btn: any) => (
+                          <>
+                            {btn?.button_name === "Edit" && (
+                              <DropdownMenuItem
+                                className="cursor-pointer"
+                                onClick={() => handleClickBtn(btn)}
+                              >
+                                <Icon className="mr-2" icon={btn.icon} />
+                                <span>{btn?.button_name}</span>
+                              </DropdownMenuItem>
+                            )}
+                            {btn?.button_name === "Delete" && (
+                              <DropdownMenuItem
+                                className="cursor-pointer w-full"
+                                onClick={() => handleClickBtn(btn)}
+                              >
+                                <Icon className="mr-2" icon={btn.icon} />
+                                <span>{btn?.button_name}</span>
+                              </DropdownMenuItem>
+                            )}
+                          </>
+                        ))}
+                      </DialogTrigger>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <DialogPortal>
+                    {showEditDialog && (
+                      <DialogContent className="sm:max-w-[34rem]">
+                        <DialogHeader>
+                          <DialogTitle>Edit voucher code details</DialogTitle>
+                          <DialogDescription>
+                            Edit voucher code details below. Update information
+                            and click save to apply changes.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <ScrollArea className="h-72 w-full">
+                          <div className="w-full">
+                            {modalData?.details.map((detail: any) => (
+                              <>
+                                <div className="grid py-2 mx-6">
+                                  <div className="grid gap-1">
+                                    {detail.type !== "select" &&
+                                      detail.type !== "date" && (
+                                        <>
+                                          <Label className="font-semibold text-xs">
+                                            {detail.label}
+                                          </Label>
+                                          <Input
+                                            placeholder={`Enter ${detail.label}`}
+                                            type={detail?.type}
+                                            {...register(
+                                              detail?.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase()
+                                            )}
+                                            onChange={(e) => {
+                                              if (
+                                                detail.label ===
+                                                "Counter vouchers"
+                                              ) {
+                                                setCounterVoucherVal(
+                                                  e.target.value
+                                                );
+                                              }
+                                              setValue(
+                                                detail.label
+                                                  .replace(/\s+/g, "_")
+                                                  .toLowerCase(),
+                                                e.target.value
+                                              );
+                                            }}
+                                            className="w-full"
+                                          />
+                                        </>
+                                      )}
+                                    {detail.type === "date" && (
                                       <>
                                         <Label className="font-semibold text-xs">
                                           {detail.label}
@@ -249,168 +295,140 @@ const VoucherList: React.FC = ({ voucherData }) => {
                                               .replace(/\s+/g, "_")
                                               .toLowerCase()
                                           )}
-                                          onChange={(e) => {
-                                            if (
-                                              detail.label ===
-                                              "Counter vouchers"
-                                            ) {
-                                              setCounterVoucherVal(
-                                                e.target.value
-                                              );
-                                            }
-                                            setValue(
-                                              detail.label
-                                                .replace(/\s+/g, "_")
-                                                .toLowerCase(),
-                                              e.target.value
-                                            );
-                                          }}
+                                          value={detail.value}
                                           className="w-full"
                                         />
                                       </>
                                     )}
-                                  {detail.type === "date" && (
-                                    <>
-                                      <Label className="font-semibold text-xs">
-                                        {detail.label}
-                                      </Label>
-                                      <Input
-                                        placeholder={`Enter ${detail.label}`}
-                                        type={detail?.type}
-                                        {...register(
-                                          detail?.label
-                                            .replace(/\s+/g, "_")
-                                            .toLowerCase()
-                                        )}
-                                        value={detail.value}
-                                        className="w-full"
-                                      />
-                                    </>
-                                  )}
-                                  {detail.type === "select" && (
-                                    <>
-                                      <Label className="font-semibold text-xs">
-                                        {detail?.label}
-                                      </Label>
-                                      <Select
-                                        onValueChange={(value) =>
-                                          setValue(
+                                    {detail.type === "select" && (
+                                      <>
+                                        <Label className="font-semibold text-xs">
+                                          {detail?.label}
+                                        </Label>
+                                        <Select
+                                          onValueChange={(value) =>
+                                            setValue(
+                                              detail.label
+                                                .replace(/\s+/g, "_")
+                                                .toLowerCase(),
+                                              value
+                                            )
+                                          }
+                                          value={watch(
                                             detail.label
                                               .replace(/\s+/g, "_")
-                                              .toLowerCase(),
-                                            value
+                                              .toLowerCase()
+                                          )}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue
+                                              placeholder={detail.value}
+                                            />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectGroup>
+                                              {detail?.option?.map(
+                                                (opt: any) => (
+                                                  <SelectItem
+                                                    key={opt.value}
+                                                    value={opt.value}
+                                                  >
+                                                    {opt.label}
+                                                  </SelectItem>
+                                                )
+                                              )}
+                                            </SelectGroup>
+                                          </SelectContent>
+                                        </Select>
+                                      </>
+                                    )}
+                                    <small className="text-red-500 w-full">
+                                      {editVoucherError?.message &&
+                                        editVoucherError?.message[
+                                          _.replace(
+                                            _.lowerCase(detail.label),
+                                            " ",
+                                            "_"
                                           )
-                                        }
-                                        value={watch(
-                                          detail.label
-                                            .replace(/\s+/g, "_")
-                                            .toLowerCase()
-                                        )}
-                                      >
-                                        <SelectTrigger>
-                                          <SelectValue
-                                            placeholder={detail.value}
-                                          />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          <SelectGroup>
-                                            {detail?.option?.map((opt: any) => (
-                                              <SelectItem
-                                                key={opt.value}
-                                                value={opt.value}
-                                              >
-                                                {opt.label}
-                                              </SelectItem>
-                                            ))}
-                                          </SelectGroup>
-                                        </SelectContent>
-                                      </Select>
-                                    </>
-                                  )}
-                                  <small className="text-red-500 w-full">
-                                    {editVoucherError?.message &&
-                                      editVoucherError?.message[
-                                        _.replace(
-                                          _.lowerCase(detail.label),
-                                          " ",
-                                          "_"
-                                        )
-                                      ]}
-                                  </small>
+                                        ]}
+                                    </small>
+                                  </div>
                                 </div>
-                              </div>
-                            </>
-                          ))}
-                        </div>
-                      </ScrollArea>
-                      <DialogFooter>
-                        <Button
-                          className="bg-bgrjavancena disabled:opacity-100"
-                          type="submit"
-                          disabled={editVoucherLoading}
-                          onClick={() => handleSaveClick()}
-                        >
-                          {editVoucherLoading && (
-                            <span className="flex items-center gap-1">
-                              Saving...
-                              <IconReload className="animate-spin" size={16} />
-                            </span>
-                          )}
-                          {!editVoucherLoading && "Save changes"}
-                        </Button>
-                        <DialogClose asChild>
-                          <Button type="button" variant="secondary">
-                            Close
+                              </>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                        <DialogFooter>
+                          <Button
+                            className="bg-bgrjavancena disabled:opacity-100"
+                            type="submit"
+                            disabled={editVoucherLoading}
+                            onClick={() => handleSaveClick()}
+                          >
+                            {editVoucherLoading && (
+                              <span className="flex items-center gap-1">
+                                Saving...
+                                <IconReload
+                                  className="animate-spin"
+                                  size={16}
+                                />
+                              </span>
+                            )}
+                            {!editVoucherLoading && "Save changes"}
                           </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  )}
-                  {showDeleteDialog && (
-                    <DialogContent className="sm:max-w-[34rem]">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Are you sure you want to delete this voucher?{" "}
-                          {modalData?.voucher_code}
-                        </DialogTitle>
-                        <DialogDescription>
-                          Deleting this voucher code is a permanent action and
-                          cannot be undone.
-                        </DialogDescription>
-                      </DialogHeader>
+                          <DialogClose asChild>
+                            <Button type="button" variant="secondary">
+                              Close
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    )}
+                    {showDeleteDialog && (
+                      <DialogContent className="sm:max-w-[34rem]">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Are you sure you want to delete this voucher?{" "}
+                            {modalData?.voucher_code}
+                          </DialogTitle>
+                          <DialogDescription>
+                            Deleting this voucher code is a permanent action and
+                            cannot be undone.
+                          </DialogDescription>
+                        </DialogHeader>
 
-                      <DialogFooter>
-                        <Button
-                          className="bg-bgrjavancena disabled:opacity-100"
-                          type="submit"
-                          // disabled={loadingEditUser}
-                          onClick={() => handleDelete()}
-                        >
-                          {/* {loadingEditUser && (
-                                  <span className="flex items-center gap-1">
-                                    Saving...
-                                    <IconReload
-                                      className="animate-spin"
-                                      size={16}
-                                    />
-                                  </span>
-                                )} */}
-                          {"Save changes"}
-                        </Button>
-                        <DialogClose asChild>
-                          <Button type="button" variant="secondary">
-                            Close
+                        <DialogFooter>
+                          <Button
+                            className="bg-bgrjavancena disabled:opacity-100"
+                            type="submit"
+                            disabled={deleteVoucherLoading}
+                            onClick={() => handleDelete()}
+                          >
+                            {deleteVoucherLoading && (
+                              <span className="flex items-center gap-1">
+                                Deleting...
+                                <IconReload
+                                  className="animate-spin"
+                                  size={16}
+                                />
+                              </span>
+                            )}
+                            {!deleteVoucherLoading && "Delete"}
                           </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  )}
-                </DialogPortal>
-              </Dialog>
-            </>
-          </CardFooter>
-        </Card>
-      ))}
+                          <DialogClose asChild>
+                            <Button type="button" variant="secondary">
+                              Close
+                            </Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </DialogContent>
+                    )}
+                  </DialogPortal>
+                </Dialog>
+              </>
+            </CardFooter>
+          </Card>
+        ))}
     </div>
   );
 };

@@ -69,6 +69,10 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import useAxiosClient from "@/axios-client";
 import axios from "axios";
 import { Separator } from "@/components/ui/separator";
+import {
+  deleteChildVoucherData,
+  updateChildVoucherData,
+} from "@/app/slice/voucherSlice";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -958,12 +962,6 @@ export function RowUsersActions<TData>({
                                   );
                                   onChangeSelect(detail.label, selected);
                                 }}
-                                // defaultValue={setValue(
-                                //   detail.label
-                                //     .replace(/\s+/g, "_")
-                                //     .toLowerCase(),
-                                //   detail.value_name
-                                // )}
                               >
                                 <SelectTrigger>
                                   <SelectValue
@@ -1302,31 +1300,6 @@ export function RowTransactionActions<TData>({
     <>
       {row?.original?.actions && (
         <Dialog>
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="ghost">
-                <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-full">
-              <DropdownMenuLabel>Action</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {row?.original?.actions?.map((act, index) => (
-                <DropdownMenuItem>
-                  <DialogTrigger
-                    className="flex items-center w-full justify-between"
-                    onClick={() => handleActionFunc(act)}
-                  >
-                    {act.button_name}
-                    <DropdownMenuShortcut>
-                      <Icon fontSize={16} icon={act.icon} />
-                    </DropdownMenuShortcut>
-                  </DialogTrigger>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-
           {row?.original?.actions?.map((act, index) => (
             <DialogTrigger onClick={() => handleActionFunc(act)}>
               {act.button_name === "Void" ? (
@@ -1891,6 +1864,233 @@ export function RowLogsActions<TData>({
                   ))}
                 </ScrollArea>
                 <DialogFooter>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+          </DialogPortal>
+        </Dialog>
+      )}
+    </>
+  );
+}
+
+export function RowVoucherActions<TData>({
+  row,
+}: DataTableRowActionsProps<TData>) {
+  const errorMessage = useSelector(usersError);
+  const { control, handleSubmit, getValues, setValue, register, watch } =
+    useForm({});
+
+  const [modalData, setModalData] = useState({});
+  console.log(modalData);
+
+  const [funcData, setFuncData] = useState({});
+  console.log(funcData);
+
+  const dispatch = useAppDispatch();
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const updateChildVoucherError = useAppSelector(
+    (state) => state.voucher.updateChildVoucherError
+  );
+  const updateChildVoucherLoading = useAppSelector(
+    (state) => state.voucher.updateChildVoucherLoading
+  );
+
+  const deleteChildVoucherLoading = useAppSelector(
+    (state) => state.voucher.deleteChildVoucherLoading
+  );
+
+  const handleActionFunc = (values: any) => {
+    console.log(values);
+
+    const buttonName = values.button_name;
+    console.log(buttonName);
+
+    switch (buttonName) {
+      case "Edit":
+        values.details.forEach((val: any) => {
+          const fieldName = val.label.replace(/\s+/g, "_").toLowerCase();
+          setValue(fieldName, val.value);
+        });
+        setShowEditDialog(true);
+        setShowDeleteDialog(false);
+        setFuncData(values);
+        setModalData(values);
+        break;
+
+      case "Delete":
+        setShowEditDialog(false);
+        setShowDeleteDialog(true);
+        setFuncData(values);
+        setModalData(values);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleSaveClick = () => {
+    const formValues = getValues();
+
+    console.log(formValues);
+
+    const payload = {
+      voucher_code: formValues.voucher_code,
+      voucher_id: modalData.voucher_id,
+      voucher_items_id: modalData.voucher_items_id,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      updateChildVoucherData({
+        url: modalData?.url,
+        method: "POST",
+        data: payload,
+      })
+    );
+  };
+
+  const handleDelete = () => {
+    const payload = {
+      voucher_id: modalData?.voucher_id,
+      voucher_items_id: modalData?.voucher_items_id,
+      eu_device: Cookies.get("eu"),
+    };
+
+    dispatch(
+      deleteChildVoucherData({
+        url: modalData?.url,
+        method: "DELETE",
+        data: payload,
+      })
+    );
+  };
+
+  return (
+    <>
+      {row?.original?.actions && (
+        <Dialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="ghost">
+                <DotsHorizontalIcon className="hidden md:block h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-full">
+              <DropdownMenuLabel>Action</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {row?.original?.actions?.map((act, index) => (
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    onClick={() => handleActionFunc(act)}
+                    className="flex items-center w-full justify-between"
+                  >
+                    {act.button_name}
+                    <DropdownMenuShortcut>
+                      <Icon fontSize={16} icon={act.icon} />
+                    </DropdownMenuShortcut>
+                  </DialogTrigger>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogPortal>
+            {showEditDialog && (
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    Edit details
+                    <span className="font-normal">
+                      {_.startCase(row?.original?.name)}
+                    </span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Easily update your voucher information.
+                  </DialogDescription>
+                </DialogHeader>
+                {modalData?.details?.map((detail) => (
+                  <>
+                    <div className="grid gap-2 py-3">
+                      <Label className="w-full font-semibold text-xs">
+                        {detail?.label}
+                      </Label>
+
+                      <Input
+                        type={detail?.type}
+                        {...register(
+                          detail?.label.replace(/\s+/g, "_").toLowerCase()
+                        )}
+                        className="w-full"
+                      />
+                      <small className="text-red-500 w-full">
+                        {updateChildVoucherError?.message &&
+                          updateChildVoucherError?.message[
+                            _.replace(_.lowerCase(detail.label), " ", "_")
+                          ]}
+                      </small>
+                    </div>
+                  </>
+                ))}
+                <DialogFooter>
+                  <Button
+                    className="bg-bgrjavancena disabled:opacity-100"
+                    type="submit"
+                    disabled={updateChildVoucherLoading}
+                    onClick={() => handleSaveClick()}
+                  >
+                    {updateChildVoucherLoading && (
+                      <span className="flex items-center gap-1">
+                        Saving...
+                        <IconReload className="animate-spin" size={16} />
+                      </span>
+                    )}
+                    {!updateChildVoucherLoading && "Save changes"}
+                  </Button>
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            )}
+            {showDeleteDialog && (
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    Are you sure you want to delete this voucher?
+                    <span className="font-normal">
+                      {_.startCase(row?.original?.name)}
+                    </span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Deleting this voucher code is a permanent action and cannot
+                    be undone.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter>
+                  <Button
+                    className="bg-bgrjavancena disabled:opacity-100"
+                    type="submit"
+                    disabled={deleteChildVoucherLoading}
+                    onClick={() => handleDelete()}
+                  >
+                    {deleteChildVoucherLoading && (
+                      <span className="flex items-center gap-1">
+                        Deleting...
+                        <IconReload className="animate-spin" size={16} />
+                      </span>
+                    )}
+                    {!deleteChildVoucherLoading && "Delete"}
+                  </Button>
                   <DialogClose asChild>
                     <Button type="button" variant="secondary">
                       Close
